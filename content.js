@@ -124,11 +124,13 @@
     const now = new Date();
     const diff = deadline.getTime() - now.getTime();
     if (diff < 0) return "Vencida";
-    const totalHours = Math.floor(diff / 3600000);
-    const days = Math.floor(totalHours / 24);
-    const hours = totalHours % 24;
+    const totalMinutes = Math.floor(diff / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
     if (days > 0) return `en ${days}d ${hours}h`;
-    return `en ${hours}h`;
+    if (hours > 0) return `en ${hours}h ${minutes}m`;
+    return `en ${minutes}m`;
   }
 
   function isActivityPending(activity) {

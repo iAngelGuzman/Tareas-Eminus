@@ -1,10 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Eminus Pending Panel",
+  "name": "Miyu --pendientes",
   "description": "Inyecta un panel en Eminus para ver tareas pendientes y su log.",
   "version": "1.0.0",
   "permissions": ["storage", "notifications"],
   "host_permissions": ["https://eminus.uv.mx/*"],
+  "icons": {
+    "16": "logo.png",
+    "32": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://eminus.uv.mx/eminus4/*"],
@@ -23,7 +29,7 @@
     "service_worker": "service-worker.js"
   },
   "action": {
-    "default_title": "Eminus Pending Panel",
+    "default_title": "Miyu --pendientes",
     "default_popup": "popup.html"
   }
 }
