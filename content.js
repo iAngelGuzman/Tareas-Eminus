@@ -1177,16 +1177,9 @@
     } else if (currentAccountId && !storedAccountId) {
       await storageSet({ [STORAGE_KEYS.ACCOUNT_ID]: currentAccountId });
     } else if (!currentToken && storedAccountId) {
-      await storageSet({
-        [STORAGE_KEYS.LOG]: [],
-        [STORAGE_KEYS.SNAPSHOT]: null,
-        [STORAGE_KEYS.KNOWN_IDS]: [],
-        [STORAGE_KEYS.ARCHIVED]: [],
-        [STORAGE_KEYS.ACCOUNT_ID]: null
-      });
-      data[STORAGE_KEYS.LOG] = [];
-      data[STORAGE_KEYS.SNAPSHOT] = null;
-      data[STORAGE_KEYS.ARCHIVED] = [];
+      // Sesion cerrada: no borrar datos del storage para que persistan
+      // cuando se reinicie sesion con la misma cuenta. Si entra otra
+      // cuenta, scanPending() detectara el cambio y limpiara todo.
       await syncBadge(0);
     }
 
