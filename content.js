@@ -12,7 +12,8 @@
     PANEL_POSITION: "eminusPanelPosition",
     THEME: "eminusPanelTheme",
     ACCOUNT_ID: "eminusAccountId",
-    ARCHIVED: "eminusArchivedPendingIds"
+    ARCHIVED: "eminusArchivedPendingIds",
+    AUTO_REFRESH: "eminusAutoRefreshMinutes"
   };
   const NAV_KEYS = {
     ACTIVITY_ID: "ep_target_activity_id",
@@ -55,6 +56,8 @@
   let routeObserverStarted = false;
   let detailForceTimer = null;
   let dragState = null;
+  let autoRefreshTimer = null;
+  let autoRefreshMinutes = 0;
 
   let panelEls = null;
   const hasChrome = typeof chrome !== "undefined";
@@ -280,6 +283,14 @@
              <button class="ep-theme-option" data-theme="gruvbox">Gruvbox</button>
           </div>
           <button class="ep-btn" id="ep-refresh" title="Actualizar">[ ref ]</button>
+          <select class="ep-autorefresh-select" id="ep-autorefresh" title="Auto-refresh">
+            <option value="0">off</option>
+            <option value="1">1 min</option>
+            <option value="5">5 min</option>
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+          </select>
           <div class="ep-archive-stack">
             <button class="ep-btn ep-archive-btn" id="ep-archive-toggle" title="Archivadas" aria-label="Archivadas">
               ${ARCHIVE_BUTTON_HTML}
@@ -313,6 +324,7 @@
       themeMenu: root.querySelector("#ep-theme-menu"),
       themeOptions: root.querySelectorAll(".ep-theme-option"),
       refreshBtn: root.querySelector("#ep-refresh"),
+      autoRefreshSelect: root.querySelector("#ep-autorefresh"),
       archiveBtn: root.querySelector("#ep-archive-toggle"),
       collapseBtn: root.querySelector("#ep-collapse"),
       tabButtons: root.querySelectorAll(".ep-tab"),
@@ -327,6 +339,10 @@
       btn.addEventListener("click", () => setTheme(btn.dataset.theme));
     });
     panelEls.refreshBtn.addEventListener("click", () => scanPending());
+    panelEls.autoRefreshSelect.addEventListener("change", (e) => {
+      const minutes = parseInt(e.target.value, 10);
+      setAutoRefresh(minutes);
+    });
     panelEls.archiveBtn.addEventListener("click", toggleArchiveView);
     panelEls.collapseBtn.addEventListener("click", toggleCollapse);
     panelEls.tabButtons.forEach((btn) => {
@@ -1156,7 +1172,7 @@
   }
 
   async function hydrateFromStorage() {
-    let data = await storageGet([STORAGE_KEYS.LOG, STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.THEME, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED]);
+    let data = await storageGet([STORAGE_KEYS.LOG, STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.THEME, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED, STORAGE_KEYS.AUTO_REFRESH]);
     
     const storedAccountId = data[STORAGE_KEYS.ACCOUNT_ID];
     const currentToken = getToken();
@@ -1220,6 +1236,12 @@
     }
 
     renderLogs(state.logs);
+
+    const storedAutoRefresh = Number(data[STORAGE_KEYS.AUTO_REFRESH]) || 0;
+    if (storedAutoRefresh > 0 && panelEls?.autoRefreshSelect) {
+      panelEls.autoRefreshSelect.value = String(storedAutoRefresh);
+      startAutoRefresh(storedAutoRefresh);
+    }
   }
 
   async function scanPending() {
@@ -1282,6 +1304,7 @@
       if (panelEls?.subtitle) {
         panelEls.subtitle.textContent = `Última lectura: ${formatDateTime(logMeta.updatedAt)}`;
       }
+      updateAutoRefreshLabel(autoRefreshMinutes);
       const status = `${visiblePending.length} pendientes | ${logMeta.newCount} nuevas`;
       setStatus(status);
 
@@ -1300,11 +1323,75 @@
       await syncBadge(visiblePending.length, logMeta.newCount, currentOverdue.length);
     } catch (err) {
       console.error("[Eminus Pending Panel]", err);
-      setStatus(err.message || "Error al leer pendientes");
+      if (!navigator.onLine) {
+        const snapshot = await storageGet([STORAGE_KEYS.SNAPSHOT]);
+        const cached = snapshot[STORAGE_KEYS.SNAPSHOT];
+        if (cached && Array.isArray(cached.pending) && cached.pending.length > 0) {
+          state.pending = applyArchivedState(cached.pending, state.archivedIds);
+          state.lastUpdatedAt = cached.updatedAt;
+          renderPending(state.pending);
+          renderLogs(state.logs);
+          if (panelEls?.subtitle) {
+            panelEls.subtitle.textContent = `Última lectura: ${formatDateTime(cached.updatedAt)}`;
+          }
+          updateAutoRefreshLabel(autoRefreshMinutes);
+          const visible = getVisiblePending(state.pending);
+          const overdueCount = visible.filter((item) => item.urgency === "overdue").length;
+          setStatus(`Sin conexión — ${visible.length} pendientes (caché)`);
+          await syncBadge(visible.length, 0, overdueCount);
+        } else {
+          setStatus("Sin conexión — sin datos en caché");
+        }
+      } else {
+        setStatus(err.message || "Error al leer pendientes");
+      }
     } finally {
       if (panelEls?.refreshBtn) {
         panelEls.refreshBtn.disabled = false;
       }
+    }
+  }
+
+  function startAutoRefresh(minutes) {
+    stopAutoRefresh();
+    if (!minutes || minutes <= 0) return;
+    autoRefreshMinutes = minutes;
+    const ms = minutes * 60 * 1000;
+    autoRefreshTimer = window.setInterval(() => {
+      scanPending();
+    }, ms);
+    updateAutoRefreshLabel(minutes);
+  }
+
+  function stopAutoRefresh() {
+    if (autoRefreshTimer) {
+      window.clearInterval(autoRefreshTimer);
+      autoRefreshTimer = null;
+    }
+    autoRefreshMinutes = 0;
+    if (panelEls?.autoRefreshSelect) {
+      panelEls.autoRefreshSelect.value = "0";
+    }
+    updateAutoRefreshLabel(0);
+  }
+
+  async function setAutoRefresh(minutes) {
+    autoRefreshMinutes = minutes;
+    await storageSet({ [STORAGE_KEYS.AUTO_REFRESH]: minutes });
+    if (minutes > 0) {
+      startAutoRefresh(minutes);
+    } else {
+      stopAutoRefresh();
+    }
+  }
+
+  function updateAutoRefreshLabel(minutes) {
+    if (!panelEls?.subtitle) return;
+    const baseText = panelEls.subtitle.textContent.replace(/ · Auto-refresh: \d+ min/g, "");
+    if (minutes > 0) {
+      panelEls.subtitle.textContent = baseText + ` · Auto-refresh: ${minutes} min`;
+    } else {
+      panelEls.subtitle.textContent = baseText;
     }
   }
 
@@ -1334,5 +1421,24 @@
   hydrateFromStorage().then(() => {
     loadDetailIntoActivityIframeIfNeeded();
     scanPending();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === "e" || e.code === "KeyE")) {
+      e.preventDefault();
+      toggleCollapse();
+    }
+  });
+
+  window.addEventListener("online", () => {
+    if (panelEls?.footer) {
+      const txt = panelEls.footer.textContent.replace(/^Sin conexión\s*(—\s*)?/, "");
+      panelEls.footer.textContent = txt || "En línea";
+    }
+    scanPending();
+  });
+
+  window.addEventListener("offline", () => {
+    setStatus("Sin conexión");
   });
 })();

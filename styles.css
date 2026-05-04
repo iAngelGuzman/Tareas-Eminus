@@ -119,6 +119,32 @@
   color: #fff;
 }
 
+.ep-autorefresh-select {
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: inherit;
+  padding: 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-transform: lowercase;
+}
+
+.ep-autorefresh-select:hover,
+.ep-autorefresh-select:focus {
+  color: #000;
+}
+
+.ep-autorefresh-select option {
+  text-transform: lowercase;
+  background: #fff;
+  color: #000;
+}
+
 .ep-tabs {
   display: flex;
   background: #ffffff;
@@ -400,7 +426,8 @@
   color: #aaa;
 }
 
-#eminus-pending-panel.ep-dark-theme .ep-btn {
+#eminus-pending-panel.ep-dark-theme .ep-btn,
+#eminus-pending-panel.ep-dark-theme .ep-autorefresh-select {
   color: #e0e0e0;
 }
 
@@ -731,6 +758,7 @@
 #eminus-pending-panel.ep-hacker-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-hacker-theme .ep-subtitle,
 #eminus-pending-panel.ep-hacker-theme .ep-btn,
+#eminus-pending-panel.ep-hacker-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-hacker-theme .ep-course,
 #eminus-pending-panel.ep-hacker-theme .ep-title-task,
 #eminus-pending-panel.ep-hacker-theme .ep-meta,
@@ -829,6 +857,7 @@
 #eminus-pending-panel.ep-ocean-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-ocean-theme .ep-subtitle,
 #eminus-pending-panel.ep-ocean-theme .ep-btn,
+#eminus-pending-panel.ep-ocean-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-ocean-theme .ep-course,
 #eminus-pending-panel.ep-ocean-theme .ep-title-task,
 #eminus-pending-panel.ep-ocean-theme .ep-meta,
@@ -931,6 +960,7 @@
 #eminus-pending-panel.ep-dracula-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-dracula-theme .ep-subtitle,
 #eminus-pending-panel.ep-dracula-theme .ep-btn,
+#eminus-pending-panel.ep-dracula-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-dracula-theme .ep-course,
 #eminus-pending-panel.ep-dracula-theme .ep-title-task,
 #eminus-pending-panel.ep-dracula-theme .ep-meta,
@@ -976,6 +1006,7 @@
 #eminus-pending-panel.ep-nord-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-nord-theme .ep-subtitle,
 #eminus-pending-panel.ep-nord-theme .ep-btn,
+#eminus-pending-panel.ep-nord-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-nord-theme .ep-course,
 #eminus-pending-panel.ep-nord-theme .ep-title-task,
 #eminus-pending-panel.ep-nord-theme .ep-meta,
@@ -1022,6 +1053,7 @@
 #eminus-pending-panel.ep-solarized-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-solarized-theme .ep-subtitle,
 #eminus-pending-panel.ep-solarized-theme .ep-btn,
+#eminus-pending-panel.ep-solarized-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-solarized-theme .ep-course,
 #eminus-pending-panel.ep-solarized-theme .ep-title-task,
 #eminus-pending-panel.ep-solarized-theme .ep-meta,
@@ -1068,6 +1100,7 @@
 #eminus-pending-panel.ep-solarizedlight-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-subtitle,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-btn,
+#eminus-pending-panel.ep-solarizedlight-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-course,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-title-task,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-meta,
@@ -1114,6 +1147,7 @@
 #eminus-pending-panel.ep-gruvbox-theme .ep-title-wrap .ep-title,
 #eminus-pending-panel.ep-gruvbox-theme .ep-subtitle,
 #eminus-pending-panel.ep-gruvbox-theme .ep-btn,
+#eminus-pending-panel.ep-gruvbox-theme .ep-autorefresh-select,
 #eminus-pending-panel.ep-gruvbox-theme .ep-course,
 #eminus-pending-panel.ep-gruvbox-theme .ep-title-task,
 #eminus-pending-panel.ep-gruvbox-theme .ep-meta,
