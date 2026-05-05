@@ -303,11 +303,13 @@
       <div class="ep-tabs">
         <button class="ep-tab ep-tab-active" data-tab="pending">Pendientes</button>
         <button class="ep-tab" data-tab="overdue">Vencidas</button>
+        <button class="ep-tab" data-tab="agenda">Agenda</button>
         <button class="ep-tab" data-tab="log">Log</button>
       </div>
 
       <section class="ep-body" id="ep-body-pending"></section>
       <section class="ep-body ep-hidden" id="ep-body-overdue"></section>
+      <section class="ep-body ep-hidden" id="ep-body-agenda"></section>
       <section class="ep-body ep-hidden" id="ep-body-log"></section>
 
       <footer class="ep-footer" id="ep-footer-status">Listo</footer>
@@ -330,6 +332,7 @@
       tabButtons: root.querySelectorAll(".ep-tab"),
       pendingBody: root.querySelector("#ep-body-pending"),
       overdueBody: root.querySelector("#ep-body-overdue"),
+      agendaBody: root.querySelector("#ep-body-agenda"),
       logBody: root.querySelector("#ep-body-log"),
       footer: root.querySelector("#ep-footer-status")
     };
@@ -493,12 +496,14 @@
     if (state.isArchiveView) {
       panelEls.pendingBody.classList.remove("ep-hidden");
       panelEls.overdueBody.classList.add("ep-hidden");
+      panelEls.agendaBody.classList.add("ep-hidden");
       panelEls.logBody.classList.add("ep-hidden");
       return;
     }
 
     panelEls.pendingBody.classList.toggle("ep-hidden", state.activeTab !== "pending");
     panelEls.overdueBody.classList.toggle("ep-hidden", state.activeTab !== "overdue");
+    panelEls.agendaBody.classList.toggle("ep-hidden", state.activeTab !== "agenda");
     panelEls.logBody.classList.toggle("ep-hidden", state.activeTab !== "log");
   }
 
@@ -542,6 +547,119 @@
     return dt.toLocaleString();
   }
 
+  function renderAgenda(items) {
+    if (!panelEls?.agendaBody) return;
+
+    const visibleItems = items.filter((item) => !item.archived);
+    const overdueItems = visibleItems.filter((item) => item.urgency === "overdue");
+    const noDateItems = visibleItems.filter((item) => !item.deadlineRaw && item.urgency !== "overdue");
+    const datedItems = visibleItems.filter((item) => item.deadlineRaw && item.urgency !== "overdue");
+
+    const groups = {};
+    datedItems.forEach((item) => {
+      const d = new Date(item.deadlineRaw);
+      if (Number.isNaN(d.getTime())) return;
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      if (!groups[dateStr]) groups[dateStr] = [];
+      groups[dateStr].push(item);
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (visibleItems.length === 0) {
+      panelEls.agendaBody.innerHTML = `<div class="ep-empty">Sin tareas pendientes detectadas.</div>`;
+      return;
+    }
+
+    let html = "";
+
+    const buildMiniItem = (item) => {
+      const urgencyClass = `ep-${item.urgency}`;
+      const originalIndex = items.indexOf(item);
+      const timeMatch = item.deadlineLabel ? item.deadlineLabel.match(/(\d{1,2}:\d{2})/) : null;
+      const timeStr = timeMatch ? timeMatch[1] : "";
+      return `
+        <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
+          <article class="ep-item ${urgencyClass} ep-agenda-item">
+            <div class="ep-meta-row" style="margin-bottom: 4px;">
+              <div class="ep-course">${escapeHtml(item.course)}</div>
+              ${timeStr ? `<div class="ep-meta" style="font-weight: 700;">${escapeHtml(timeStr)}</div>` : ""}
+            </div>
+            <div class="ep-title-task" style="font-size: 12px; margin-bottom: 0;">${escapeHtml(item.title)}</div>
+          </article>
+        </div>
+      `;
+    };
+
+    if (overdueItems.length > 0) {
+      html += `<div class="ep-agenda-day">`;
+      html += `<div class="ep-agenda-day-header ep-agenda-overdue">Vencidas</div>`;
+      overdueItems.forEach((item) => {
+        html += buildMiniItem(item);
+      });
+      html += `</div>`;
+    }
+
+    const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const dayName = dayNames[d.getDay()];
+      const dayLabel = i === 0 ? "Hoy" : i === 1 ? "Mañana" : `${dayName} ${d.getDate()}`;
+      const dayItems = groups[dateStr] || [];
+
+      html += `<div class="ep-agenda-day">`;
+      html += `<div class="ep-agenda-day-header">${escapeHtml(dayLabel)}</div>`;
+      if (dayItems.length === 0) {
+        html += `<div class="ep-agenda-empty">Libre</div>`;
+      } else {
+        dayItems.forEach((item) => {
+          html += buildMiniItem(item);
+        });
+      }
+      html += `</div>`;
+    }
+
+    const futureItems = datedItems.filter((item) => {
+      const d = new Date(item.deadlineRaw);
+      const dOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      return dOnly.getTime() >= today.getTime() + 7 * 24 * 60 * 60 * 1000;
+    });
+
+    if (futureItems.length > 0) {
+      html += `<div class="ep-agenda-day">`;
+      html += `<div class="ep-agenda-day-header">Más adelante</div>`;
+      futureItems.forEach((item) => {
+        const originalIndex = items.indexOf(item);
+        const urgencyClass = `ep-${item.urgency}`;
+        const due = item.deadlineLabel || "";
+        html += `
+          <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
+            <article class="ep-item ${urgencyClass} ep-agenda-item">
+              <div class="ep-course">${escapeHtml(item.course)}</div>
+              <div class="ep-title-task" style="font-size: 12px; margin-bottom: 4px;">${escapeHtml(item.title)}</div>
+              <div class="ep-meta">${escapeHtml(due)}</div>
+            </article>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    if (noDateItems.length > 0) {
+      html += `<div class="ep-agenda-day">`;
+      html += `<div class="ep-agenda-day-header">Sin fecha</div>`;
+      noDateItems.forEach((item) => {
+        html += buildMiniItem(item);
+      });
+      html += `</div>`;
+    }
+
+    panelEls.agendaBody.innerHTML = html;
+  }
+
   function renderPending(items) {
     if (!panelEls?.pendingBody) return;
     if (!panelEls?.overdueBody) return;
@@ -582,12 +700,15 @@
     if (state.isArchiveView) {
       panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, "Sin tareas archivadas.", { label: "Restaurar", action: "unarchive" });
       panelEls.overdueBody.innerHTML = "";
+      panelEls.agendaBody.innerHTML = "";
     } else {
       panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, "Sin tareas pendientes detectadas.");
       panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, "Sin tareas vencidas detectadas.", { label: "Archivar", action: "archive" });
+      renderAgenda(items);
     }
 
     const addItemListeners = (container) => {
+      if (!container) return;
       container.querySelectorAll(".ep-item-btn").forEach((card) => {
         const openItem = () => {
           const index = Number(card.getAttribute("data-item-index"));
@@ -614,6 +735,7 @@
     };
 
     const addActionListeners = (container) => {
+      if (!container) return;
       container.querySelectorAll(".ep-mini-btn").forEach((btn) => {
         btn.addEventListener("click", async (event) => {
           event.preventDefault();
@@ -631,7 +753,7 @@
 
     const containers = state.isArchiveView
       ? [panelEls.pendingBody]
-      : [panelEls.pendingBody, panelEls.overdueBody];
+      : [panelEls.pendingBody, panelEls.overdueBody, panelEls.agendaBody];
 
     containers.forEach((container) => {
       addItemListeners(container);

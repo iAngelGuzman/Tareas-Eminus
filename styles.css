@@ -64,7 +64,6 @@
 
 .ep-seal-art {
   cursor: pointer;
-}
   background: transparent;
   color: #000;
 }
@@ -249,6 +248,78 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.ep-agenda-day {
+  margin-bottom: 16px;
+}
+
+.ep-agenda-day:last-child {
+  margin-bottom: 0;
+}
+
+.ep-agenda-day-header {
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.ep-agenda-day-header.ep-agenda-overdue {
+  border-bottom-style: dashed;
+  color: #c0392b;
+}
+
+.ep-agenda-empty {
+  font-size: 11px;
+  color: #888;
+  padding: 4px 8px;
+  border: 1px dashed currentColor;
+  opacity: 0.7;
+}
+
+.ep-agenda-item {
+  margin-bottom: 4px;
+  padding: 8px;
+}
+
+.ep-agenda-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Dark theme agenda fixes */
+#eminus-pending-panel.ep-dark-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff6b6b;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff0000;
+}
+
+#eminus-pending-panel.ep-ocean-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #f43f5e;
+}
+
+#eminus-pending-panel.ep-dracula-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff5555;
+}
+
+#eminus-pending-panel.ep-nord-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #bf616a;
+}
+
+#eminus-pending-panel.ep-solarized-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarizedlight-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #dc322f;
+}
+
+#eminus-pending-panel.ep-gruvbox-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #cc241d;
 }
 
 .ep-mini-btn {
