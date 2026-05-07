@@ -1,3 +1,7 @@
+/* ══════════════════════════════════════════
+   BASE PANEL LAYOUT
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel {
   position: fixed;
   top: 96px;
@@ -39,6 +43,14 @@
   box-sizing: border-box;
 }
 
+#eminus-pending-panel.ep-archive-view .ep-tabs {
+  display: none;
+}
+
+/* ══════════════════════════════════════════
+   HEADER & BRAND
+   ══════════════════════════════════════════ */
+
 .ep-header {
   display: flex;
   align-items: center;
@@ -54,7 +66,9 @@
   display: flex;
   flex: 0 0 auto;
 }
-.ep-seal-art, .ep-miyu-text {
+
+.ep-seal-art,
+.ep-miyu-text {
   margin: 0;
   padding: 0;
   font: 400 6px/1 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -83,6 +97,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .ep-title::before {
   content: "$ ";
 }
@@ -144,6 +159,10 @@
   color: #000;
 }
 
+/* ══════════════════════════════════════════
+   TABS
+   ══════════════════════════════════════════ */
+
 .ep-tabs {
   display: flex;
   background: #ffffff;
@@ -160,6 +179,7 @@
   font-size: 12px;
   cursor: pointer;
 }
+
 .ep-tab:last-child {
   border-right: none;
 }
@@ -174,6 +194,10 @@
   font-weight: 700;
   background: #fff;
 }
+
+/* ══════════════════════════════════════════
+   BODY & ITEMS
+   ══════════════════════════════════════════ */
 
 .ep-body {
   overflow-y: auto;
@@ -205,27 +229,13 @@
   flex-direction: column;
 }
 
-.ep-item.ep-overdue {
-  border-left: 4px solid #000;
-  background-color: #fff0f0;
-}
-
-.ep-item.ep-imminent {
-  border-left: 4px dashed #000;
-  background-color: #fffbe0;
-}
-
-.ep-item.ep-urgent {
-  border-left: 4px dotted #000;
-  background-color: #fff3e0;
-}
-
 .ep-course {
   font-size: 12px;
   color: #666;
   text-transform: lowercase;
   margin-bottom: 8px;
 }
+
 .ep-course::before {
   content: "> ";
 }
@@ -249,6 +259,52 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+.ep-item-btn {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.ep-item-btn:focus-visible .ep-item {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.ep-item-btn:hover .ep-item {
+  background: #000;
+  color: #fff;
+}
+
+.ep-item-btn:hover .ep-item .ep-course,
+.ep-item-btn:hover .ep-item .ep-title-task,
+.ep-item-btn:hover .ep-item .ep-meta {
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════
+   URGENCY STYLES (BASE)
+   ══════════════════════════════════════════ */
+
+.ep-item.ep-overdue {
+  border-left: 4px solid #000;
+  background-color: #fff0f0;
+}
+
+.ep-item.ep-imminent {
+  border-left: 4px dashed #000;
+  background-color: #fffbe0;
+}
+
+.ep-item.ep-urgent {
+  border-left: 4px dotted #000;
+  background-color: #fff3e0;
+}
+
+/* ══════════════════════════════════════════
+   AGENDA
+   ══════════════════════════════════════════ */
 
 .ep-agenda-day {
   margin-bottom: 16px;
@@ -289,38 +345,60 @@
   margin-bottom: 0;
 }
 
-/* Dark theme agenda fixes */
-#eminus-pending-panel.ep-dark-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #ff6b6b;
+/* ══════════════════════════════════════════
+   LOG
+   ══════════════════════════════════════════ */
+
+.ep-log-item {
+  background: #ffffff;
+  border: 1px solid #000;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
-#eminus-pending-panel.ep-hacker-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #ff0000;
+.ep-log-time {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
 }
 
-#eminus-pending-panel.ep-ocean-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #f43f5e;
+.ep-log-summary {
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
 }
 
-#eminus-pending-panel.ep-dracula-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #ff5555;
+.ep-log-lines {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
 }
 
-#eminus-pending-panel.ep-nord-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #bf616a;
+.ep-log-changes {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #444;
 }
 
-#eminus-pending-panel.ep-solarized-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #dc322f;
+.ep-log-change {
+  margin-bottom: 4px;
 }
 
-#eminus-pending-panel.ep-solarizedlight-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #dc322f;
+/* ══════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════ */
+
+.ep-footer {
+  border-top: 1px solid #000;
+  background: #ffffff;
+  font-size: 12px;
+  color: #666;
+  padding: 8px 16px;
 }
 
-#eminus-pending-panel.ep-gruvbox-theme .ep-agenda-day-header.ep-agenda-overdue {
-  color: #cc241d;
-}
+/* ══════════════════════════════════════════
+   MINI BUTTONS
+   ══════════════════════════════════════════ */
 
 .ep-mini-btn {
   border: 1px dashed currentColor;
@@ -343,6 +421,10 @@
   padding: 2px 4px;
   min-width: 20px;
 }
+
+/* ══════════════════════════════════════════
+   ARCHIVE STACK & BUTTON
+   ══════════════════════════════════════════ */
 
 .ep-item.ep-archived {
   opacity: 0.75;
@@ -400,80 +482,103 @@
   display: block;
 }
 
-
-
-#eminus-pending-panel.ep-archive-view .ep-tabs {
-  display: none;
-}
-
-.ep-log-item {
-  background: #ffffff;
-  border: 1px solid #000;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.ep-log-time {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.ep-log-summary {
-  font-size: 12px;
-  font-weight: 700;
-  color: #000;
-}
-
-.ep-log-lines {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #666;
-}
-
-.ep-log-changes {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #444;
-}
-
-.ep-log-change {
-  margin-bottom: 4px;
-}
-
-.ep-footer {
-  border-top: 1px solid #000;
-  background: #ffffff;
-  font-size: 12px;
-  color: #666;
-  padding: 8px 16px;
-}
-
-.ep-item-btn {
-  all: unset;
-  display: block;
-  width: 100%;
-  cursor: pointer;
-}
-
-.ep-item-btn:focus-visible .ep-item {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
-.ep-item-btn:hover .ep-item {
-  background: #000;
-  color: #fff;
-}
-.ep-item-btn:hover .ep-item .ep-course,
-.ep-item-btn:hover .ep-item .ep-title-task,
-.ep-item-btn:hover .ep-item .ep-meta {
-  color: #fff;
-}
+/* ══════════════════════════════════════════
+   DRAG
+   ══════════════════════════════════════════ */
 
 #eminus-pending-panel.ep-dragging .ep-header {
   cursor: grabbing;
 }
+
+/* ══════════════════════════════════════════
+   THEME MENU
+   ══════════════════════════════════════════ */
+
+.ep-theme-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid #000;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.ep-theme-menu.ep-hidden {
+  display: none !important;
+}
+
+.ep-theme-option {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #000;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: #000;
+}
+
+.ep-theme-option:last-child {
+  border-bottom: none;
+}
+
+.ep-theme-option:hover {
+  background: #f0f0f0;
+}
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFICATIONS (BASE)
+   ══════════════════════════════════════════ */
+
+.ep-toast {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #000;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  text-align: center;
+  font-family: inherit;
+}
+
+.ep-toast-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ep-toast-new {
+  background: #ffeaea;
+  color: #c0392b;
+  border-color: #c0392b;
+}
+
+.ep-toast-overdue {
+  background: #fff0f0;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.ep-toast-info {
+  background: #f0f8ff;
+  color: #2980b9;
+  border-color: #2980b9;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════ */
 
 @media (max-width: 768px) {
   #eminus-pending-panel {
@@ -484,12 +589,16 @@
     max-height: calc(100vh - 100px);
   }
 
-  .ep-seal-art, .ep-miyu-text {
+  .ep-seal-art,
+  .ep-miyu-text {
     font-size: 4px;
   }
 }
 
-/* Dark Theme */
+/* ══════════════════════════════════════════
+   THEME: DARK
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-dark-theme {
   background: #121212;
   color: #e0e0e0;
@@ -586,240 +695,25 @@
   color: #aaa;
 }
 
-/* Borrar log en dark mode */
 #eminus-pending-panel.ep-dark-theme #ep-clear-log {
   border-color: #444 !important;
   color: #e0e0e0 !important;
 }
 
-/* Toast notifications */
-.ep-toast {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  left: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid #000;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  pointer-events: none;
-  text-align: center;
-  font-family: inherit;
-}
-
-.ep-toast-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.ep-toast-new {
-  background: #ffeaea;
-  color: #c0392b;
-  border-color: #c0392b;
-}
-
-.ep-toast-overdue {
-  background: #fff0f0;
-  color: #e74c3c;
-  border-color: #e74c3c;
-}
-
-.ep-toast-info {
-  background: #f0f8ff;
-  color: #2980b9;
-  border-color: #2980b9;
-}
-
-/* Dark theme toasts */
-#eminus-pending-panel.ep-dark-theme .ep-toast-new {
-  background: #4a1a1a;
-  color: #ff6b6b;
-  border-color: #ff6b6b;
-}
-#eminus-pending-panel.ep-dark-theme .ep-toast-overdue {
-  background: #3b1a1a;
-  color: #ff6b6b;
-  border-color: #ff6b6b;
-}
-#eminus-pending-panel.ep-dark-theme .ep-toast-info {
-  background: #1a2a3a;
-  color: #5dade2;
-  border-color: #5dade2;
-}
-
-/* Hacker theme toasts */
-#eminus-pending-panel.ep-hacker-theme .ep-toast-new {
-  background: #330000;
-  color: #ff0000;
-  border-color: #ff0000;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-toast-overdue {
-  background: #330000;
-  color: #ff0000;
-  border-color: #ff0000;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-toast-info {
-  background: #001100;
-  color: #00ff00;
-  border-color: #00ff00;
-}
-
-/* Ocean theme toasts */
-#eminus-pending-panel.ep-ocean-theme .ep-toast-new {
-  background: #4c1d2e;
-  color: #f43f5e;
-  border-color: #f43f5e;
-}
-#eminus-pending-panel.ep-ocean-theme .ep-toast-overdue {
-  background: #4c1d2e;
-  color: #f43f5e;
-  border-color: #f43f5e;
-}
-#eminus-pending-panel.ep-ocean-theme .ep-toast-info {
-  background: #0c4a6e;
-  color: #7dd3fc;
-  border-color: #7dd3fc;
-}
-
-/* Dracula theme toasts */
-#eminus-pending-panel.ep-dracula-theme .ep-toast-new {
-  background: #42222a;
-  color: #ff5555;
-  border-color: #ff5555;
-}
-#eminus-pending-panel.ep-dracula-theme .ep-toast-overdue {
-  background: #42222a;
-  color: #ff5555;
-  border-color: #ff5555;
-}
-#eminus-pending-panel.ep-dracula-theme .ep-toast-info {
-  background: #2a2d3e;
-  color: #8be9fd;
-  border-color: #8be9fd;
-}
-
-/* Nord theme toasts */
-#eminus-pending-panel.ep-nord-theme .ep-toast-new {
-  background: #3b2a32;
-  color: #bf616a;
-  border-color: #bf616a;
-}
-#eminus-pending-panel.ep-nord-theme .ep-toast-overdue {
-  background: #3b2a32;
-  color: #bf616a;
-  border-color: #bf616a;
-}
-#eminus-pending-panel.ep-nord-theme .ep-toast-info {
-  background: #2e3440;
-  color: #88c0d0;
-  border-color: #88c0d0;
-}
-
-/* Solarized theme toasts */
-#eminus-pending-panel.ep-solarized-theme .ep-toast-new {
-  background: #2b1d24;
-  color: #dc322f;
-  border-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarized-theme .ep-toast-overdue {
-  background: #2b1d24;
-  color: #dc322f;
-  border-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarized-theme .ep-toast-info {
-  background: #1a2a32;
-  color: #268bd2;
-  border-color: #268bd2;
-}
-
-/* Solarized Light theme toasts */
-#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-new {
-  background: #fce8e6;
-  color: #dc322f;
-  border-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-overdue {
-  background: #fce8e6;
-  color: #dc322f;
-  border-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-info {
-  background: #e8f4fc;
-  color: #268bd2;
-  border-color: #268bd2;
-}
-
-/* Gruvbox theme toasts */
-#eminus-pending-panel.ep-gruvbox-theme .ep-toast-new {
-  background: #3c1f1e;
-  color: #cc241d;
-  border-color: #cc241d;
-}
-#eminus-pending-panel.ep-gruvbox-theme .ep-toast-overdue {
-  background: #3c1f1e;
-  color: #cc241d;
-  border-color: #cc241d;
-}
-#eminus-pending-panel.ep-gruvbox-theme .ep-toast-info {
-  background: #2e3338;
-  color: #458588;
-  border-color: #458588;
-}
-
-/* Theme Menu Dropdown */
-.ep-theme-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 4px;
-  background: #fff;
-  border: 1px solid #000;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-}
-
-.ep-theme-menu.ep-hidden {
-  display: none !important;
-}
-
-.ep-theme-option {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #000;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  color: #000;
-}
-
-.ep-theme-option:last-child {
-  border-bottom: none;
-}
-
-.ep-theme-option:hover {
-  background: #f0f0f0;
-}
-
-/* Base text contrast fixes for ep-dark-theme */
 #eminus-pending-panel.ep-dark-theme .ep-theme-menu {
   background: #1e1e1e;
   border-color: #444;
 }
+
 #eminus-pending-panel.ep-dark-theme .ep-theme-option {
   color: #e0e0e0;
   border-bottom-color: #444;
 }
+
 #eminus-pending-panel.ep-dark-theme .ep-theme-option:hover {
   background: #2a2a2a;
 }
+
 #eminus-pending-panel.ep-dark-theme .ep-course,
 #eminus-pending-panel.ep-dark-theme .ep-title-task,
 #eminus-pending-panel.ep-dark-theme .ep-meta,
@@ -830,7 +724,50 @@
   color: #e0e0e0 !important;
 }
 
-/* Hacker Theme */
+/* Dark: Urgency */
+#eminus-pending-panel.ep-dark-theme .ep-item.ep-overdue {
+  background-color: #3b1a1a;
+  border-left-color: #ff6b6b;
+}
+
+#eminus-pending-panel.ep-dark-theme .ep-item.ep-imminent {
+  background-color: #3b361a;
+  border-left-color: #f6e58d;
+}
+
+#eminus-pending-panel.ep-dark-theme .ep-item.ep-urgent {
+  background-color: #2e3a1a;
+  border-left-color: #a3e635;
+}
+
+/* Dark: Agenda */
+#eminus-pending-panel.ep-dark-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff6b6b;
+}
+
+/* Dark: Toasts */
+#eminus-pending-panel.ep-dark-theme .ep-toast-new {
+  background: #4a1a1a;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+#eminus-pending-panel.ep-dark-theme .ep-toast-overdue {
+  background: #3b1a1a;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+#eminus-pending-panel.ep-dark-theme .ep-toast-info {
+  background: #1a2a3a;
+  color: #5dade2;
+  border-color: #5dade2;
+}
+
+/* ══════════════════════════════════════════
+   THEME: HACKER
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-hacker-theme {
   background: #000000;
   color: #00ff00;
@@ -922,15 +859,60 @@
   background: #000;
   border-color: #00ff00;
 }
+
 #eminus-pending-panel.ep-hacker-theme .ep-theme-option {
   color: #00ff00;
   border-bottom-color: #00ff00;
 }
+
 #eminus-pending-panel.ep-hacker-theme .ep-theme-option:hover {
   background: #003300;
 }
 
-/* Ocean Theme */
+/* Hacker: Urgency */
+#eminus-pending-panel.ep-hacker-theme .ep-item.ep-overdue {
+  background-color: #330000;
+  border-left-color: #ff0000;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-item.ep-imminent {
+  background-color: #3a3a00;
+  border-left-color: #ffff00;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-item.ep-urgent {
+  background-color: #1a1a00;
+  border-left-color: #ccff00;
+}
+
+/* Hacker: Agenda */
+#eminus-pending-panel.ep-hacker-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff0000;
+}
+
+/* Hacker: Toasts */
+#eminus-pending-panel.ep-hacker-theme .ep-toast-new {
+  background: #330000;
+  color: #ff0000;
+  border-color: #ff0000;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-toast-overdue {
+  background: #330000;
+  color: #ff0000;
+  border-color: #ff0000;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-toast-info {
+  background: #001100;
+  color: #00ff00;
+  border-color: #00ff00;
+}
+
+/* ══════════════════════════════════════════
+   THEME: OCEAN
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-ocean-theme {
   background: #0f172a;
   color: #38bdf8;
@@ -1022,20 +1004,66 @@
   background: #0f172a;
   border-color: #1e293b;
 }
+
 #eminus-pending-panel.ep-ocean-theme .ep-theme-option {
   color: #38bdf8;
   border-bottom-color: #1e293b;
 }
+
 #eminus-pending-panel.ep-ocean-theme .ep-theme-option:hover {
   background: #0c4a6e;
 }
 
-/* Dracula Theme */
+/* Ocean: Urgency */
+#eminus-pending-panel.ep-ocean-theme .ep-item.ep-overdue {
+  background-color: #4c1d2e;
+  border-left-color: #f43f5e;
+}
+
+#eminus-pending-panel.ep-ocean-theme .ep-item.ep-imminent {
+  background-color: #3f3b18;
+  border-left-color: #eab308;
+}
+
+#eminus-pending-panel.ep-ocean-theme .ep-item.ep-urgent {
+  background-color: #2e3a18;
+  border-left-color: #a3e635;
+}
+
+/* Ocean: Agenda */
+#eminus-pending-panel.ep-ocean-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #f43f5e;
+}
+
+/* Ocean: Toasts */
+#eminus-pending-panel.ep-ocean-theme .ep-toast-new {
+  background: #4c1d2e;
+  color: #f43f5e;
+  border-color: #f43f5e;
+}
+
+#eminus-pending-panel.ep-ocean-theme .ep-toast-overdue {
+  background: #4c1d2e;
+  color: #f43f5e;
+  border-color: #f43f5e;
+}
+
+#eminus-pending-panel.ep-ocean-theme .ep-toast-info {
+  background: #0c4a6e;
+  color: #7dd3fc;
+  border-color: #7dd3fc;
+}
+
+/* ══════════════════════════════════════════
+   THEME: DRACULA
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-dracula-theme {
   background: #282a36;
   color: #f8f8f2;
   border-color: #44475a;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-header,
 #eminus-pending-panel.ep-dracula-theme .ep-tabs,
 #eminus-pending-panel.ep-dracula-theme .ep-body,
@@ -1046,6 +1074,7 @@
   background: #282a36;
   border-color: #44475a;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-seal-art,
 #eminus-pending-panel.ep-dracula-theme .ep-miyu-text,
 #eminus-pending-panel.ep-dracula-theme .ep-title-wrap .ep-title,
@@ -1062,27 +1091,75 @@
 #eminus-pending-panel.ep-dracula-theme .ep-theme-option {
   color: #f8f8f2 !important;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-tab-active {
   background: #44475a;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn {
   background: #44475a;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-btn:hover,
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn:hover {
   background: #bd93f9;
   color: #282a36 !important;
 }
+
 #eminus-pending-panel.ep-dracula-theme .ep-theme-option:hover {
   background: #44475a;
 }
 
-/* Nord Theme */
+/* Dracula: Urgency */
+#eminus-pending-panel.ep-dracula-theme .ep-item.ep-overdue {
+  background-color: #42222a;
+  border-left-color: #ff5555;
+}
+
+#eminus-pending-panel.ep-dracula-theme .ep-item.ep-imminent {
+  background-color: #383a2c;
+  border-left-color: #f1fa8c;
+}
+
+#eminus-pending-panel.ep-dracula-theme .ep-item.ep-urgent {
+  background-color: #2a3a2c;
+  border-left-color: #50fa7b;
+}
+
+/* Dracula: Agenda */
+#eminus-pending-panel.ep-dracula-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff5555;
+}
+
+/* Dracula: Toasts */
+#eminus-pending-panel.ep-dracula-theme .ep-toast-new {
+  background: #42222a;
+  color: #ff5555;
+  border-color: #ff5555;
+}
+
+#eminus-pending-panel.ep-dracula-theme .ep-toast-overdue {
+  background: #42222a;
+  color: #ff5555;
+  border-color: #ff5555;
+}
+
+#eminus-pending-panel.ep-dracula-theme .ep-toast-info {
+  background: #2a2d3e;
+  color: #8be9fd;
+  border-color: #8be9fd;
+}
+
+/* ══════════════════════════════════════════
+   THEME: NORD
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-nord-theme {
   background: #2E3440;
   color: #D8DEE9;
   border-color: #4C566A;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-header,
 #eminus-pending-panel.ep-nord-theme .ep-tabs,
 #eminus-pending-panel.ep-nord-theme .ep-body,
@@ -1093,6 +1170,7 @@
   background: #2E3440;
   border-color: #4C566A;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-seal-art,
 #eminus-pending-panel.ep-nord-theme .ep-miyu-text,
 #eminus-pending-panel.ep-nord-theme .ep-title-wrap .ep-title,
@@ -1109,28 +1187,75 @@
 #eminus-pending-panel.ep-nord-theme .ep-theme-option {
   color: #D8DEE9 !important;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-tab-active {
   background: #4C566A;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-item-btn {
   background: #4C566A;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-btn:hover,
 #eminus-pending-panel.ep-nord-theme .ep-item-btn:hover {
   background: #88C0D0;
   color: #2E3440 !important;
 }
+
 #eminus-pending-panel.ep-nord-theme .ep-theme-option:hover {
   background: #4C566A;
 }
 
+/* Nord: Urgency */
+#eminus-pending-panel.ep-nord-theme .ep-item.ep-overdue {
+  background-color: #3b2a32;
+  border-left-color: #bf616a;
+}
 
-/* Solarized Theme */
+#eminus-pending-panel.ep-nord-theme .ep-item.ep-imminent {
+  background-color: #39362c;
+  border-left-color: #ebcb8b;
+}
+
+#eminus-pending-panel.ep-nord-theme .ep-item.ep-urgent {
+  background-color: #2e3a2c;
+  border-left-color: #a3be8c;
+}
+
+/* Nord: Agenda */
+#eminus-pending-panel.ep-nord-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #bf616a;
+}
+
+/* Nord: Toasts */
+#eminus-pending-panel.ep-nord-theme .ep-toast-new {
+  background: #3b2a32;
+  color: #bf616a;
+  border-color: #bf616a;
+}
+
+#eminus-pending-panel.ep-nord-theme .ep-toast-overdue {
+  background: #3b2a32;
+  color: #bf616a;
+  border-color: #bf616a;
+}
+
+#eminus-pending-panel.ep-nord-theme .ep-toast-info {
+  background: #2e3440;
+  color: #88c0d0;
+  border-color: #88c0d0;
+}
+
+/* ══════════════════════════════════════════
+   THEME: SOLARIZED
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-solarized-theme {
   background: #002b36;
   color: #839496;
   border-color: #073642;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-header,
 #eminus-pending-panel.ep-solarized-theme .ep-tabs,
 #eminus-pending-panel.ep-solarized-theme .ep-body,
@@ -1141,6 +1266,7 @@
   background: #002b36;
   border-color: #073642;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-seal-art,
 #eminus-pending-panel.ep-solarized-theme .ep-miyu-text,
 #eminus-pending-panel.ep-solarized-theme .ep-title-wrap .ep-title,
@@ -1157,28 +1283,76 @@
 #eminus-pending-panel.ep-solarized-theme .ep-theme-option {
   color: #839496 !important;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-tab-active {
   background: #073642;
   color: #268bd2;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-item-btn {
   background: #073642;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-btn:hover,
 #eminus-pending-panel.ep-solarized-theme .ep-item-btn:hover {
   background: #268bd2;
   color: #002b36 !important;
 }
+
 #eminus-pending-panel.ep-solarized-theme .ep-theme-option:hover {
   background: #073642;
 }
 
-/* Solarized Light Theme */
+/* Solarized: Urgency */
+#eminus-pending-panel.ep-solarized-theme .ep-item.ep-overdue {
+  background-color: #2b1d24;
+  border-left-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-theme .ep-item.ep-imminent {
+  background-color: #29281c;
+  border-left-color: #b58900;
+}
+
+#eminus-pending-panel.ep-solarized-theme .ep-item.ep-urgent {
+  background-color: #1e2b1d;
+  border-left-color: #859900;
+}
+
+/* Solarized: Agenda */
+#eminus-pending-panel.ep-solarized-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #dc322f;
+}
+
+/* Solarized: Toasts */
+#eminus-pending-panel.ep-solarized-theme .ep-toast-new {
+  background: #2b1d24;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-theme .ep-toast-overdue {
+  background: #2b1d24;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-theme .ep-toast-info {
+  background: #1a2a32;
+  color: #268bd2;
+  border-color: #268bd2;
+}
+
+/* ══════════════════════════════════════════
+   THEME: SOLARIZED LIGHT
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-solarizedlight-theme {
   background: #fdf6e3;
   color: #586e75;
   border-color: #eee8d5;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-header,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-tabs,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-body,
@@ -1189,6 +1363,7 @@
   background: #fdf6e3;
   border-color: #eee8d5;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-seal-art,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-miyu-text,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-title-wrap .ep-title,
@@ -1205,28 +1380,76 @@
 #eminus-pending-panel.ep-solarizedlight-theme .ep-theme-option {
   color: #586e75 !important;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-tab-active {
   background: #eee8d5;
   color: #268bd2;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-item-btn {
   background: #eee8d5;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-btn:hover,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-item-btn:hover {
   background: #268bd2;
   color: #fdf6e3 !important;
 }
+
 #eminus-pending-panel.ep-solarizedlight-theme .ep-theme-option:hover {
   background: #eee8d5;
 }
 
-/* Gruvbox Theme */
+/* Solarized Light: Urgency */
+#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-overdue {
+  background-color: #fce8e6;
+  border-left-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-imminent {
+  background-color: #fcf8e3;
+  border-left-color: #b58900;
+}
+
+#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-urgent {
+  background-color: #e8f5e9;
+  border-left-color: #859900;
+}
+
+/* Solarized Light: Agenda */
+#eminus-pending-panel.ep-solarizedlight-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #dc322f;
+}
+
+/* Solarized Light: Toasts */
+#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-new {
+  background: #fce8e6;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-overdue {
+  background: #fce8e6;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarizedlight-theme .ep-toast-info {
+  background: #e8f4fc;
+  color: #268bd2;
+  border-color: #268bd2;
+}
+
+/* ══════════════════════════════════════════
+   THEME: GRUVBOX
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-gruvbox-theme {
   background: #282828;
   color: #ebdbb2;
   border-color: #504945;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-header,
 #eminus-pending-panel.ep-gruvbox-theme .ep-tabs,
 #eminus-pending-panel.ep-gruvbox-theme .ep-body,
@@ -1237,6 +1460,7 @@
   background: #282828;
   border-color: #504945;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-seal-art,
 #eminus-pending-panel.ep-gruvbox-theme .ep-miyu-text,
 #eminus-pending-panel.ep-gruvbox-theme .ep-title-wrap .ep-title,
@@ -1253,139 +1477,70 @@
 #eminus-pending-panel.ep-gruvbox-theme .ep-theme-option {
   color: #ebdbb2 !important;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-tab-active {
   background: #504945;
   color: #fabd2f;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-item-btn {
   background: #504945;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-btn:hover,
 #eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover {
   background: #fabd2f;
   color: #282828 !important;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-theme-option:hover {
   background: #504945;
 }
 
-
-
-/* Themed Urgency Styles */
-
-/* Dark Theme */
-#eminus-pending-panel.ep-dark-theme .ep-item.ep-overdue {
-  background-color: #3b1a1a;
-  border-left-color: #ff6b6b;
-}
-#eminus-pending-panel.ep-dark-theme .ep-item.ep-imminent {
-  background-color: #3b361a;
-  border-left-color: #f6e58d;
-}
-#eminus-pending-panel.ep-dark-theme .ep-item.ep-urgent {
-  background-color: #2e3a1a;
-  border-left-color: #a3e635;
-}
-
-/* Hacker Theme */
-#eminus-pending-panel.ep-hacker-theme .ep-item.ep-overdue {
-  background-color: #330000;
-  border-left-color: #ff0000;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-item.ep-imminent {
-  background-color: #3a3a00;
-  border-left-color: #ffff00;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-item.ep-urgent {
-  background-color: #1a1a00;
-  border-left-color: #ccff00;
-}
-
-/* Ocean Theme */
-#eminus-pending-panel.ep-ocean-theme .ep-item.ep-overdue {
-  background-color: #4c1d2e;
-  border-left-color: #f43f5e;
-}
-#eminus-pending-panel.ep-ocean-theme .ep-item.ep-imminent {
-  background-color: #3f3b18;
-  border-left-color: #eab308;
-}
-#eminus-pending-panel.ep-ocean-theme .ep-item.ep-urgent {
-  background-color: #2e3a18;
-  border-left-color: #a3e635;
-}
-
-/* Dracula Theme */
-#eminus-pending-panel.ep-dracula-theme .ep-item.ep-overdue {
-  background-color: #42222a;
-  border-left-color: #ff5555;
-}
-#eminus-pending-panel.ep-dracula-theme .ep-item.ep-imminent {
-  background-color: #383a2c;
-  border-left-color: #f1fa8c;
-}
-#eminus-pending-panel.ep-dracula-theme .ep-item.ep-urgent {
-  background-color: #2a3a2c;
-  border-left-color: #50fa7b;
-}
-
-/* Nord Theme */
-#eminus-pending-panel.ep-nord-theme .ep-item.ep-overdue {
-  background-color: #3b2a32;
-  border-left-color: #bf616a;
-}
-#eminus-pending-panel.ep-nord-theme .ep-item.ep-imminent {
-  background-color: #39362c;
-  border-left-color: #ebcb8b;
-}
-#eminus-pending-panel.ep-nord-theme .ep-item.ep-urgent {
-  background-color: #2e3a2c;
-  border-left-color: #a3be8c;
-}
-
-/* Solarized Theme */
-#eminus-pending-panel.ep-solarized-theme .ep-item.ep-overdue {
-  background-color: #2b1d24;
-  border-left-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarized-theme .ep-item.ep-imminent {
-  background-color: #29281c;
-  border-left-color: #b58900;
-}
-#eminus-pending-panel.ep-solarized-theme .ep-item.ep-urgent {
-  background-color: #1e2b1d;
-  border-left-color: #859900;
-}
-
-/* Solarized Light Theme */
-#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-overdue {
-  background-color: #fce8e6;
-  border-left-color: #dc322f;
-}
-#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-imminent {
-  background-color: #fcf8e3;
-  border-left-color: #b58900;
-}
-#eminus-pending-panel.ep-solarizedlight-theme .ep-item.ep-urgent {
-  background-color: #e8f5e9;
-  border-left-color: #859900;
-}
-
-/* Gruvbox Theme */
+/* Gruvbox: Urgency */
 #eminus-pending-panel.ep-gruvbox-theme .ep-item.ep-overdue {
   background-color: #3c1f1e;
   border-left-color: #cc241d;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-item.ep-imminent {
   background-color: #3c381e;
   border-left-color: #d79921;
 }
+
 #eminus-pending-panel.ep-gruvbox-theme .ep-item.ep-urgent {
   background-color: #2e3c1e;
   border-left-color: #98971a;
 }
 
-/* Fix hover states for all themes on these items so they don't look completely invisible */
+/* Gruvbox: Agenda */
+#eminus-pending-panel.ep-gruvbox-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #cc241d;
+}
+
+/* Gruvbox: Toasts */
+#eminus-pending-panel.ep-gruvbox-theme .ep-toast-new {
+  background: #3c1f1e;
+  color: #cc241d;
+  border-color: #cc241d;
+}
+
+#eminus-pending-panel.ep-gruvbox-theme .ep-toast-overdue {
+  background: #3c1f1e;
+  color: #cc241d;
+  border-color: #cc241d;
+}
+
+#eminus-pending-panel.ep-gruvbox-theme .ep-toast-info {
+  background: #2e3338;
+  color: #458588;
+  border-color: #458588;
+}
+
+/* ══════════════════════════════════════════
+   THEMED URGENCY HOVER FIXES
+   ══════════════════════════════════════════ */
+
 #eminus-pending-panel.ep-dark-theme .ep-item-btn:hover .ep-item.ep-overdue,
 #eminus-pending-panel.ep-ocean-theme .ep-item-btn:hover .ep-item.ep-overdue,
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn:hover .ep-item.ep-overdue,
@@ -1414,12 +1569,16 @@
 }
 
 #eminus-pending-panel.ep-hacker-theme .ep-item-btn:hover .ep-item.ep-overdue {
-  background-color: #ff0000; color: #000;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-item-btn:hover .ep-item.ep-imminent {
-  background-color: #ffff00; color: #000;
-}
-#eminus-pending-panel.ep-hacker-theme .ep-item-btn:hover .ep-item.ep-urgent {
-  background-color: #ccff00; color: #000;
+  background-color: #ff0000;
+  color: #000;
 }
 
+#eminus-pending-panel.ep-hacker-theme .ep-item-btn:hover .ep-item.ep-imminent {
+  background-color: #ffff00;
+  color: #000;
+}
+
+#eminus-pending-panel.ep-hacker-theme .ep-item-btn:hover .ep-item.ep-urgent {
+  background-color: #ccff00;
+  color: #000;
+}

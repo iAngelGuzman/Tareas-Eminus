@@ -15,7 +15,6 @@
   });
 
   document.body.appendChild(btn);
-  document.body.appendChild(testBtn);
 
   function showCelebration() {
     if (document.getElementById("ep-celebration-overlay")) return;

@@ -1,20 +1,23 @@
-# Eminus Pending Panel (Chrome Extension)
+# Miyu --pendientes (Chrome Extension)
 
-Extensión de Chrome (Manifest V3) para inyectar un panel en `eminus.uv.mx/eminus4` y mostrar:
+Extensión de Chrome (Manifest V3) para inyectar un panel en `eminus.uv.mx` y mostrar:
 
 - Tareas pendientes por curso
 - Estado de urgencia (vencida, inminente, urgente, normal)
 - Log histórico de revisiones
-
-Todo vive en la raíz de este repositorio.
+- Animación de celebración al entregar tareas
 
 ## Archivos
 
-- `manifest.json`: configuración de la extensión
-- `content.js`: inyección del panel y consumo de API Eminus
-- `styles.css`: estilos del panel flotante
-- `service-worker.js`: badge en el ícono de la extensión
-- `popup.html` + `popup.js`: popup rápido para abrir/actualizar panel
+| Archivo | Descripción |
+|---------|-------------|
+| `manifest.json` | Configuración de la extensión (MV3) |
+| `content.js` | Inyección del panel flotante y consumo de API Eminus |
+| `styles.css` | Estilos del panel flotante (9 temas) |
+| `service-worker.js` | Badge en el ícono y proxy de API |
+| `detail-nav.js` | Botón volver y animaciones en página de detalle |
+| `detail-nav.css` | Estilos del botón volver y animaciones |
+| `logo.png` | Ícono de la extensión |
 
 ## Instalación (modo desarrollador)
 
@@ -28,8 +31,9 @@ Todo vive en la raíz de este repositorio.
 1. Inicia sesión en Eminus normalmente
 2. Abre cualquier página bajo `https://eminus.uv.mx/eminus4/`
 3. Verás el panel flotante a la derecha
-4. Usa el botón `↻` para refrescar pendientes
+4. Usa el botón `[ ref ]` para refrescar pendientes
 5. En la pestaña `Log` verás el historial de lecturas
+6. `Alt+E` colapsa/expande el panel
 
 ## Notas técnicas
 
@@ -41,3 +45,9 @@ Todo vive en la raíz de este repositorio.
   - `eminusLastSnapshot`
   - `eminusPendingLog`
   - `eminusKnownPendingIds`
+  - `eminusArchivedPendingIds`
+  - `eminusPinnedPendingIds`
+  - `eminusPanelTheme`
+  - `eminusPanelPosition`
+  - `eminusAccountId`
+  - `eminusAutoRefreshMinutes`

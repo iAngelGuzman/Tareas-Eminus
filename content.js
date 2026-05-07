@@ -1,9 +1,11 @@
+/* ─── Guard ─── */
 (() => {
   if (window.__eminusPendingPanelInjected) {
     return;
   }
   window.__eminusPendingPanelInjected = true;
 
+  /* ─── Constants ─── */
   const API_BASE = "https://eminus.uv.mx/eminusapi8/api";
   const STORAGE_KEYS = {
     LOG: "eminusPendingLog",
@@ -44,6 +46,7 @@
     <span class="ep-bracket">]</span>
   `;
 
+  /* ─── State ─── */
   const state = {
     isCollapsed: true,
     activeTab: "pending",
@@ -65,6 +68,10 @@
   const hasChrome = typeof chrome !== "undefined";
   const hasStorageApi = hasChrome && !!chrome.storage?.local;
   const hasRuntimeApi = hasChrome && !!chrome.runtime;
+
+  /* ══════════════════════════════════════════
+     UTILITY FUNCTIONS
+     ══════════════════════════════════════════ */
 
   function asBool(value) {
     if (typeof value === "boolean") return value;
@@ -181,6 +188,60 @@
     return "normal";
   }
 
+  function escapeHtml(text) {
+    return String(text || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function normalizePositiveId(value) {
+    const raw = String(value ?? "").trim();
+    if (!/^\d+$/.test(raw)) return "";
+    const asNumber = Number(raw);
+    if (!Number.isFinite(asNumber) || asNumber <= 0) return "";
+    return String(asNumber);
+  }
+
+  function formatDateTime(iso) {
+    if (!iso) return "Sin fecha";
+    const dt = new Date(iso);
+    if (Number.isNaN(dt.getTime())) return iso;
+    return dt.toLocaleString();
+  }
+
+  function setsEqual(a, b) {
+    if (a.size !== b.size) return false;
+    for (const value of a) {
+      if (!b.has(value)) return false;
+    }
+    return true;
+  }
+
+  /* ══════════════════════════════════════════
+     STORAGE HELPERS
+     ══════════════════════════════════════════ */
+
+  async function storageGet(keys) {
+    if (!hasStorageApi) {
+      return {};
+    }
+    return chrome.storage.local.get(keys);
+  }
+
+  async function storageSet(payload) {
+    if (!hasStorageApi) {
+      return;
+    }
+    return chrome.storage.local.set(payload);
+  }
+
+  /* ══════════════════════════════════════════
+     ARCHIVE & PIN STATE MANAGEMENT
+     ══════════════════════════════════════════ */
+
   function normalizeArchivedIds(raw) {
     if (!Array.isArray(raw)) return new Set();
     const ids = raw.map((id) => String(id)).filter((id) => id);
@@ -242,27 +303,104 @@
     return getVisiblePending(items).length;
   }
 
-  function setsEqual(a, b) {
-    if (a.size !== b.size) return false;
-    for (const value of a) {
-      if (!b.has(value)) return false;
-    }
-    return true;
+  async function persistArchiveState() {
+    const archivedList = Array.from(state.archivedIds);
+    await storageSet({ [STORAGE_KEYS.ARCHIVED]: archivedList });
+
+    const pendingCount = getVisiblePendingCount(state.pending);
+    const updatedAt = state.lastUpdatedAt || new Date().toISOString();
+    state.lastUpdatedAt = updatedAt;
+
+    await storageSet({
+      [STORAGE_KEYS.SNAPSHOT]: {
+        updatedAt,
+        pendingCount,
+        pending: state.pending
+      }
+    });
+
+    const overdueCount = state.pending.filter((item) => item.urgency === "overdue" && !item.archived).length;
+    await syncBadge(pendingCount, 0, overdueCount);
   }
 
-  async function storageGet(keys) {
-    if (!hasStorageApi) {
-      return {};
-    }
-    return chrome.storage.local.get(keys);
+  async function archiveItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item || item.urgency !== "overdue") return;
+    if (item.archived) return;
+
+    state.archivedIds.add(item.id);
+    item.archived = true;
+
+    renderPending(state.pending);
+    await persistArchiveState();
+    setStatus(`Archivada: ${item.title}`);
   }
 
-  async function storageSet(payload) {
-    if (!hasStorageApi) {
-      return;
-    }
-    return chrome.storage.local.set(payload);
+  async function unarchiveItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item || item.urgency !== "overdue") return;
+    if (!item.archived) return;
+
+    state.archivedIds.delete(item.id);
+    item.archived = false;
+
+    renderPending(state.pending);
+    await persistArchiveState();
+    setStatus(`Restaurada: ${item.title}`);
   }
+
+  async function persistPinnedState() {
+    const pinnedList = Array.from(state.pinnedIds);
+    await storageSet({ [STORAGE_KEYS.PINNED]: pinnedList });
+  }
+
+  async function pinItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item) return;
+    if (item.pinned) return;
+
+    state.pinnedIds.add(item.id);
+    item.pinned = true;
+
+    state.pending.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+      if (!a.deadlineRaw) return 1;
+      if (!b.deadlineRaw) return -1;
+      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+    });
+
+    renderPending(state.pending);
+    await persistPinnedState();
+    setStatus(`Fijada: ${item.title}`);
+  }
+
+  async function unpinItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item) return;
+    if (!item.pinned) return;
+
+    state.pinnedIds.delete(item.id);
+    item.pinned = false;
+
+    state.pending.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+      if (!a.deadlineRaw) return 1;
+      if (!b.deadlineRaw) return -1;
+      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+    });
+
+    renderPending(state.pending);
+    await persistPinnedState();
+    setStatus(`Desfijada: ${item.title}`);
+  }
+
+  /* ══════════════════════════════════════════
+     PANEL DOM CREATION
+     ══════════════════════════════════════════ */
 
   function createPanel() {
     const root = document.createElement("aside");
@@ -273,17 +411,17 @@
         <div class="ep-brand-inline">
           <div style="display: flex; gap: 16px; align-items: center;">
             <pre class="ep-seal-art" id="ep-seal-art">
-▒▒▒▒         ▒▒▒▒
-▒▒▒▒▒▒▒░░░░░░▒▒▒▒
- ▒▒░░░▒▒▒░░▒▒▒░▒▒
- ▒▒▓▒▓▒░░░░▒▒▓█▓▒
-▒░▒▓▓▓▒▒▒░░░▒▒▓▓▒▒
-░▒▒░░░░░░▒▒▒▒▒▒▒▒▒
-░░▒▒▒░░░▒▓▓▓▓▓▓▒▒▒
-░░░▒░░░░░▒▓▓█▓▒▒▒▒
-░░░░░░▒▒▒▒▒▓▓▓▓▓▓▒▒
-░░░░░░░▒▒▓▓▓▓▓▓▓▓
-░░░░░░▒▒▒▒▓▓▓▓▓▓▓</pre>
+ ▒▒▒▒         ▒▒▒▒
+ ▒▒▒▒▒▒▒░░░░░░▒▒▒▒
+  ▒▒░░░▒▒▒░░▒▒▒░▒▒
+  ▒▒▓▒▓▒░░░░▒▒▓█▓▒
+ ▒░▒▓▓▓▒▒▒░░░▒▒▓▓▒▒
+ ░▒▒░░░░░░▒▒▒▒▒▒▒▒▒
+ ░░▒▒▒░░░▒▓▓▓▓▓▓▒▒▒
+ ░░░▒░░░░░▒▓▓█▓▒▒▒▒
+ ░░░░░░▒▒▒▒▒▓▓▓▓▓▓▒▒
+ ░░░░░░░▒▒▓▓▓▓▓▓▓▓
+ ░░░░░░▒▒▒▒▓▓▓▓▓▓▓</pre>
             <pre class="ep-miyu-text">
            _                 
  _ __ ___ (_)_   _ _   _     
@@ -396,6 +534,93 @@
     setupPanelDrag();
   }
 
+  /* ══════════════════════════════════════════
+     PANEL UI
+     ══════════════════════════════════════════ */
+
+  function toggleCollapse() {
+    state.isCollapsed = !state.isCollapsed;
+    panelEls.root.classList.toggle("ep-collapsed", state.isCollapsed);
+    panelEls.collapseBtn.textContent = state.isCollapsed ? "[ + ]" : "[ - ]";
+  }
+
+  function toggleThemeMenu() {
+    panelEls.themeMenu.classList.toggle("ep-hidden");
+  }
+
+  async function setTheme(themeName) {
+    panelEls.root.classList.remove("ep-dark-theme", "ep-hacker-theme", "ep-ocean-theme", "ep-dracula-theme", "ep-nord-theme", "ep-solarized-theme", "ep-solarizedlight-theme", "ep-gruvbox-theme");
+    if (themeName !== "light") {
+      panelEls.root.classList.add(`ep-${themeName}-theme`);
+    }
+    panelEls.themeMenu.classList.add("ep-hidden");
+    await storageSet({ [STORAGE_KEYS.THEME]: themeName });
+  }
+
+  function updateArchiveToggleButton() {
+    if (!panelEls?.archiveBtn) return;
+    const label = state.isArchiveView ? "Volver" : "Archivadas";
+    panelEls.archiveBtn.title = label;
+    panelEls.archiveBtn.setAttribute("aria-label", label);
+    panelEls.archiveBtn.innerHTML = state.isArchiveView ? ARCHIVE_BACK_HTML : ARCHIVE_BUTTON_HTML;
+  }
+
+  function updateTabVisibility() {
+    panelEls.tabButtons.forEach((btn) => {
+      btn.classList.toggle("ep-tab-active", btn.dataset.tab === state.activeTab);
+    });
+
+    if (state.isArchiveView) {
+      panelEls.pendingBody.classList.remove("ep-hidden");
+      panelEls.overdueBody.classList.add("ep-hidden");
+      panelEls.agendaBody.classList.add("ep-hidden");
+      panelEls.logBody.classList.add("ep-hidden");
+      return;
+    }
+
+    panelEls.pendingBody.classList.toggle("ep-hidden", state.activeTab !== "pending");
+    panelEls.overdueBody.classList.toggle("ep-hidden", state.activeTab !== "overdue");
+    panelEls.agendaBody.classList.toggle("ep-hidden", state.activeTab !== "agenda");
+    panelEls.logBody.classList.toggle("ep-hidden", state.activeTab !== "log");
+  }
+
+  function setArchiveView(isOpen) {
+    if (state.isArchiveView === isOpen) return;
+    if (isOpen) {
+      state.lastTabBeforeArchive = state.activeTab;
+      state.activeTab = "pending";
+    }
+    state.isArchiveView = isOpen;
+    panelEls.root.classList.toggle("ep-archive-view", isOpen);
+    updateArchiveToggleButton();
+
+    if (!isOpen && state.lastTabBeforeArchive) {
+      state.activeTab = state.lastTabBeforeArchive;
+    }
+
+    updateTabVisibility();
+    renderPending(state.pending);
+  }
+
+  function toggleArchiveView() {
+    setArchiveView(!state.isArchiveView);
+  }
+
+  function setTab(tab) {
+    state.activeTab = tab;
+    updateTabVisibility();
+  }
+
+  function setStatus(text) {
+    if (panelEls?.footer) {
+      panelEls.footer.textContent = text;
+    }
+  }
+
+  /* ══════════════════════════════════════════
+     PANEL DRAG & POSITION
+     ══════════════════════════════════════════ */
+
   function clampPanelPosition(left, top) {
     if (!panelEls?.root) {
       return { left, top };
@@ -489,91 +714,9 @@
     panelEls.header.addEventListener("pointercancel", finishDrag);
   }
 
-  function toggleCollapse() {
-    state.isCollapsed = !state.isCollapsed;
-    panelEls.root.classList.toggle("ep-collapsed", state.isCollapsed);
-    panelEls.collapseBtn.textContent = state.isCollapsed ? "[ + ]" : "[ - ]";
-  }
-
-  function toggleThemeMenu() {
-    panelEls.themeMenu.classList.toggle("ep-hidden");
-  }
-
-  async function setTheme(themeName) {
-    panelEls.root.classList.remove("ep-dark-theme", "ep-hacker-theme", "ep-ocean-theme", "ep-dracula-theme", "ep-nord-theme", "ep-solarized-theme", "ep-solarizedlight-theme", "ep-gruvbox-theme");
-    if (themeName !== "light") {
-      panelEls.root.classList.add(`ep-${themeName}-theme`);
-    }
-    panelEls.themeMenu.classList.add("ep-hidden");
-    await storageSet({ [STORAGE_KEYS.THEME]: themeName });
-  }
-
-  function updateArchiveToggleButton() {
-    if (!panelEls?.archiveBtn) return;
-    const label = state.isArchiveView ? "Volver" : "Archivadas";
-    panelEls.archiveBtn.title = label;
-    panelEls.archiveBtn.setAttribute("aria-label", label);
-    panelEls.archiveBtn.innerHTML = state.isArchiveView ? ARCHIVE_BACK_HTML : ARCHIVE_BUTTON_HTML;
-  }
-
-  function updateTabVisibility() {
-    panelEls.tabButtons.forEach((btn) => {
-      btn.classList.toggle("ep-tab-active", btn.dataset.tab === state.activeTab);
-    });
-
-    if (state.isArchiveView) {
-      panelEls.pendingBody.classList.remove("ep-hidden");
-      panelEls.overdueBody.classList.add("ep-hidden");
-      panelEls.agendaBody.classList.add("ep-hidden");
-      panelEls.logBody.classList.add("ep-hidden");
-      return;
-    }
-
-    panelEls.pendingBody.classList.toggle("ep-hidden", state.activeTab !== "pending");
-    panelEls.overdueBody.classList.toggle("ep-hidden", state.activeTab !== "overdue");
-    panelEls.agendaBody.classList.toggle("ep-hidden", state.activeTab !== "agenda");
-    panelEls.logBody.classList.toggle("ep-hidden", state.activeTab !== "log");
-  }
-
-  function setArchiveView(isOpen) {
-    if (state.isArchiveView === isOpen) return;
-    if (isOpen) {
-      state.lastTabBeforeArchive = state.activeTab;
-      state.activeTab = "pending";
-    }
-    state.isArchiveView = isOpen;
-    panelEls.root.classList.toggle("ep-archive-view", isOpen);
-    updateArchiveToggleButton();
-
-    if (!isOpen && state.lastTabBeforeArchive) {
-      state.activeTab = state.lastTabBeforeArchive;
-    }
-
-    updateTabVisibility();
-    renderPending(state.pending);
-  }
-
-  function toggleArchiveView() {
-    setArchiveView(!state.isArchiveView);
-  }
-
-  function setTab(tab) {
-    state.activeTab = tab;
-    updateTabVisibility();
-  }
-
-  function setStatus(text) {
-    if (panelEls?.footer) {
-      panelEls.footer.textContent = text;
-    }
-  }
-
-  function formatDateTime(iso) {
-    if (!iso) return "Sin fecha";
-    const dt = new Date(iso);
-    if (Number.isNaN(dt.getTime())) return iso;
-    return dt.toLocaleString();
-  }
+  /* ══════════════════════════════════════════
+     RENDERING
+     ══════════════════════════════════════════ */
 
   function renderAgenda(items) {
     if (!panelEls?.agendaBody) return;
@@ -851,109 +994,9 @@
     }
   }
 
-  async function persistArchiveState() {
-    const archivedList = Array.from(state.archivedIds);
-    await storageSet({ [STORAGE_KEYS.ARCHIVED]: archivedList });
-
-    const pendingCount = getVisiblePendingCount(state.pending);
-    const updatedAt = state.lastUpdatedAt || new Date().toISOString();
-    state.lastUpdatedAt = updatedAt;
-
-    await storageSet({
-      [STORAGE_KEYS.SNAPSHOT]: {
-        updatedAt,
-        pendingCount,
-        pending: state.pending
-      }
-    });
-
-    const overdueCount = state.pending.filter((item) => item.urgency === "overdue" && !item.archived).length;
-    await syncBadge(pendingCount, 0, overdueCount);
-  }
-
-  async function archiveItemByIndex(index) {
-    const item = state.pending[index];
-    if (!item || item.urgency !== "overdue") return;
-    if (item.archived) return;
-
-    state.archivedIds.add(item.id);
-    item.archived = true;
-
-    renderPending(state.pending);
-    await persistArchiveState();
-    setStatus(`Archivada: ${item.title}`);
-  }
-
-  async function unarchiveItemByIndex(index) {
-    const item = state.pending[index];
-    if (!item || item.urgency !== "overdue") return;
-    if (!item.archived) return;
-
-    state.archivedIds.delete(item.id);
-    item.archived = false;
-
-    renderPending(state.pending);
-    await persistArchiveState();
-    setStatus(`Restaurada: ${item.title}`);
-  }
-
-  async function persistPinnedState() {
-    const pinnedList = Array.from(state.pinnedIds);
-    await storageSet({ [STORAGE_KEYS.PINNED]: pinnedList });
-  }
-
-  async function pinItemByIndex(index) {
-    const item = state.pending[index];
-    if (!item) return;
-    if (item.pinned) return;
-
-    state.pinnedIds.add(item.id);
-    item.pinned = true;
-
-    state.pending.sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
-      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
-      if (!a.deadlineRaw) return 1;
-      if (!b.deadlineRaw) return -1;
-      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
-    });
-
-    renderPending(state.pending);
-    await persistPinnedState();
-    setStatus(`Fijada: ${item.title}`);
-  }
-
-  async function unpinItemByIndex(index) {
-    const item = state.pending[index];
-    if (!item) return;
-    if (!item.pinned) return;
-
-    state.pinnedIds.delete(item.id);
-    item.pinned = false;
-
-    state.pending.sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
-      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
-      if (!a.deadlineRaw) return 1;
-      if (!b.deadlineRaw) return -1;
-      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
-    });
-
-    renderPending(state.pending);
-    await persistPinnedState();
-    setStatus(`Desfijada: ${item.title}`);
-  }
-
-  function escapeHtml(text) {
-    return String(text || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
+  /* ══════════════════════════════════════════
+     TOAST & NOTIFICATIONS
+     ══════════════════════════════════════════ */
 
   function showToast(message, type = "info") {
     if (!panelEls?.root) return;
@@ -995,6 +1038,19 @@
     }
   }
 
+  async function syncBadge(count, newCount = 0, overdueCount = 0) {
+    if (!hasRuntimeApi) return;
+    try {
+      await chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count, newCount, overdueCount });
+    } catch (err) {
+      console.debug("No se pudo actualizar badge", err);
+    }
+  }
+
+  /* ══════════════════════════════════════════
+     AUTH TOKEN HELPERS
+     ══════════════════════════════════════════ */
+
   function getToken() {
     return localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken") || "";
   }
@@ -1020,13 +1076,9 @@
     }
   }
 
-  function normalizePositiveId(value) {
-    const raw = String(value ?? "").trim();
-    if (!/^\d+$/.test(raw)) return "";
-    const asNumber = Number(raw);
-    if (!Number.isFinite(asNumber) || asNumber <= 0) return "";
-    return String(asNumber);
-  }
+  /* ══════════════════════════════════════════
+     NAVIGATION
+     ══════════════════════════════════════════ */
 
   function savePendingNavigationTarget(item) {
     sessionStorage.setItem(NAV_KEYS.ACTIVITY_ID, String(item.activityId || ""));
@@ -1253,6 +1305,10 @@
     setStatus("Esta actividad no trae idActividad para abrir detalle directo.");
   }
 
+  /* ══════════════════════════════════════════
+     API & DATA FETCHING
+     ══════════════════════════════════════════ */
+
   async function fetchJson(path, token) {
     if (hasRuntimeApi) {
       try {
@@ -1349,6 +1405,10 @@
     return pending;
   }
 
+  /* ══════════════════════════════════════════
+     CHANGE DETECTION & LOGGING
+     ══════════════════════════════════════════ */
+
   function detectChanges(pending, previousPending) {
     const changes = [];
     if (!Array.isArray(previousPending) || previousPending.length === 0) return changes;
@@ -1430,14 +1490,9 @@
     return { newCount, overdueCount, updatedAt: nowIso, changes };
   }
 
-  async function syncBadge(count, newCount = 0, overdueCount = 0) {
-    if (!hasRuntimeApi) return;
-    try {
-      await chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count, newCount, overdueCount });
-    } catch (err) {
-      console.debug("No se pudo actualizar badge", err);
-    }
-  }
+  /* ══════════════════════════════════════════
+     PERSISTENCE & SCAN
+     ══════════════════════════════════════════ */
 
   async function hydrateFromStorage() {
     let data = await storageGet([STORAGE_KEYS.LOG, STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.THEME, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED, STORAGE_KEYS.PINNED, STORAGE_KEYS.AUTO_REFRESH]);
@@ -1659,6 +1714,10 @@
     }
   }
 
+  /* ══════════════════════════════════════════
+     AUTO REFRESH
+     ══════════════════════════════════════════ */
+
   function startAutoRefresh(minutes) {
     stopAutoRefresh();
     if (!minutes || minutes <= 0) return;
@@ -1701,6 +1760,10 @@
       panelEls.subtitle.textContent = baseText;
     }
   }
+
+  /* ══════════════════════════════════════════
+     INITIALIZATION
+     ══════════════════════════════════════════ */
 
   if (hasRuntimeApi && chrome.runtime?.onMessage) {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
