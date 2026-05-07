@@ -55,6 +55,9 @@ em.createPanel = function () {
              <button class="ep-theme-option" data-theme="solarized">Solarized</button>
              <button class="ep-theme-option" data-theme="solarizedlight">Solarized Light</button>
              <button class="ep-theme-option" data-theme="gruvbox">Gruvbox</button>
+             <button class="ep-theme-option" data-theme="sakura">Sakura</button>
+             <button class="ep-theme-option" data-theme="lavender">Lavender</button>
+             <button class="ep-theme-option" data-theme="rosa">Rosa</button>
           </div>
           <button class="ep-btn" id="ep-refresh" title="Actualizar">[ ref ]</button>
           <select class="ep-autorefresh-select" id="ep-autorefresh" title="Auto-refresh">

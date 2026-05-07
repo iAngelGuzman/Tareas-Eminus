@@ -17,7 +17,7 @@ em.toggleThemeMenu = function () {
 };
 
 em.setTheme = async function (themeName) {
-  em.panelEls.root.classList.remove("ep-dark-theme", "ep-hacker-theme", "ep-ocean-theme", "ep-dracula-theme", "ep-nord-theme", "ep-solarized-theme", "ep-solarizedlight-theme", "ep-gruvbox-theme");
+  em.panelEls.root.classList.remove("ep-dark-theme", "ep-hacker-theme", "ep-ocean-theme", "ep-dracula-theme", "ep-nord-theme", "ep-solarized-theme", "ep-solarizedlight-theme", "ep-gruvbox-theme", "ep-sakura-theme", "ep-lavender-theme", "ep-rosa-theme");
   if (themeName !== "light") {
     em.panelEls.root.classList.add("ep-" + themeName + "-theme");
   }
