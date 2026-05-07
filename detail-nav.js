@@ -74,58 +74,47 @@
     setTimeout(dismiss, 5000);
   }
 
-  function tryBindSubmitButton() {
-    if (window.__epSubmitCelebrationBound) return true;
+  const SUBMIT_KEYWORDS = [
+    "entregar", "entregar tarea", "entregar actividad", "entregar trabajo",
+    "enviar tarea", "enviar actividad", "enviar trabajo", "enviar",
+    "subir tarea", "subir actividad", "subir trabajo", "subir",
+    "guardar", "guardar tarea", "guardar actividad",
+    "submit", "send", "upload"
+  ];
 
-    let button = null;
-    const submitBtns = document.querySelectorAll(
-      'button[type="submit"]:not([disabled]), input[type="submit"]:not([disabled])'
-    );
-    for (const btn of submitBtns) {
-      if (btn.offsetParent !== null) {
-        button = btn;
-        break;
-      }
-    }
+  function looksLikeSubmitButton(el) {
+    if (!el || el.disabled) return false;
+    if (el.offsetParent === null) return false;
 
-    if (!button) {
-      const allBtns = document.querySelectorAll(
-        'button, a.btn, a.button, [role="button"], input[type="button"], .btn'
-      );
-      const keywords = [
-        "entregar", "entregar tarea", "entregar actividad",
-        "enviar tarea", "enviar actividad", "enviar",
-        "subir tarea", "subir actividad", "subir"
-      ];
-      for (const btn of allBtns) {
-        const text = (btn.textContent || btn.value || "").toLowerCase().trim();
-        if (keywords.some(k => text.includes(k)) && btn.offsetParent !== null) {
-          button = btn;
-          break;
-        }
-      }
-    }
+    const tag = el.tagName.toLowerCase();
+    const type = (el.getAttribute("type") || "").toLowerCase();
 
-    if (!button) return false;
+    if ((tag === "button" || tag === "input") && type === "submit") return true;
 
-    button.addEventListener("click", () => {
-      setTimeout(() => showCelebration(), 800);
-    }, { once: true });
+    const text = (el.textContent || el.value || el.getAttribute("aria-label") || "").toLowerCase().trim();
+    if (!text) return false;
 
-    window.__epSubmitCelebrationBound = true;
-    return true;
+    return SUBMIT_KEYWORDS.some(k => text.includes(k));
   }
 
-  if (!tryBindSubmitButton()) {
-    const retry = () => {
-      if (tryBindSubmitButton()) return;
-      setTimeout(retry, 1500);
-    };
-    setTimeout(retry, 1000);
-
-    const observer = new MutationObserver(() => {
-      if (tryBindSubmitButton()) observer.disconnect();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+  let celebrationTimeout = null;
+  function scheduleCelebration() {
+    if (celebrationTimeout) return;
+    celebrationTimeout = setTimeout(() => {
+      celebrationTimeout = null;
+      showCelebration();
+    }, 800);
   }
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest('button, input[type="submit"], input[type="button"], a.btn, a.button, [role="button"], .btn');
+    if (!btn) return;
+    if (!looksLikeSubmitButton(btn)) return;
+    scheduleCelebration();
+  });
+
+  document.addEventListener("submit", () => {
+    scheduleCelebration();
+  });
+
 })();
