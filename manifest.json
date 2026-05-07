@@ -14,8 +14,26 @@
   "content_scripts": [
     {
       "matches": ["https://eminus.uv.mx/eminus4/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"],
+      "js": [
+        "content/utils.js",
+        "content/auth.js",
+        "content/constants.js",
+        "content/storage.js",
+        "content/state.js",
+        "content/toast.js",
+        "content/drag.js",
+        "content/render.js",
+        "content/panel-ui.js",
+        "content/archive-pin.js",
+        "content/panel-dom.js",
+        "content/navigation.js",
+        "content/api.js",
+        "content/changes.js",
+        "content/auto-refresh.js",
+        "content/scan.js",
+        "content.js"
+      ],
+      "css": ["styles.css", "content/themes.css"],
       "run_at": "document_idle"
     },
     {
