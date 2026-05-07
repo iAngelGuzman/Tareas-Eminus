@@ -1369,3 +1369,131 @@
   color: #c04878;
   border-color: #e85080;
 }
+
+/* ══════════════════════════════════════════
+   THEME: SANDIA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-sandia-theme {
+  background: #1a3a1a;
+  color: #f0c8c8;
+  border-color: #2d5a2d;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-header,
+#eminus-pending-panel.ep-sandia-theme .ep-tabs,
+#eminus-pending-panel.ep-sandia-theme .ep-body,
+#eminus-pending-panel.ep-sandia-theme .ep-footer,
+#eminus-pending-panel.ep-sandia-theme .ep-item,
+#eminus-pending-panel.ep-sandia-theme .ep-log-item,
+#eminus-pending-panel.ep-sandia-theme .ep-theme-menu {
+  background: #1a3a1a;
+  border-color: #2d5a2d;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-seal-art,
+#eminus-pending-panel.ep-sandia-theme .ep-miyu-text,
+#eminus-pending-panel.ep-sandia-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-sandia-theme .ep-subtitle,
+#eminus-pending-panel.ep-sandia-theme .ep-btn,
+#eminus-pending-panel.ep-sandia-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-sandia-theme .ep-course,
+#eminus-pending-panel.ep-sandia-theme .ep-title-task,
+#eminus-pending-panel.ep-sandia-theme .ep-meta,
+#eminus-pending-panel.ep-sandia-theme .ep-log-time,
+#eminus-pending-panel.ep-sandia-theme .ep-log-summary,
+#eminus-pending-panel.ep-sandia-theme .ep-log-lines,
+#eminus-pending-panel.ep-sandia-theme .ep-log-changes,
+#eminus-pending-panel.ep-sandia-theme .ep-theme-option {
+  color: #f0c8c8 !important;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-tab {
+  color: #8ab88a;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-tab-active {
+  color: #ffffff;
+  background: #c0392b;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #f0c8c8;
+  background: #2d5a2d;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-btn:hover {
+  background: #c0392b;
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item-btn {
+  background: #2d5a2d;
+  border-color: #3d7a3d;
+  color: #f0c8c8;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item-btn:hover {
+  background: #c0392b;
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-theme-option:hover {
+  background: #2d5a2d;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-empty {
+  color: #6a9a6a;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item-title {
+  color: #e85050;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item-date {
+  color: #8ab88a;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item-course {
+  color: #6a9a6a;
+}
+
+/* Sandia: Urgency */
+#eminus-pending-panel.ep-sandia-theme .ep-item.ep-overdue {
+  background-color: #ffc8d5;
+  border-left-color: #e74c3c;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item.ep-imminent {
+  background-color: #ffe8b8;
+  border-left-color: #f0c040;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-item.ep-urgent {
+  background-color: #c8f0c8;
+  border-left-color: #50d050;
+}
+
+/* Sandia: Agenda */
+#eminus-pending-panel.ep-sandia-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #e74c3c;
+}
+
+/* Sandia: Toasts */
+#eminus-pending-panel.ep-sandia-theme .ep-toast-new {
+  background: #ffc8d5;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-toast-overdue {
+  background: #ffc8d5;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+#eminus-pending-panel.ep-sandia-theme .ep-toast-info {
+  background: #c8f0c8;
+  color: #50d050;
+  border-color: #50d050;
+}
