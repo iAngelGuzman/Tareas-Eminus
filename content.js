@@ -13,6 +13,7 @@
     THEME: "eminusPanelTheme",
     ACCOUNT_ID: "eminusAccountId",
     ARCHIVED: "eminusArchivedPendingIds",
+    PINNED: "eminusPinnedPendingIds",
     AUTO_REFRESH: "eminusAutoRefreshMinutes"
   };
   const NAV_KEYS = {
@@ -49,6 +50,7 @@
     pending: [],
     logs: [],
     archivedIds: new Set(),
+    pinnedIds: new Set(),
     lastUpdatedAt: null,
     isArchiveView: false,
     lastTabBeforeArchive: "pending"
@@ -185,6 +187,12 @@
     return new Set(ids);
   }
 
+  function normalizePinnedIds(raw) {
+    if (!Array.isArray(raw)) return new Set();
+    const ids = raw.map((id) => String(id)).filter((id) => id);
+    return new Set(ids);
+  }
+
   function applyArchivedState(items, archivedSet) {
     if (!Array.isArray(items)) return [];
     items.forEach((item) => {
@@ -199,6 +207,26 @@
     if (!Array.isArray(items)) return next;
     items.forEach((item) => {
       if (item && item.id && archivedSet.has(item.id)) {
+        next.add(item.id);
+      }
+    });
+    return next;
+  }
+
+  function applyPinnedState(items, pinnedSet) {
+    if (!Array.isArray(items)) return [];
+    items.forEach((item) => {
+      if (!item || !item.id) return;
+      item.pinned = pinnedSet.has(item.id);
+    });
+    return items;
+  }
+
+  function prunePinnedIds(items, pinnedSet) {
+    const next = new Set();
+    if (!Array.isArray(items)) return next;
+    items.forEach((item) => {
+      if (item && item.id && pinnedSet.has(item.id)) {
         next.add(item.id);
       }
     });
@@ -579,6 +607,7 @@
       const originalIndex = items.indexOf(item);
       const timeMatch = item.deadlineLabel ? item.deadlineLabel.match(/(\d{1,2}:\d{2})/) : null;
       const timeStr = timeMatch ? timeMatch[1] : "";
+      const pinIcon = item.pinned ? `<span style="margin-right:4px;opacity:0.9;">★</span>` : "";
       return `
         <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
           <article class="ep-item ${urgencyClass} ep-agenda-item">
@@ -586,7 +615,7 @@
               <div class="ep-course">${escapeHtml(item.course)}</div>
               ${timeStr ? `<div class="ep-meta" style="font-weight: 700;">${escapeHtml(timeStr)}</div>` : ""}
             </div>
-            <div class="ep-title-task" style="font-size: 12px; margin-bottom: 0;">${escapeHtml(item.title)}</div>
+            <div class="ep-title-task" style="font-size: 12px; margin-bottom: 0;">${pinIcon}${escapeHtml(item.title)}</div>
           </article>
         </div>
       `;
@@ -635,11 +664,12 @@
         const originalIndex = items.indexOf(item);
         const urgencyClass = `ep-${item.urgency}`;
         const due = item.deadlineLabel || "";
+        const pinIcon = item.pinned ? `<span style="margin-right:4px;opacity:0.9;">★</span>` : "";
         html += `
           <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
             <article class="ep-item ${urgencyClass} ep-agenda-item">
               <div class="ep-course">${escapeHtml(item.course)}</div>
-              <div class="ep-title-task" style="font-size: 12px; margin-bottom: 4px;">${escapeHtml(item.title)}</div>
+              <div class="ep-title-task" style="font-size: 12px; margin-bottom: 4px;">${pinIcon}${escapeHtml(item.title)}</div>
               <div class="ep-meta">${escapeHtml(due)}</div>
             </article>
           </div>
@@ -668,7 +698,7 @@
     const overdueItems = items.filter((item) => item.urgency === "overdue" && !item.archived);
     const archivedItems = items.filter((item) => item.archived);
 
-    const buildListHtml = (list, emptyMsg, actionConfig = null) => {
+    const buildListHtml = (list, emptyMsg, actionConfig = null, showPin = false) => {
       if (!list.length) {
         return `<div class="ep-empty">${emptyMsg}</div>`;
       }
@@ -678,11 +708,17 @@
           const due = item.deadlineLabel || "Sin fecha";
           const originalIndex = items.indexOf(item);
           const archivedClass = item.archived ? "ep-archived" : "";
+          const pinLabel = item.pinned ? "Desfijar" : "Fijar";
+          const pinAction = item.pinned ? "unpin" : "pin";
+          const pinHtml = showPin
+            ? `<button class="ep-mini-btn ep-pin-btn" type="button" data-action="${pinAction}" data-item-index="${originalIndex}" title="${escapeHtml(pinLabel)}">${item.pinned ? "★" : "☆"}</button>`
+            : "";
           const actionHtml = actionConfig
             ? `<button class="ep-mini-btn" type="button" data-action="${actionConfig.action}" data-item-index="${originalIndex}">${escapeHtml(actionConfig.label)}</button>`
             : "";
-          const metaHtml = actionConfig
-            ? `<div class="ep-meta-row"><div class="ep-meta">Vence: ${escapeHtml(due)}</div>${actionHtml}</div>`
+          const buttonsHtml = [pinHtml, actionHtml].filter(Boolean).join("");
+          const metaHtml = buttonsHtml
+            ? `<div class="ep-meta-row"><div class="ep-meta">Vence: ${escapeHtml(due)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
             : `<div class="ep-meta">Vence: ${escapeHtml(due)}</div>`;
           return `
             <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
@@ -698,12 +734,12 @@
     };
 
     if (state.isArchiveView) {
-      panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, "Sin tareas archivadas.", { label: "Restaurar", action: "unarchive" });
+      panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, "Sin tareas archivadas.", { label: "Restaurar", action: "unarchive" }, false);
       panelEls.overdueBody.innerHTML = "";
       panelEls.agendaBody.innerHTML = "";
     } else {
-      panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, "Sin tareas pendientes detectadas.");
-      panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, "Sin tareas vencidas detectadas.", { label: "Archivar", action: "archive" });
+      panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, "Sin tareas pendientes detectadas.", null, true);
+      panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, "Sin tareas vencidas detectadas.", { label: "Archivar", action: "archive" }, true);
       renderAgenda(items);
     }
 
@@ -746,6 +782,10 @@
             await archiveItemByIndex(index);
           } else if (action === "unarchive") {
             await unarchiveItemByIndex(index);
+          } else if (action === "pin") {
+            await pinItemByIndex(index);
+          } else if (action === "unpin") {
+            await unpinItemByIndex(index);
           }
         });
       });
@@ -780,11 +820,19 @@
           : "";
         const pendingCount = Number(entry.pendingCount || 0);
         const newCount = Number(entry.newCount || 0);
+        const changes = Array.isArray(entry.changes) ? entry.changes : [];
+        const changesHtml = changes.length
+          ? `<div class="ep-log-changes">${changes.map((c) => {
+              const label = c.type === "deadline" ? "cambió de fecha" : "cambió de estado";
+              return `<div class="ep-log-change">• ${escapeHtml(c.title)} ${label}: ${escapeHtml(c.from)} → ${escapeHtml(c.to)}</div>`;
+            }).join("")}</div>`
+          : "";
 
         return `
           <article class="ep-log-item">
             <div class="ep-log-time">${escapeHtml(formatDateTime(entry.timestamp))}</div>
             <div class="ep-log-summary">${pendingCount} pendientes (${newCount} nuevas)</div>
+            ${changesHtml}
             ${lines}
           </article>
         `;
@@ -847,6 +895,55 @@
     renderPending(state.pending);
     await persistArchiveState();
     setStatus(`Restaurada: ${item.title}`);
+  }
+
+  async function persistPinnedState() {
+    const pinnedList = Array.from(state.pinnedIds);
+    await storageSet({ [STORAGE_KEYS.PINNED]: pinnedList });
+  }
+
+  async function pinItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item) return;
+    if (item.pinned) return;
+
+    state.pinnedIds.add(item.id);
+    item.pinned = true;
+
+    state.pending.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+      if (!a.deadlineRaw) return 1;
+      if (!b.deadlineRaw) return -1;
+      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+    });
+
+    renderPending(state.pending);
+    await persistPinnedState();
+    setStatus(`Fijada: ${item.title}`);
+  }
+
+  async function unpinItemByIndex(index) {
+    const item = state.pending[index];
+    if (!item) return;
+    if (!item.pinned) return;
+
+    state.pinnedIds.delete(item.id);
+    item.pinned = false;
+
+    state.pending.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+      if (!a.deadlineRaw) return 1;
+      if (!b.deadlineRaw) return -1;
+      return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+    });
+
+    renderPending(state.pending);
+    await persistPinnedState();
+    setStatus(`Desfijada: ${item.title}`);
   }
 
   function escapeHtml(text) {
@@ -1191,7 +1288,7 @@
     return active.length ? active : courses;
   }
 
-  async function buildPendingData(token) {
+  async function buildPendingData(token, pinnedSet = new Set()) {
     const coursesRaw = await fetchJson("/Course/getAllCourses", token);
     const courses = filterActiveCourses(coursesRaw);
     const pending = [];
@@ -1227,14 +1324,22 @@
           course: courseName,
           title: String(act.titulo || "Actividad sin titulo"),
           deadlineRaw: deadlineDate ? deadlineDate.toISOString() : "",
+          deadlineStr,
           deadlineLabel: remaining ? `${deadlineStr} (${remaining})` : deadlineStr,
           urgency,
-          archived: false
+          archived: false,
+          pinned: pinnedSet.has(id),
+          estatus: String(act.estatus || "").trim(),
+          entregada: asBool(act.entregada),
+          completada: asBool(act.completada),
+          fechaEntrega: String(act.fechaEntrega || "").trim()
         });
       }
     }
 
     pending.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
       if (!a.deadlineRaw && !b.deadlineRaw) return 0;
       if (!a.deadlineRaw) return 1;
       if (!b.deadlineRaw) return -1;
@@ -1244,21 +1349,62 @@
     return pending;
   }
 
-  async function appendLog(pending, knownIdsBefore, visiblePending = pending) {
+  function detectChanges(pending, previousPending) {
+    const changes = [];
+    if (!Array.isArray(previousPending) || previousPending.length === 0) return changes;
+
+    const prevById = new Map();
+    for (const item of previousPending) {
+      if (item && item.id) prevById.set(item.id, item);
+    }
+
+    for (const item of pending) {
+      const prev = prevById.get(item.id);
+      if (!prev) continue;
+
+      // Cambio de fecha límite
+      if (prev.deadlineRaw !== item.deadlineRaw) {
+        changes.push({
+          type: "deadline",
+          title: `${item.course} - ${item.title}`,
+          from: prev.deadlineStr || prev.deadlineLabel || "Sin fecha",
+          to: item.deadlineStr || item.deadlineLabel || "Sin fecha"
+        });
+      }
+
+      // Cambio de estado/entrega
+      const prevStatus = prev.estatus || (prev.entregada ? "Entregada" : prev.completada ? "Completada" : "Pendiente");
+      const newStatus = item.estatus || (item.entregada ? "Entregada" : item.completada ? "Completada" : "Pendiente");
+      if (prevStatus !== newStatus) {
+        changes.push({
+          type: "status",
+          title: `${item.course} - ${item.title}`,
+          from: prevStatus,
+          to: newStatus
+        });
+      }
+    }
+
+    return changes;
+  }
+
+  async function appendLog(pending, knownIdsBefore, visiblePending = pending, previousPending = []) {
     const nowIso = new Date().toISOString();
     const currentIds = pending.map((item) => item.id);
     const newCount = currentIds.filter((id) => !knownIdsBefore.has(id)).length;
     const pendingCount = Array.isArray(visiblePending) ? visiblePending.length : 0;
+    const changes = detectChanges(pending, previousPending);
 
     const data = await storageGet([STORAGE_KEYS.LOG]);
     const logs = Array.isArray(data[STORAGE_KEYS.LOG]) ? data[STORAGE_KEYS.LOG] : [];
-    
-    if (newCount > 0) {
+
+    if (newCount > 0 || changes.length > 0) {
       const previewSource = pendingCount ? visiblePending : pending;
       const entry = {
         timestamp: nowIso,
         pendingCount,
         newCount,
+        changes,
         previewTitles: previewSource.slice(0, 4).map((p) => `${p.course} - ${p.title}`)
       };
       logs.unshift(entry);
@@ -1281,7 +1427,7 @@
       [STORAGE_KEYS.KNOWN_IDS]: currentIds
     });
 
-    return { newCount, overdueCount, updatedAt: nowIso };
+    return { newCount, overdueCount, updatedAt: nowIso, changes };
   }
 
   async function syncBadge(count, newCount = 0, overdueCount = 0) {
@@ -1294,23 +1440,25 @@
   }
 
   async function hydrateFromStorage() {
-    let data = await storageGet([STORAGE_KEYS.LOG, STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.THEME, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED, STORAGE_KEYS.AUTO_REFRESH]);
+    let data = await storageGet([STORAGE_KEYS.LOG, STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.THEME, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED, STORAGE_KEYS.PINNED, STORAGE_KEYS.AUTO_REFRESH]);
     
     const storedAccountId = data[STORAGE_KEYS.ACCOUNT_ID];
     const currentToken = getToken();
     const currentAccountId = getAccountIdFromToken(currentToken);
 
-    if (storedAccountId && currentAccountId && storedAccountId !== currentAccountId) {
+      if (storedAccountId && currentAccountId && storedAccountId !== currentAccountId) {
       await storageSet({
         [STORAGE_KEYS.LOG]: [],
         [STORAGE_KEYS.SNAPSHOT]: null,
         [STORAGE_KEYS.KNOWN_IDS]: [],
         [STORAGE_KEYS.ARCHIVED]: [],
+        [STORAGE_KEYS.PINNED]: [],
         [STORAGE_KEYS.ACCOUNT_ID]: currentAccountId
       });
       data[STORAGE_KEYS.LOG] = [];
       data[STORAGE_KEYS.SNAPSHOT] = null;
       data[STORAGE_KEYS.ARCHIVED] = [];
+      data[STORAGE_KEYS.PINNED] = [];
       await syncBadge(0);
     } else if (currentAccountId && !storedAccountId) {
       await storageSet({ [STORAGE_KEYS.ACCOUNT_ID]: currentAccountId });
@@ -1323,6 +1471,7 @@
 
     state.logs = Array.isArray(data[STORAGE_KEYS.LOG]) ? data[STORAGE_KEYS.LOG] : [];
     state.archivedIds = normalizeArchivedIds(data[STORAGE_KEYS.ARCHIVED]);
+    state.pinnedIds = normalizePinnedIds(data[STORAGE_KEYS.PINNED]);
 
     const theme = data[STORAGE_KEYS.THEME] || "light";
     if (theme !== "light") {
@@ -1332,6 +1481,7 @@
     const snapshot = data[STORAGE_KEYS.SNAPSHOT];
     if (snapshot && Array.isArray(snapshot.pending)) {
       state.pending = applyArchivedState(snapshot.pending, state.archivedIds);
+      applyPinnedState(state.pending, state.pinnedIds);
       state.lastUpdatedAt = snapshot.updatedAt || null;
 
       const prunedArchived = pruneArchivedIds(state.pending, state.archivedIds);
@@ -1339,6 +1489,21 @@
         state.archivedIds = prunedArchived;
         await storageSet({ [STORAGE_KEYS.ARCHIVED]: Array.from(prunedArchived) });
       }
+
+      const prunedPinned = prunePinnedIds(state.pending, state.pinnedIds);
+      if (!setsEqual(prunedPinned, state.pinnedIds)) {
+        state.pinnedIds = prunedPinned;
+        await storageSet({ [STORAGE_KEYS.PINNED]: Array.from(prunedPinned) });
+      }
+
+      state.pending.sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+        if (!a.deadlineRaw) return 1;
+        if (!b.deadlineRaw) return -1;
+        return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+      });
 
       if (panelEls?.subtitle) {
         panelEls.subtitle.textContent = `Última lectura: ${formatDateTime(snapshot.updatedAt)}`;
@@ -1380,17 +1545,19 @@
       }
 
       const currentAccountId = getAccountIdFromToken(token);
-      let knownData = await storageGet([STORAGE_KEYS.KNOWN_IDS, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED]);
+      let knownData = await storageGet([STORAGE_KEYS.KNOWN_IDS, STORAGE_KEYS.ACCOUNT_ID, STORAGE_KEYS.ARCHIVED, STORAGE_KEYS.PINNED]);
       
       if (knownData[STORAGE_KEYS.ACCOUNT_ID] && currentAccountId && knownData[STORAGE_KEYS.ACCOUNT_ID] !== currentAccountId) {
         knownData[STORAGE_KEYS.KNOWN_IDS] = [];
         knownData[STORAGE_KEYS.ARCHIVED] = [];
+        knownData[STORAGE_KEYS.PINNED] = [];
         state.logs = [];
         await storageSet({
           [STORAGE_KEYS.LOG]: [],
           [STORAGE_KEYS.SNAPSHOT]: null,
           [STORAGE_KEYS.KNOWN_IDS]: [],
           [STORAGE_KEYS.ARCHIVED]: [],
+          [STORAGE_KEYS.PINNED]: [],
           [STORAGE_KEYS.ACCOUNT_ID]: currentAccountId
         });
       } else if (!knownData[STORAGE_KEYS.ACCOUNT_ID] && currentAccountId) {
@@ -1399,8 +1566,9 @@
 
       const knownIds = new Set(Array.isArray(knownData[STORAGE_KEYS.KNOWN_IDS]) ? knownData[STORAGE_KEYS.KNOWN_IDS] : []);
       state.archivedIds = normalizeArchivedIds(knownData[STORAGE_KEYS.ARCHIVED]);
+      state.pinnedIds = normalizePinnedIds(knownData[STORAGE_KEYS.PINNED]);
 
-      const pending = await buildPendingData(token);
+      const pending = await buildPendingData(token, state.pinnedIds);
       applyArchivedState(pending, state.archivedIds);
 
       const prunedArchived = pruneArchivedIds(pending, state.archivedIds);
@@ -1409,9 +1577,16 @@
         await storageSet({ [STORAGE_KEYS.ARCHIVED]: Array.from(prunedArchived) });
       }
 
+      const prunedPinned = prunePinnedIds(pending, state.pinnedIds);
+      if (!setsEqual(prunedPinned, state.pinnedIds)) {
+        state.pinnedIds = prunedPinned;
+        await storageSet({ [STORAGE_KEYS.PINNED]: Array.from(prunedPinned) });
+      }
+
       const visiblePending = getVisiblePending(pending);
 
-      const previousOverdueIds = new Set((state.pending || []).filter((item) => item.urgency === "overdue" && !item.archived).map((item) => item.id));
+      const previousPending = state.pending || [];
+      const previousOverdueIds = new Set(previousPending.filter((item) => item.urgency === "overdue" && !item.archived).map((item) => item.id));
       const currentOverdue = visiblePending.filter((item) => item.urgency === "overdue");
       const currentOverdueIds = new Set(currentOverdue.map((item) => item.id));
       const newlyOverdue = currentOverdue.filter((item) => !previousOverdueIds.has(item.id));
@@ -1419,7 +1594,7 @@
       state.pending = pending;
       renderPending(pending);
 
-      const logMeta = await appendLog(pending, knownIds, visiblePending);
+      const logMeta = await appendLog(pending, knownIds, visiblePending, previousPending);
       renderLogs(state.logs);
       state.lastUpdatedAt = logMeta.updatedAt;
 
@@ -1446,22 +1621,32 @@
     } catch (err) {
       console.error("[Eminus Pending Panel]", err);
       if (!navigator.onLine) {
-        const snapshot = await storageGet([STORAGE_KEYS.SNAPSHOT]);
-        const cached = snapshot[STORAGE_KEYS.SNAPSHOT];
-        if (cached && Array.isArray(cached.pending) && cached.pending.length > 0) {
-          state.pending = applyArchivedState(cached.pending, state.archivedIds);
-          state.lastUpdatedAt = cached.updatedAt;
-          renderPending(state.pending);
-          renderLogs(state.logs);
-          if (panelEls?.subtitle) {
-            panelEls.subtitle.textContent = `Última lectura: ${formatDateTime(cached.updatedAt)}`;
-          }
-          updateAutoRefreshLabel(autoRefreshMinutes);
-          const visible = getVisiblePending(state.pending);
-          const overdueCount = visible.filter((item) => item.urgency === "overdue").length;
-          setStatus(`Sin conexión — ${visible.length} pendientes (caché)`);
-          await syncBadge(visible.length, 0, overdueCount);
-        } else {
+        const snapshot = await storageGet([STORAGE_KEYS.SNAPSHOT, STORAGE_KEYS.PINNED]);
+          const cached = snapshot[STORAGE_KEYS.SNAPSHOT];
+          if (cached && Array.isArray(cached.pending) && cached.pending.length > 0) {
+            state.pinnedIds = normalizePinnedIds(snapshot[STORAGE_KEYS.PINNED]);
+            state.pending = applyArchivedState(cached.pending, state.archivedIds);
+            applyPinnedState(state.pending, state.pinnedIds);
+            state.pending.sort((a, b) => {
+              if (a.pinned && !b.pinned) return -1;
+              if (!a.pinned && b.pinned) return 1;
+              if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+              if (!a.deadlineRaw) return 1;
+              if (!b.deadlineRaw) return -1;
+              return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+            });
+            state.lastUpdatedAt = cached.updatedAt;
+            renderPending(state.pending);
+            renderLogs(state.logs);
+            if (panelEls?.subtitle) {
+              panelEls.subtitle.textContent = `Última lectura: ${formatDateTime(cached.updatedAt)}`;
+            }
+            updateAutoRefreshLabel(autoRefreshMinutes);
+            const visible = getVisiblePending(state.pending);
+            const overdueCount = visible.filter((item) => item.urgency === "overdue").length;
+            setStatus(`Sin conexión — ${visible.length} pendientes (caché)`);
+            await syncBadge(visible.length, 0, overdueCount);
+          } else {
           setStatus("Sin conexión — sin datos en caché");
         }
       } else {

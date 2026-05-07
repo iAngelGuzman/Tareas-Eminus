@@ -337,6 +337,13 @@
   opacity: 0.75;
 }
 
+.ep-pin-btn {
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 4px;
+  min-width: 20px;
+}
+
 .ep-item.ep-archived {
   opacity: 0.75;
   border-style: dashed;
@@ -422,6 +429,16 @@
   margin-top: 8px;
   font-size: 12px;
   color: #666;
+}
+
+.ep-log-changes {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #444;
+}
+
+.ep-log-change {
+  margin-bottom: 4px;
 }
 
 .ep-footer {
@@ -808,7 +825,8 @@
 #eminus-pending-panel.ep-dark-theme .ep-meta,
 #eminus-pending-panel.ep-dark-theme .ep-log-time,
 #eminus-pending-panel.ep-dark-theme .ep-log-summary,
-#eminus-pending-panel.ep-dark-theme .ep-log-lines {
+#eminus-pending-panel.ep-dark-theme .ep-log-lines,
+#eminus-pending-panel.ep-dark-theme .ep-log-changes {
   color: #e0e0e0 !important;
 }
 
@@ -835,7 +853,8 @@
 #eminus-pending-panel.ep-hacker-theme .ep-meta,
 #eminus-pending-panel.ep-hacker-theme .ep-log-time,
 #eminus-pending-panel.ep-hacker-theme .ep-log-summary,
-#eminus-pending-panel.ep-hacker-theme .ep-log-lines {
+#eminus-pending-panel.ep-hacker-theme .ep-log-lines,
+#eminus-pending-panel.ep-hacker-theme .ep-log-changes {
   color: #00ff00 !important;
 }
 
@@ -934,7 +953,8 @@
 #eminus-pending-panel.ep-ocean-theme .ep-meta,
 #eminus-pending-panel.ep-ocean-theme .ep-log-time,
 #eminus-pending-panel.ep-ocean-theme .ep-log-summary,
-#eminus-pending-panel.ep-ocean-theme .ep-log-lines {
+#eminus-pending-panel.ep-ocean-theme .ep-log-lines,
+#eminus-pending-panel.ep-ocean-theme .ep-log-changes {
   color: #7dd3fc !important;
 }
 
@@ -1038,6 +1058,7 @@
 #eminus-pending-panel.ep-dracula-theme .ep-log-time,
 #eminus-pending-panel.ep-dracula-theme .ep-log-summary,
 #eminus-pending-panel.ep-dracula-theme .ep-log-lines,
+#eminus-pending-panel.ep-dracula-theme .ep-log-changes,
 #eminus-pending-panel.ep-dracula-theme .ep-theme-option {
   color: #f8f8f2 !important;
 }
@@ -1084,6 +1105,7 @@
 #eminus-pending-panel.ep-nord-theme .ep-log-time,
 #eminus-pending-panel.ep-nord-theme .ep-log-summary,
 #eminus-pending-panel.ep-nord-theme .ep-log-lines,
+#eminus-pending-panel.ep-nord-theme .ep-log-changes,
 #eminus-pending-panel.ep-nord-theme .ep-theme-option {
   color: #D8DEE9 !important;
 }
@@ -1131,6 +1153,7 @@
 #eminus-pending-panel.ep-solarized-theme .ep-log-time,
 #eminus-pending-panel.ep-solarized-theme .ep-log-summary,
 #eminus-pending-panel.ep-solarized-theme .ep-log-lines,
+#eminus-pending-panel.ep-solarized-theme .ep-log-changes,
 #eminus-pending-panel.ep-solarized-theme .ep-theme-option {
   color: #839496 !important;
 }
@@ -1178,6 +1201,7 @@
 #eminus-pending-panel.ep-solarizedlight-theme .ep-log-time,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-log-summary,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-log-lines,
+#eminus-pending-panel.ep-solarizedlight-theme .ep-log-changes,
 #eminus-pending-panel.ep-solarizedlight-theme .ep-theme-option {
   color: #586e75 !important;
 }
@@ -1225,6 +1249,7 @@
 #eminus-pending-panel.ep-gruvbox-theme .ep-log-time,
 #eminus-pending-panel.ep-gruvbox-theme .ep-log-summary,
 #eminus-pending-panel.ep-gruvbox-theme .ep-log-lines,
+#eminus-pending-panel.ep-gruvbox-theme .ep-log-changes,
 #eminus-pending-panel.ep-gruvbox-theme .ep-theme-option {
   color: #ebdbb2 !important;
 }

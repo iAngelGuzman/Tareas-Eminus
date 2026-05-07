@@ -29,7 +29,6 @@
     "service_worker": "service-worker.js"
   },
   "action": {
-    "default_title": "Miyu --pendientes",
-    "default_popup": "popup.html"
+    "default_title": "Miyu --pendientes"
   }
 }

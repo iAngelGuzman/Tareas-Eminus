@@ -19,6 +19,12 @@ async function requestJson({ url, method = "GET", token = "", body = null }) {
   return { ok: response.ok, status: response.status, data };
 }
 
+chrome.action.onClicked.addListener((tab) => {
+  if (tab?.id) {
+    chrome.tabs.sendMessage(tab.id, { type: "OPEN_AND_REFRESH_PANEL" }).catch(() => {});
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "UPDATE_BADGE") {
     const newCount = Number(message.newCount || 0);
