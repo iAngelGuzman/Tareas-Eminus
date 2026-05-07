@@ -46,7 +46,7 @@ em.renderAgenda = function (items) {
               <div class="ep-course">${em.escapeHtml(item.course)}</div>
               ${timeStr ? `<div class="ep-meta" style="font-weight: 700;">${em.escapeHtml(timeStr)}</div>` : ""}
             </div>
-            <div class="ep-title-task" style="font-size: 12px; margin-bottom: 0;">${pinIcon}${em.escapeHtml(item.title)}</div>
+            <div class="ep-title-task" style="font-size: 12px; margin-bottom: 0;">${pinIcon}<span class="ep-wave-text">${em.wrapTextSpans(item.title)}</span></div>
           </article>
         </div>
       `;
@@ -157,7 +157,7 @@ em.renderPending = function (items) {
             <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
               <article class="ep-item ${urgencyClass} ${archivedClass}">
                 <div class="ep-course">${em.escapeHtml(item.course)}</div>
-                <div class="ep-title-task">${em.escapeHtml(item.title)}</div>
+                <div class="ep-title-task"><span class="ep-wave-text">${em.wrapTextSpans(item.title)}</span></div>
                 ${metaHtml}
               </article>
             </div>

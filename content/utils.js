@@ -130,6 +130,16 @@ em.escapeHtml = function (text) {
     .replaceAll("'", "&#39;");
 };
 
+em.wrapTextSpans = function (text) {
+  if (!text) return "";
+  return text.split("").map((char, index) => {
+    if (char === " ") {
+      return `<span class="ep-space" style="--i:${index}">&nbsp;</span>`;
+    }
+    return `<span style="--i:${index}">${em.escapeHtml(char)}</span>`;
+  }).join("");
+};
+
 em.normalizePositiveId = function (value) {
   const raw = String(value ?? "").trim();
   if (!/^\d+$/.test(raw)) return "";

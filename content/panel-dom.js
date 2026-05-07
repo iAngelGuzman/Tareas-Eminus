@@ -47,6 +47,7 @@ em.createPanel = function () {
           <button class="ep-btn" id="ep-theme-toggle" title="Temas">[ ⚙ ]</button>
           <div id="ep-theme-menu" class="ep-theme-menu ep-hidden">
              <button class="ep-theme-option" data-theme="light">Light</button>
+             <button class="ep-theme-option" data-theme="jazmin">Jazmín</button>
              <button class="ep-theme-option" data-theme="dark">Dark</button>
              <button class="ep-theme-option" data-theme="hacker">Hacker</button>
              <button class="ep-theme-option" data-theme="ocean">Ocean</button>
@@ -59,7 +60,15 @@ em.createPanel = function () {
              <button class="ep-theme-option" data-theme="lavender">Lavender</button>
              <button class="ep-theme-option" data-theme="rosa">Rosa</button>
              <button class="ep-theme-option" data-theme="sandia">Sandia</button>
-          </div>
+             <button class="ep-theme-option" data-theme="matcha">Matcha</button>
+             <button class="ep-theme-option" data-theme="moka">Moka</button>
+             <button class="ep-theme-option" data-theme="candy">Candy</button>
+             <button class="ep-theme-option" data-theme="aurora">Aurora</button>
+             <button class="ep-theme-option" data-theme="synthwave">Synthwave</button>
+             <button class="ep-theme-option" data-theme="minimal">Minimal</button>
+             <button class="ep-theme-option" data-theme="wispr">Wispr</button>
+             <button class="ep-theme-option" data-theme="solarized-osaka">Solarized Osaka</button>
+             <button class="ep-theme-option" data-theme="olivia">Olivia</button>          </div>
           <button class="ep-btn" id="ep-refresh" title="Actualizar">[ ref ]</button>
           <select class="ep-autorefresh-select" id="ep-autorefresh" title="Auto-refresh">
             <option value="0">off</option>

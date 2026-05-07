@@ -949,7 +949,9 @@
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn:hover .ep-item.ep-overdue,
 #eminus-pending-panel.ep-nord-theme .ep-item-btn:hover .ep-item.ep-overdue,
 #eminus-pending-panel.ep-solarized-theme .ep-item-btn:hover .ep-item.ep-overdue,
-#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-overdue {
+#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-overdue,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item.ep-overdue,
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item.ep-overdue {
   background-color: rgba(255, 0, 0, 0.3);
 }
 
@@ -958,7 +960,9 @@
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn:hover .ep-item.ep-imminent,
 #eminus-pending-panel.ep-nord-theme .ep-item-btn:hover .ep-item.ep-imminent,
 #eminus-pending-panel.ep-solarized-theme .ep-item-btn:hover .ep-item.ep-imminent,
-#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-imminent {
+#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-imminent,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item.ep-imminent,
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item.ep-imminent {
   background-color: rgba(255, 165, 0, 0.3);
 }
 
@@ -967,7 +971,9 @@
 #eminus-pending-panel.ep-dracula-theme .ep-item-btn:hover .ep-item.ep-urgent,
 #eminus-pending-panel.ep-nord-theme .ep-item-btn:hover .ep-item.ep-urgent,
 #eminus-pending-panel.ep-solarized-theme .ep-item-btn:hover .ep-item.ep-urgent,
-#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-urgent {
+#eminus-pending-panel.ep-gruvbox-theme .ep-item-btn:hover .ep-item.ep-urgent,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item.ep-urgent,
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item.ep-urgent {
   background-color: rgba(255, 255, 0, 0.2);
 }
 
@@ -1496,4 +1502,1436 @@
   background: #c8f0c8;
   color: #50d050;
   border-color: #50d050;
+}
+
+/* ══════════════════════════════════════════
+   THEME: MATCHA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-matcha-theme {
+  background: #f4f1e8;
+  color: #2c3e2c;
+  border-color: #b8c9a8;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-header,
+#eminus-pending-panel.ep-matcha-theme .ep-tabs,
+#eminus-pending-panel.ep-matcha-theme .ep-body,
+#eminus-pending-panel.ep-matcha-theme .ep-footer,
+#eminus-pending-panel.ep-matcha-theme .ep-item,
+#eminus-pending-panel.ep-matcha-theme .ep-log-item,
+#eminus-pending-panel.ep-matcha-theme .ep-theme-menu {
+  background: #f4f1e8;
+  border-color: #b8c9a8;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-seal-art,
+#eminus-pending-panel.ep-matcha-theme .ep-miyu-text,
+#eminus-pending-panel.ep-matcha-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-matcha-theme .ep-subtitle,
+#eminus-pending-panel.ep-matcha-theme .ep-btn,
+#eminus-pending-panel.ep-matcha-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-matcha-theme .ep-course,
+#eminus-pending-panel.ep-matcha-theme .ep-title-task,
+#eminus-pending-panel.ep-matcha-theme .ep-meta,
+#eminus-pending-panel.ep-matcha-theme .ep-log-time,
+#eminus-pending-panel.ep-matcha-theme .ep-log-summary,
+#eminus-pending-panel.ep-matcha-theme .ep-log-lines,
+#eminus-pending-panel.ep-matcha-theme .ep-log-changes,
+#eminus-pending-panel.ep-matcha-theme .ep-theme-option {
+  color: #2c3e2c !important;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-tab {
+  color: #7a8a6a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-tab-active {
+  color: #f4f1e8;
+  background: #5a7a4a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #2c3e2c;
+  background: #e8e4d8;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-btn:hover {
+  background: #5a7a4a;
+  color: #f4f1e8 !important;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item-btn {
+  background: #e8e4d8;
+  border-color: #b8c9a8;
+  color: #3a5a3a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item-btn:hover {
+  background: #5a7a4a;
+  color: #f4f1e8 !important;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-theme-option:hover {
+  background: #e8e4d8;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-empty {
+  color: #7a8a6a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item-title {
+  color: #3a5a3a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item-date {
+  color: #7a8a6a;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item-course {
+  color: #6a7a5a;
+}
+
+/* Matcha: Urgency */
+#eminus-pending-panel.ep-matcha-theme .ep-item.ep-overdue {
+  background-color: #f5e0e0;
+  border-left-color: #b04040;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item.ep-imminent {
+  background-color: #f5ecd0;
+  border-left-color: #b89030;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-item.ep-urgent {
+  background-color: #e0efd0;
+  border-left-color: #5a8a3a;
+}
+
+/* Matcha: Agenda */
+#eminus-pending-panel.ep-matcha-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #b04040;
+}
+
+/* Matcha: Toasts */
+#eminus-pending-panel.ep-matcha-theme .ep-toast-new {
+  background: #f5e0e0;
+  color: #b04040;
+  border-color: #b04040;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-toast-overdue {
+  background: #f5e0e0;
+  color: #b04040;
+  border-color: #b04040;
+}
+
+#eminus-pending-panel.ep-matcha-theme .ep-toast-info {
+  background: #e0efd0;
+  color: #4a7a3a;
+  border-color: #5a8a3a;
+}
+
+/* ══════════════════════════════════════════
+   THEME: MOKA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-moka-theme {
+  background: #3e2723;
+  color: #f8c0d0;
+  border-color: #6d4c41;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-header,
+#eminus-pending-panel.ep-moka-theme .ep-tabs,
+#eminus-pending-panel.ep-moka-theme .ep-body,
+#eminus-pending-panel.ep-moka-theme .ep-footer,
+#eminus-pending-panel.ep-moka-theme .ep-item,
+#eminus-pending-panel.ep-moka-theme .ep-log-item,
+#eminus-pending-panel.ep-moka-theme .ep-theme-menu {
+  background: #3e2723;
+  border-color: #6d4c41;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-seal-art,
+#eminus-pending-panel.ep-moka-theme .ep-miyu-text,
+#eminus-pending-panel.ep-moka-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-moka-theme .ep-subtitle,
+#eminus-pending-panel.ep-moka-theme .ep-btn,
+#eminus-pending-panel.ep-moka-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-moka-theme .ep-course,
+#eminus-pending-panel.ep-moka-theme .ep-title-task,
+#eminus-pending-panel.ep-moka-theme .ep-meta,
+#eminus-pending-panel.ep-moka-theme .ep-log-time,
+#eminus-pending-panel.ep-moka-theme .ep-log-summary,
+#eminus-pending-panel.ep-moka-theme .ep-log-lines,
+#eminus-pending-panel.ep-moka-theme .ep-log-changes,
+#eminus-pending-panel.ep-moka-theme .ep-theme-option {
+  color: #f8c0d0 !important;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-tab {
+  color: #a1887f;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-tab-active {
+  color: #3e2723;
+  background: #f48fb1;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #f8c0d0;
+  background: #5d4037;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-btn:hover {
+  background: #f48fb1;
+  color: #3e2723 !important;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item-btn {
+  background: #5d4037;
+  border-color: #795548;
+  color: #f48fb1;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item-btn:hover {
+  background: #f48fb1;
+  color: #3e2723 !important;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-theme-option:hover {
+  background: #5d4037;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-empty {
+  color: #a1887f;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item-title {
+  color: #f48fb1;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item-date {
+  color: #a1887f;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item-course {
+  color: #8d6e63;
+}
+
+/* Moka: Urgency */
+#eminus-pending-panel.ep-moka-theme .ep-item.ep-overdue {
+  background-color: #5c2020;
+  border-left-color: #ef5350;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item.ep-imminent {
+  background-color: #5c4a20;
+  border-left-color: #fdd835;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-item.ep-urgent {
+  background-color: #2e5c2e;
+  border-left-color: #66bb6a;
+}
+
+/* Moka: Agenda */
+#eminus-pending-panel.ep-moka-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ef5350;
+}
+
+/* Moka: Toasts */
+#eminus-pending-panel.ep-moka-theme .ep-toast-new {
+  background: #5c2020;
+  color: #f48fb1;
+  border-color: #f48fb1;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-toast-overdue {
+  background: #5c2020;
+  color: #ef5350;
+  border-color: #ef5350;
+}
+
+#eminus-pending-panel.ep-moka-theme .ep-toast-info {
+  background: #3e2723;
+  color: #f48fb1;
+  border-color: #f48fb1;
+}
+
+/* ══════════════════════════════════════════
+   THEME: JAZMÍN
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-jazmin-theme {
+  background: #fffdf5;
+  color: #3d3a28;
+  border-color: #ddd8c0;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-header,
+#eminus-pending-panel.ep-jazmin-theme .ep-tabs,
+#eminus-pending-panel.ep-jazmin-theme .ep-body,
+#eminus-pending-panel.ep-jazmin-theme .ep-footer,
+#eminus-pending-panel.ep-jazmin-theme .ep-item,
+#eminus-pending-panel.ep-jazmin-theme .ep-log-item,
+#eminus-pending-panel.ep-jazmin-theme .ep-theme-menu {
+  background: #fffdf5;
+  border-color: #ddd8c0;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-seal-art,
+#eminus-pending-panel.ep-jazmin-theme .ep-miyu-text,
+#eminus-pending-panel.ep-jazmin-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-jazmin-theme .ep-subtitle,
+#eminus-pending-panel.ep-jazmin-theme .ep-btn,
+#eminus-pending-panel.ep-jazmin-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-jazmin-theme .ep-course,
+#eminus-pending-panel.ep-jazmin-theme .ep-title-task,
+#eminus-pending-panel.ep-jazmin-theme .ep-meta,
+#eminus-pending-panel.ep-jazmin-theme .ep-log-time,
+#eminus-pending-panel.ep-jazmin-theme .ep-log-summary,
+#eminus-pending-panel.ep-jazmin-theme .ep-log-lines,
+#eminus-pending-panel.ep-jazmin-theme .ep-log-changes,
+#eminus-pending-panel.ep-jazmin-theme .ep-theme-option {
+  color: #3d3a28 !important;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-tab {
+  color: #9e9a78;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-tab-active {
+  color: #3d3a28;
+  background: #e8dfa0;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #3d3a28;
+  background: #f5f0d8;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-btn:hover {
+  background: #6a8a50;
+  color: #fffdf5 !important;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item-btn {
+  background: #f5f0d8;
+  border-color: #ddd8c0;
+  color: #5a7340;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item-btn:hover {
+  background: #6a8a50;
+  color: #fffdf5 !important;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-theme-option:hover {
+  background: #f5f0d8;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-empty {
+  color: #9e9a78;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item-title {
+  color: #5a7340;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item-date {
+  color: #9e9a78;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item-course {
+  color: #7a7660;
+}
+
+/* Jazmín: Urgency */
+#eminus-pending-panel.ep-jazmin-theme .ep-item.ep-overdue {
+  background-color: #fde0d8;
+  border-left-color: #c06850;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item.ep-imminent {
+  background-color: #fdf5d0;
+  border-left-color: #b8a030;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-item.ep-urgent {
+  background-color: #e8f0d8;
+  border-left-color: #6a8a50;
+}
+
+/* Jazmín: Agenda */
+#eminus-pending-panel.ep-jazmin-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #c06850;
+}
+
+/* Jazmín: Toasts */
+#eminus-pending-panel.ep-jazmin-theme .ep-toast-new {
+  background: #fde0d8;
+  color: #c06850;
+  border-color: #c06850;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-toast-overdue {
+  background: #fde0d8;
+  color: #c06850;
+  border-color: #c06850;
+}
+
+#eminus-pending-panel.ep-jazmin-theme .ep-toast-info {
+  background: #e8f0d8;
+  color: #5a7340;
+  border-color: #6a8a50;
+}
+
+/* ══════════════════════════════════════════
+   THEME: CANDY
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-candy-theme {
+  background: #fdf0f8;
+  color: #3a2050;
+  border-color: #e8b8d0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-header,
+#eminus-pending-panel.ep-candy-theme .ep-tabs,
+#eminus-pending-panel.ep-candy-theme .ep-body,
+#eminus-pending-panel.ep-candy-theme .ep-footer,
+#eminus-pending-panel.ep-candy-theme .ep-item,
+#eminus-pending-panel.ep-candy-theme .ep-log-item,
+#eminus-pending-panel.ep-candy-theme .ep-theme-menu {
+  background: #fdf0f8;
+  border-color: #e8b8d0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-seal-art,
+#eminus-pending-panel.ep-candy-theme .ep-miyu-text,
+#eminus-pending-panel.ep-candy-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-candy-theme .ep-subtitle,
+#eminus-pending-panel.ep-candy-theme .ep-btn,
+#eminus-pending-panel.ep-candy-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-candy-theme .ep-course,
+#eminus-pending-panel.ep-candy-theme .ep-title-task,
+#eminus-pending-panel.ep-candy-theme .ep-meta,
+#eminus-pending-panel.ep-candy-theme .ep-log-time,
+#eminus-pending-panel.ep-candy-theme .ep-log-summary,
+#eminus-pending-panel.ep-candy-theme .ep-log-lines,
+#eminus-pending-panel.ep-candy-theme .ep-log-changes,
+#eminus-pending-panel.ep-candy-theme .ep-theme-option {
+  color: #3a2050 !important;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-tab {
+  color: #d080b0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-tab-active {
+  color: #ffffff;
+  background: #f4a0c8;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #3a2050;
+  background: #b0d0f0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-btn:hover {
+  background: #80b8f0;
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item-btn {
+  background: #fdf0f8;
+  border-color: #e8b8d0;
+  color: #d060a0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item-btn:hover {
+  background: #f4a0c8;
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-theme-option:hover {
+  background: #b0d0f0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-empty {
+  color: #d080b0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item-title {
+  color: #d060a0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item-date {
+  color: #d080b0;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item-course {
+  color: #b080a0;
+}
+
+/* Candy: Urgency */
+#eminus-pending-panel.ep-candy-theme .ep-item.ep-overdue {
+  background-color: #fde0ec;
+  border-left-color: #e86080;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item.ep-imminent {
+  background-color: #fdf0d8;
+  border-left-color: #e0a040;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-item.ep-urgent {
+  background-color: #d8f0e0;
+  border-left-color: #60b080;
+}
+
+/* Candy: Agenda */
+#eminus-pending-panel.ep-candy-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #e86080;
+}
+
+/* Candy: Toasts */
+#eminus-pending-panel.ep-candy-theme .ep-toast-new {
+  background: #fde0ec;
+  color: #e86080;
+  border-color: #e86080;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-toast-overdue {
+  background: #fde0ec;
+  color: #e86080;
+  border-color: #e86080;
+}
+
+#eminus-pending-panel.ep-candy-theme .ep-toast-info {
+  background: #d8f0e0;
+  color: #60b080;
+  border-color: #60b080;
+}
+
+/* ══════════════════════════════════════════
+   THEME: AURORA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-aurora-theme {
+  background: #0a0e1a;
+  color: #e4e8f0;
+  border-color: #1e293b;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-header,
+#eminus-pending-panel.ep-aurora-theme .ep-tabs,
+#eminus-pending-panel.ep-aurora-theme .ep-body,
+#eminus-pending-panel.ep-aurora-theme .ep-footer,
+#eminus-pending-panel.ep-aurora-theme .ep-item,
+#eminus-pending-panel.ep-aurora-theme .ep-log-item,
+#eminus-pending-panel.ep-aurora-theme .ep-theme-menu {
+  background: #0a0e1a;
+  border-color: #1e293b;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-seal-art,
+#eminus-pending-panel.ep-aurora-theme .ep-miyu-text,
+#eminus-pending-panel.ep-aurora-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-aurora-theme .ep-subtitle,
+#eminus-pending-panel.ep-aurora-theme .ep-btn,
+#eminus-pending-panel.ep-aurora-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-aurora-theme .ep-course,
+#eminus-pending-panel.ep-aurora-theme .ep-title-task,
+#eminus-pending-panel.ep-aurora-theme .ep-meta,
+#eminus-pending-panel.ep-aurora-theme .ep-log-time,
+#eminus-pending-panel.ep-aurora-theme .ep-log-summary,
+#eminus-pending-panel.ep-aurora-theme .ep-log-lines,
+#eminus-pending-panel.ep-aurora-theme .ep-log-changes,
+#eminus-pending-panel.ep-aurora-theme .ep-theme-option {
+  color: #e4e8f0 !important;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-tab {
+  color: #6b7a99;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-tab-active {
+  color: #0a0e1a;
+  background: #34d399;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #e4e8f0;
+  background: #1a2340;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-btn:hover {
+  background: #34d399;
+  color: #0a0e1a !important;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item-btn {
+  background: #111827;
+  border-color: #1e293b;
+  color: #34d399;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item-btn:hover {
+  background: #34d399;
+  color: #0a0e1a !important;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-theme-option:hover {
+  background: #1a2340;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-empty {
+  color: #6b7a99;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item-title {
+  color: #60a5fa;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item-date {
+  color: #6b7a99;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item-course {
+  color: #5a6a8a;
+}
+
+/* Aurora: Urgency */
+#eminus-pending-panel.ep-aurora-theme .ep-item.ep-overdue {
+  background-color: #2a0a0a;
+  border-left-color: #ef4444;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item.ep-imminent {
+  background-color: #2a2410;
+  border-left-color: #f59e0b;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-item.ep-urgent {
+  background-color: #003320;
+  border-left-color: #34d399;
+}
+
+/* Aurora: Agenda */
+#eminus-pending-panel.ep-aurora-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ef4444;
+}
+
+/* Aurora: Toasts */
+#eminus-pending-panel.ep-aurora-theme .ep-toast-new {
+  background: #2a0a0a;
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-toast-overdue {
+  background: #2a0a0a;
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+#eminus-pending-panel.ep-aurora-theme .ep-toast-info {
+  background: #00142a;
+  color: #60a5fa;
+  border-color: #60a5fa;
+}
+
+/* ══════════════════════════════════════════
+   THEME: SYNTHWAVE
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-synthwave-theme {
+  background: #1a1b26;
+  color: #c0caf5;
+  border-color: #24283b;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-header {
+  background: #1f2335;
+  border-bottom: 2px solid #7aa2f7;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-seal-art,
+#eminus-pending-panel.ep-synthwave-theme .ep-miyu-text,
+#eminus-pending-panel.ep-synthwave-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-synthwave-theme .ep-subtitle,
+#eminus-pending-panel.ep-synthwave-theme .ep-btn,
+#eminus-pending-panel.ep-synthwave-theme .ep-autorefresh-select {
+  color: #7aa2f7 !important;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-title-wrap .ep-title {
+  text-shadow: 0 0 8px rgba(122, 162, 247, 0.4);
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-tabs {
+  background: #1f2335;
+  border-bottom-color: #24283b;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-tab {
+  color: #565f89;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-tab-active {
+  color: #bb9af7;
+  background: #24283b;
+  border-bottom: 2px solid #bb9af7;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #7dcfff;
+  background: #24283b;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-body {
+  background: #1a1b26;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-item,
+#eminus-pending-panel.ep-synthwave-theme .ep-log-item {
+  background: #1a1b26;
+  border-color: #24283b;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-item-btn:hover .ep-item {
+  background: #7aa2f7;
+  color: #1a1b26 !important;
+  border-color: #7aa2f7;
+  transform: none;
+  box-shadow: none;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-synthwave-theme .ep-item-btn:hover .ep-item .ep-title-task,
+#eminus-pending-panel.ep-synthwave-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: #1a1b26 !important;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-course {
+  color: #bb9af7;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-title-task {
+  color: #7dcfff !important;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-meta {
+  color: #565f89;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-btn:hover {
+  background: #7aa2f7;
+  color: #1a1b26 !important;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-mini-btn {
+  background: #1a1b26;
+  border: 1px solid #bb9af7;
+  color: #bb9af7;
+  border-radius: 4px;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-mini-btn:hover {
+  background: #bb9af7;
+  color: #1a1b26 !important;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-footer {
+  background: #1f2335;
+  border-top-color: #24283b;
+  color: #565f89;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-theme-menu {
+  background: #1f2335;
+  border-color: #bb9af7;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-theme-option {
+  color: #c0caf5;
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-theme-option:hover {
+  background: #24283b;
+  color: #7dcfff;
+}
+
+/* Synthwave: Urgency */
+#eminus-pending-panel.ep-synthwave-theme .ep-item.ep-overdue {
+  border-left: 4px solid #f7768e;
+  background: rgba(247, 118, 142, 0.05);
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-item.ep-imminent {
+  border-left: 4px solid #e0af68;
+  background: rgba(224, 175, 104, 0.05);
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-item.ep-urgent {
+  border-left: 4px solid #9ece6a;
+  background: rgba(158, 206, 106, 0.05);
+}
+
+/* Synthwave: Agenda */
+#eminus-pending-panel.ep-synthwave-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #f7768e;
+  text-shadow: 0 0 5px rgba(247, 118, 142, 0.4);
+}
+
+/* Synthwave: Toasts */
+#eminus-pending-panel.ep-synthwave-theme .ep-toast-new {
+  background: #1f2335;
+  color: #7dcfff;
+  border-color: #7dcfff;
+  box-shadow: 0 0 10px rgba(125, 207, 255, 0.3);
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-toast-overdue {
+  background: #1f2335;
+  color: #f7768e;
+  border-color: #f7768e;
+  box-shadow: 0 0 10px rgba(247, 118, 142, 0.3);
+}
+
+#eminus-pending-panel.ep-synthwave-theme .ep-toast-info {
+  background: #1f2335;
+  color: #bb9af7;
+  border-color: #bb9af7;
+  box-shadow: 0 0 10px rgba(187, 154, 247, 0.3);
+}
+
+/* ══════════════════════════════════════════
+   THEME: MINIMAL
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-minimal-theme {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-header,
+#eminus-pending-panel.ep-minimal-theme .ep-tabs,
+#eminus-pending-panel.ep-minimal-theme .ep-body,
+#eminus-pending-panel.ep-minimal-theme .ep-footer,
+#eminus-pending-panel.ep-minimal-theme .ep-item,
+#eminus-pending-panel.ep-minimal-theme .ep-log-item,
+#eminus-pending-panel.ep-minimal-theme .ep-theme-menu {
+  background: #ffffff;
+  border-color: #f0f0f0;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-seal-art,
+#eminus-pending-panel.ep-minimal-theme .ep-miyu-text,
+#eminus-pending-panel.ep-minimal-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-minimal-theme .ep-subtitle,
+#eminus-pending-panel.ep-minimal-theme .ep-btn,
+#eminus-pending-panel.ep-minimal-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-minimal-theme .ep-course,
+#eminus-pending-panel.ep-minimal-theme .ep-title-task,
+#eminus-pending-panel.ep-minimal-theme .ep-meta,
+#eminus-pending-panel.ep-minimal-theme .ep-log-time,
+#eminus-pending-panel.ep-minimal-theme .ep-log-summary,
+#eminus-pending-panel.ep-minimal-theme .ep-log-lines,
+#eminus-pending-panel.ep-minimal-theme .ep-log-changes,
+#eminus-pending-panel.ep-minimal-theme .ep-theme-option {
+  color: #1a1a1a !important;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-tab {
+  color: #999;
+  transition: all 0.2s ease;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-tab-active {
+  color: #000;
+  background: #f8f8f8;
+  font-weight: 600;
+  border-bottom: 2px solid #000;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #000;
+  background: #fafafa;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-btn {
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-header .ep-btn {
+  border: none;
+  padding: 4px;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-header .ep-actions {
+  gap: 14px;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-archive-stack .ep-archive-btn {
+  top: -8px; /* Slightly higher to avoid overlap */
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-btn:hover {
+  background: #f0f0f0;
+  color: #000 !important;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn {
+  background: #fff;
+  border-color: #eee;
+  color: #666;
+  border-radius: 4px;
+  text-transform: lowercase;
+  font-size: 0.85em;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn:hover {
+  background: #f5f5f5;
+  color: #000 !important;
+  border-color: #ddd;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-theme-option {
+  border-bottom: 1px solid #f9f9f9;
+  font-weight: 300;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-theme-option:hover {
+  background: #fafafa;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-empty {
+  color: #ccc;
+  font-style: italic;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item,
+#eminus-pending-panel.ep-minimal-theme .ep-log-item {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn:hover .ep-item {
+  background: #000000;
+  color: #ffffff !important;
+  border-color: #000000;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn:hover .ep-item .ep-title-task,
+#eminus-pending-panel.ep-minimal-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-title,
+#eminus-pending-panel.ep-minimal-theme .ep-title-task {
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-date {
+  color: #888;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item-course {
+  color: #aaa;
+  font-size: 0.8em;
+}
+
+/* Minimal: Urgency (using very soft accents) */
+#eminus-pending-panel.ep-minimal-theme .ep-item.ep-overdue {
+  background-color: #fffafa;
+  border-left: 3px solid #ff4d4f;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item.ep-imminent {
+  background-color: #fffdf6;
+  border-left: 3px solid #ffc53d;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-item.ep-urgent {
+  background-color: #f6ffed;
+  border-left: 3px solid #73d13d;
+}
+
+/* Minimal: Agenda */
+#eminus-pending-panel.ep-minimal-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #ff4d4f;
+}
+
+/* Minimal: Toasts */
+#eminus-pending-panel.ep-minimal-theme .ep-toast-new {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #000;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-toast-overdue {
+  background: #fff;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+}
+
+#eminus-pending-panel.ep-minimal-theme .ep-toast-info {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #eee;
+}
+
+/* ══════════════════════════════════════════
+   THEME: WISPR
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-wispr-theme {
+  background: #fbfaf3;
+  color: #1a1a1a;
+  border-color: #e5e4da;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-header {
+  background: #1a342d;
+  border-bottom: 1px solid #1a342d;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-seal-art,
+#eminus-pending-panel.ep-wispr-theme .ep-miyu-text,
+#eminus-pending-panel.ep-wispr-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-wispr-theme .ep-subtitle,
+#eminus-pending-panel.ep-wispr-theme .ep-btn {
+  color: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-title-wrap .ep-title {
+  font-family: "Georgia", serif;
+  font-size: 16px;
+  text-transform: none;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-tabs {
+  background: #fbfaf3;
+  border-bottom-color: #e5e4da;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-tab {
+  color: #666;
+  font-size: 0.9em;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-tab-active {
+  color: #1a1a1a;
+  background: #fbfaf3;
+  border-bottom: 2px solid #1a1a1a;
+  font-weight: 600;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-body {
+  background: #fbfaf3;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item,
+#eminus-pending-panel.ep-wispr-theme .ep-log-item {
+  border: 1.5px solid #1a1a1a;
+  background: #ecd8fc; /* El color rosa solicitado */
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item-btn:hover .ep-item {
+  background: #ecd8fc !important; /* Mantener el rosa */
+  color: #1a1a1a !important;
+  border-color: #1a1a1a;
+}
+
+/* Wispr: Wave Animation */
+#eminus-pending-panel.ep-wispr-theme .ep-wave-text span {
+  display: inline-block;
+  transition: transform 0.2s;
+  cursor: default;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-wave-text .ep-space {
+  display: inline-block;
+  width: 0.3em; /* Asegurar espacio consistente */
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item-btn:hover .ep-wave-text span {
+  animation: ep-wispr-wave 0.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * 0.05s);
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item-btn:hover .ep-wave-text .ep-space {
+  animation: none; /* No animar espacios */
+}
+
+@keyframes ep-wispr-wave {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-wispr-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: #1a1a1a !important;
+  opacity: 0.8;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-title-task {
+  color: #1a1a1a;
+  font-family: "Georgia", serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-course {
+  font-family: sans-serif;
+  color: #1a1a1a;
+  opacity: 0.6;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-meta {
+  color: #1a1a1a;
+  opacity: 0.6;
+  font-size: 0.85em;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-mini-btn {
+  border: 1.5px solid #1a1a1a;
+  background: #ffffff; /* Favoritos siempre blanco */
+  border-radius: 20px;
+  color: #1a1a1a;
+  padding: 4px 10px;
+  font-family: sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-mini-btn:hover {
+  background: #fbfaf3;
+  transform: scale(1.1);
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-pin-btn {
+  background: #ffffff !important;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-footer {
+  background: #fbfaf3;
+  border-top-color: #e5e4da;
+  color: #888;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-theme-option:hover {
+  background: #fbfaf3;
+}
+
+/* Wispr: Urgency */
+#eminus-pending-panel.ep-wispr-theme .ep-item.ep-overdue {
+  border-left: 4px solid #ff4d4f;
+  background-color: #fff;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item.ep-imminent {
+  border-left: 4px solid #ffc53d;
+  background-color: #fff;
+}
+
+#eminus-pending-panel.ep-wispr-theme .ep-item.ep-urgent {
+  border-left: 4px solid #73d13d;
+  background-color: #fff;
+}
+
+/* Wispr: Toasts */
+/* ══════════════════════════════════════════
+   THEME: SOLARIZED OSAKA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-solarized-osaka-theme {
+  background: #001f27;
+  color: #fdf6e3;
+  border-color: #073642;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-header,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-tabs,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-body,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-footer,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-item,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-theme-menu {
+  background: #001f27;
+  border-color: #073642;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-seal-art,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-miyu-text,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-subtitle,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-btn,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-course,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-title-task,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-meta,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-time,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-summary,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-lines,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-changes,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-theme-option {
+  color: #fdf6e3 !important;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-tabs {
+  border-bottom-style: dashed;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-tab {
+  color: #586e75;
+  border-right-style: dashed;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-tab-active {
+  color: #2aa198;
+  background: #073642;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #93a1a1;
+  background: #002b36;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-btn:hover {
+  background: #2aa198;
+  color: #001f27 !important;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-log-item {
+  border: 1px solid #586e75;
+  background: #001f27;
+  border-radius: 0;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item {
+  background: #2aa198;
+  border-color: #2aa198;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item .ep-title-task,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: #001f27 !important;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-mini-btn {
+  background: #073642;
+  border: 1px dashed #586e75;
+  color: #2aa198;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-mini-btn:hover {
+  background: #2aa198;
+  color: #001f27 !important;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-theme-option:hover {
+  background: #073642;
+  color: #2aa198 !important;
+}
+
+/* Solarized Osaka: Urgency */
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item.ep-overdue {
+  background-color: #2b1d24;
+  border-left: 4px solid #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item.ep-imminent {
+  background-color: #29281c;
+  border-left: 4px dashed #b58900;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-item.ep-urgent {
+  background-color: #1e2b1d;
+  border-left: 4px dotted #859900;
+}
+
+/* Solarized Osaka: Agenda */
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #dc322f;
+}
+
+/* Solarized Osaka: Toasts */
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-toast-new {
+  background: #2b1d24;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-toast-overdue {
+  background: #2b1d24;
+  color: #dc322f;
+  border-color: #dc322f;
+}
+
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-toast-info {
+  background: #1a2a32;
+  color: #2aa198;
+  border-color: #2aa198;
+}
+
+/* ══════════════════════════════════════════
+   THEME: OLIVIA
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-olivia-theme {
+  background: #1c1b1a;
+  color: #cba694;
+  border-color: #3d3330;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-header,
+#eminus-pending-panel.ep-olivia-theme .ep-tabs,
+#eminus-pending-panel.ep-olivia-theme .ep-body,
+#eminus-pending-panel.ep-olivia-theme .ep-footer,
+#eminus-pending-panel.ep-olivia-theme .ep-item,
+#eminus-pending-panel.ep-olivia-theme .ep-log-item,
+#eminus-pending-panel.ep-olivia-theme .ep-theme-menu {
+  background: #1c1b1a;
+  border-color: #3d3330;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-seal-art,
+#eminus-pending-panel.ep-olivia-theme .ep-miyu-text,
+#eminus-pending-panel.ep-olivia-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-olivia-theme .ep-subtitle,
+#eminus-pending-panel.ep-olivia-theme .ep-btn,
+#eminus-pending-panel.ep-olivia-theme .ep-autorefresh-select,
+#eminus-pending-panel.ep-olivia-theme .ep-course,
+#eminus-pending-panel.ep-olivia-theme .ep-title-task,
+#eminus-pending-panel.ep-olivia-theme .ep-meta,
+#eminus-pending-panel.ep-olivia-theme .ep-log-time,
+#eminus-pending-panel.ep-olivia-theme .ep-log-summary,
+#eminus-pending-panel.ep-olivia-theme .ep-log-lines,
+#eminus-pending-panel.ep-olivia-theme .ep-log-changes,
+#eminus-pending-panel.ep-olivia-theme .ep-theme-option {
+  color: #cba694 !important;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-tabs {
+  border-bottom-style: dashed;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-tab {
+  color: #4a3e3a;
+  border-right-style: dashed;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-tab-active {
+  color: #f7f0e6;
+  background: #3d3330;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-tab:hover:not(.ep-tab-active) {
+  color: #cba694;
+  background: #2a2522;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-btn:hover {
+  background: #cba694;
+  color: #1c1b1a !important;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-item,
+#eminus-pending-panel.ep-olivia-theme .ep-log-item {
+  border: 1px solid #3d3330;
+  background: #1c1b1a;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item {
+  background: #cba694;
+  border-color: #cba694;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item .ep-title-task,
+#eminus-pending-panel.ep-olivia-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: #1c1b1a !important;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-mini-btn {
+  background: #3d3330;
+  border: 1px dashed #4a3e3a;
+  color: #cba694;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-mini-btn:hover {
+  background: #cba694;
+  color: #1c1b1a !important;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-theme-option:hover {
+  background: #2a2522;
+  color: #f7f0e6 !important;
+}
+
+/* Olivia: Urgency */
+#eminus-pending-panel.ep-olivia-theme .ep-item.ep-overdue {
+  background-color: #2b1d1d;
+  border-left: 4px solid #cba694;
+  border-left-color: #c05858;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-item.ep-imminent {
+  background-color: #2b281d;
+  border-left: 4px dashed #cba694;
+  border-left-color: #c0a058;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-item.ep-urgent {
+  background-color: #1d2b1d;
+  border-left: 4px dotted #cba694;
+  border-left-color: #72c058;
+}
+
+/* Olivia: Agenda */
+#eminus-pending-panel.ep-olivia-theme .ep-agenda-day-header.ep-agenda-overdue {
+  color: #c05858;
+}
+
+/* Olivia: Toasts */
+#eminus-pending-panel.ep-olivia-theme .ep-toast-new {
+  background: #2b1d1d;
+  color: #cba694;
+  border-color: #cba694;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-toast-overdue {
+  background: #2b1d1d;
+  color: #c05858;
+  border-color: #c05858;
+}
+
+#eminus-pending-panel.ep-olivia-theme .ep-toast-info {
+  background: #1d252b;
+  color: #cba694;
+  border-color: #cba694;
 }
