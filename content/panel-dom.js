@@ -100,9 +100,15 @@ em.createPanel = function () {
       <section class="ep-body ep-hidden" id="ep-body-log"></section>
 
       <footer class="ep-footer" id="ep-footer-status">Listo</footer>
+      <img class="ep-jazmin-bg" id="ep-jazmin-bg" src="" alt="" />
     `;
 
   document.body.appendChild(root);
+
+  const jazminBg = root.querySelector("#ep-jazmin-bg");
+  if (jazminBg) {
+    jazminBg.src = chrome.runtime.getURL("jazmin.png");
+  }
 
   em.panelEls = {
     root,
@@ -121,7 +127,8 @@ em.createPanel = function () {
     overdueBody: root.querySelector("#ep-body-overdue"),
     agendaBody: root.querySelector("#ep-body-agenda"),
     logBody: root.querySelector("#ep-body-log"),
-    footer: root.querySelector("#ep-footer-status")
+    footer: root.querySelector("#ep-footer-status"),
+    jazminBg: root.querySelector("#ep-jazmin-bg")
   };
 
   em.panelEls.themeBtn.addEventListener("click", em.toggleThemeMenu);

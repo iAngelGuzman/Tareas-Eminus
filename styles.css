@@ -33,6 +33,10 @@
   display: none;
 }
 
+#eminus-pending-panel.ep-collapsed .ep-jazmin-bg {
+  display: none !important;
+}
+
 #eminus-pending-panel.ep-collapsed .ep-header {
   padding: 8px;
   border-bottom: none;
@@ -604,6 +608,22 @@
   .ep-miyu-text {
     font-size: 4px;
   }
+}
+
+/* ══════════════════════════════════════════
+   THEME BACKGROUND IMAGE
+   ══════════════════════════════════════════ */
+
+.ep-jazmin-bg {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 140px;
+  height: auto;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 1;
+  display: none;
 }
 
 /* Theme styles → content/themes.css */

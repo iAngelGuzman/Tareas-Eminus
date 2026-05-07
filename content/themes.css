@@ -1888,6 +1888,11 @@
   border-color: #6a8a50;
 }
 
+/* Jazmín: Background image */
+#eminus-pending-panel.ep-jazmin-theme .ep-jazmin-bg {
+  display: block;
+}
+
 /* ══════════════════════════════════════════
    THEME: CANDY
    ══════════════════════════════════════════ */

@@ -48,5 +48,11 @@
   },
   "action": {
     "default_title": "Miyu --pendientes"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["jazmin.png"],
+      "matches": ["https://eminus.uv.mx/*"]
+    }
+  ]
 }
