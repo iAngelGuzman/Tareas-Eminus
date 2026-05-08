@@ -15,7 +15,10 @@ window.eminus.STORAGE_KEYS = {
   ACCOUNT_ID: "eminusAccountId",
   ARCHIVED: "eminusArchivedPendingIds",
   PINNED: "eminusPinnedPendingIds",
-  AUTO_REFRESH: "eminusAutoRefreshMinutes"
+  AUTO_REFRESH: "eminusAutoRefreshMinutes",
+  REMINDER_HOURS: "eminusReminderHours",
+  NOTIFIED_UPCOMING: "eminusNotifiedUpcomingIds",
+  FONT: "eminusPanelFont"
 };
 
 window.eminus.NAV_KEYS = {

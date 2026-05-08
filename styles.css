@@ -3,6 +3,10 @@
    ══════════════════════════════════════════ */
 
 #eminus-pending-panel {
+  --ep-bg-base: #fff;
+  --ep-text-base: #000;
+  --ep-bg-opposite: #fff;
+  --ep-font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   position: fixed;
   top: 96px;
   right: 16px;
@@ -13,7 +17,7 @@
   flex-direction: column;
   border: 1px solid #000;
   background: #ffffff;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--ep-font-family);
   color: #000;
   box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
 }
@@ -113,8 +117,9 @@
 
 .ep-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex: 0 0 auto;
+  align-items: center;
 }
 
 .ep-btn {
@@ -123,12 +128,12 @@
   width: auto;
   color: #000;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-family: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 4px 8px;
 }
 
 .ep-btn:hover {
@@ -136,30 +141,94 @@
   color: #fff;
 }
 
-.ep-autorefresh-select {
-  border: none;
+/* ══════════════════════════════════════════
+   CONFIG TAB STYLES
+   ══════════════════════════════════════════ */
+
+.ep-config-group {
+  margin-bottom: 20px;
+}
+
+.ep-config-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.ep-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.ep-theme-chip {
   background: transparent;
-  color: #888;
-  cursor: pointer;
+  border: 1px solid currentColor;
+  padding: 6px 4px;
   font-size: 11px;
   font-family: inherit;
-  padding: 0;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: inherit;
+}
+
+.ep-theme-chip:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.ep-theme-chip-active {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
+  font-weight: 700;
+}
+
+/* Reversa para temas oscuros para que el chip activo destaque */
+#eminus-pending-panel.ep-dark-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-hacker-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-dracula-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-ocean-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-synthwave-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-gruvbox-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-nord-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-moka-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-solarized-osaka-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-wispr-theme .ep-theme-chip-active {
+  background: #fff !important;
+  color: #000 !important;
+  border-color: #fff !important;
+}
+
+.ep-config-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ep-config-select {
+  width: 100%;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  padding: 8px;
+  font-size: 12px;
+  font-family: inherit;
   outline: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  text-transform: lowercase;
+  cursor: pointer;
 }
 
-.ep-autorefresh-select:hover,
-.ep-autorefresh-select:focus {
-  color: #000;
+.ep-config-select:hover {
+  background: rgba(128, 128, 128, 0.1);
 }
 
-.ep-autorefresh-select option {
-  text-transform: lowercase;
-  background: #fff;
-  color: #000;
+.ep-config-select option {
+  background: var(--ep-bg-base, #fff);
+  color: var(--ep-text-base, #000);
 }
 
 /* ══════════════════════════════════════════
@@ -494,58 +563,6 @@
 }
 
 /* ══════════════════════════════════════════
-   THEME MENU
-   ══════════════════════════════════════════ */
-
-.ep-theme-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 4px;
-  background: #fff;
-  border: 1px solid #000;
-  display: flex;
-  flex-direction: column;
-  max-height: 260px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  z-index: 100;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
-  min-width: 160px;
-}
-
-.ep-theme-menu::-webkit-scrollbar {
-  width: 4px;
-}
-
-.ep-theme-menu::-webkit-scrollbar-thumb {
-  background: #ccc;
-}
-
-.ep-theme-menu.ep-hidden {
-  display: none !important;
-}
-
-.ep-theme-option {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #000;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  color: #000;
-}
-
-.ep-theme-option:last-child {
-  border-bottom: none;
-}
-
-.ep-theme-option:hover {
-  background: #f0f0f0;
-}
-
-/* ══════════════════════════════════════════
    TOAST NOTIFICATIONS (BASE)
    ══════════════════════════════════════════ */
 
@@ -583,6 +600,12 @@
   background: #fff0f0;
   color: #e74c3c;
   border-color: #e74c3c;
+}
+
+.ep-toast-urgent {
+  background: #fff3e0;
+  color: #e67e22;
+  border-color: #e67e22;
 }
 
 .ep-toast-info {

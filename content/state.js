@@ -13,9 +13,11 @@ em.state = {
   logs: [],
   archivedIds: new Set(),
   pinnedIds: new Set(),
+  notifiedUpcomingIds: new Set(),
   lastUpdatedAt: null,
   isArchiveView: false,
-  lastTabBeforeArchive: "pending"
+  lastTabBeforeArchive: "pending",
+  reminderHours: 24
 };
 
 em.routeObserverStarted = false;
@@ -24,6 +26,12 @@ em.dragState = null;
 em.autoRefreshTimer = null;
 em.autoRefreshMinutes = 0;
 em.panelEls = null;
+
+em.normalizeNotifiedUpcomingIds = function (raw) {
+  if (!Array.isArray(raw)) return new Set();
+  const ids = raw.map((id) => String(id)).filter((id) => id);
+  return new Set(ids);
+};
 
 em.normalizeArchivedIds = function (raw) {
   if (!Array.isArray(raw)) return new Set();

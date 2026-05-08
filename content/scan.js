@@ -7,7 +7,18 @@ window.eminus = window.eminus || {};
 var em = window.eminus;
 
 em.hydrateFromStorage = async function () {
-  let data = await em.storageGet([em.STORAGE_KEYS.LOG, em.STORAGE_KEYS.SNAPSHOT, em.STORAGE_KEYS.THEME, em.STORAGE_KEYS.ACCOUNT_ID, em.STORAGE_KEYS.ARCHIVED, em.STORAGE_KEYS.PINNED, em.STORAGE_KEYS.AUTO_REFRESH]);
+  let data = await em.storageGet([
+    em.STORAGE_KEYS.LOG,
+    em.STORAGE_KEYS.SNAPSHOT,
+    em.STORAGE_KEYS.THEME,
+    em.STORAGE_KEYS.ACCOUNT_ID,
+    em.STORAGE_KEYS.ARCHIVED,
+    em.STORAGE_KEYS.PINNED,
+    em.STORAGE_KEYS.AUTO_REFRESH,
+    em.STORAGE_KEYS.REMINDER_HOURS,
+    em.STORAGE_KEYS.NOTIFIED_UPCOMING,
+    em.STORAGE_KEYS.FONT
+  ]);
 
   const storedAccountId = data[em.STORAGE_KEYS.ACCOUNT_ID];
   const currentToken = em.getToken();
@@ -20,12 +31,14 @@ em.hydrateFromStorage = async function () {
     clearPayload[em.STORAGE_KEYS.KNOWN_IDS] = [];
     clearPayload[em.STORAGE_KEYS.ARCHIVED] = [];
     clearPayload[em.STORAGE_KEYS.PINNED] = [];
+    clearPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
     clearPayload[em.STORAGE_KEYS.ACCOUNT_ID] = currentAccountId;
     await em.storageSet(clearPayload);
     data[em.STORAGE_KEYS.LOG] = [];
     data[em.STORAGE_KEYS.SNAPSHOT] = null;
     data[em.STORAGE_KEYS.ARCHIVED] = [];
     data[em.STORAGE_KEYS.PINNED] = [];
+    data[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
     await em.syncBadge(0);
   } else if (currentAccountId && !storedAccountId) {
     const idPayload = {};
@@ -38,11 +51,13 @@ em.hydrateFromStorage = async function () {
   em.state.logs = Array.isArray(data[em.STORAGE_KEYS.LOG]) ? data[em.STORAGE_KEYS.LOG] : [];
   em.state.archivedIds = em.normalizeArchivedIds(data[em.STORAGE_KEYS.ARCHIVED]);
   em.state.pinnedIds = em.normalizePinnedIds(data[em.STORAGE_KEYS.PINNED]);
+  em.state.notifiedUpcomingIds = em.normalizeNotifiedUpcomingIds(data[em.STORAGE_KEYS.NOTIFIED_UPCOMING]);
 
   const theme = data[em.STORAGE_KEYS.THEME] || "light";
   if (theme !== "light") {
     em.panelEls.root.classList.add("ep-" + theme + "-theme");
   }
+  em.updateActiveThemeChip && em.updateActiveThemeChip(theme);
 
   const snapshot = data[em.STORAGE_KEYS.SNAPSHOT];
   if (snapshot && Array.isArray(snapshot.pending)) {
@@ -50,21 +65,16 @@ em.hydrateFromStorage = async function () {
     em.applyPinnedState(em.state.pending, em.state.pinnedIds);
     em.state.lastUpdatedAt = snapshot.updatedAt || null;
 
-    const prunedArchived = em.pruneArchivedIds(em.state.pending, em.state.archivedIds);
-    if (!em.setsEqual(prunedArchived, em.state.archivedIds)) {
-      em.state.archivedIds = prunedArchived;
-      const archPayload = {};
-      archPayload[em.STORAGE_KEYS.ARCHIVED] = Array.from(prunedArchived);
-      await em.storageSet(archPayload);
-    }
+    // Prune settings against actual pending tasks
+    em.state.archivedIds = em.pruneArchivedIds(em.state.pending, em.state.archivedIds);
+    em.state.pinnedIds = em.prunePinnedIds(em.state.pending, em.state.pinnedIds);
+    em.state.notifiedUpcomingIds = em.pruneNotifiedUpcomingIds(em.state.pending, em.state.notifiedUpcomingIds);
 
-    const prunedPinned = em.prunePinnedIds(em.state.pending, em.state.pinnedIds);
-    if (!em.setsEqual(prunedPinned, em.state.pinnedIds)) {
-      em.state.pinnedIds = prunedPinned;
-      const pinPayload = {};
-      pinPayload[em.STORAGE_KEYS.PINNED] = Array.from(prunedPinned);
-      await em.storageSet(pinPayload);
-    }
+    const prunePayload = {};
+    prunePayload[em.STORAGE_KEYS.ARCHIVED] = Array.from(em.state.archivedIds);
+    prunePayload[em.STORAGE_KEYS.PINNED] = Array.from(em.state.pinnedIds);
+    prunePayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = Array.from(em.state.notifiedUpcomingIds);
+    await em.storageSet(prunePayload);
 
     em.state.pending.sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
@@ -96,9 +106,35 @@ em.hydrateFromStorage = async function () {
 
   const storedAutoRefresh = Number(data[em.STORAGE_KEYS.AUTO_REFRESH]) || 0;
   if (storedAutoRefresh > 0 && em.panelEls && em.panelEls.autoRefreshSelect) {
-    em.panelEls.autoRefreshSelect.value = String(storedAutoRefresh);
     em.startAutoRefresh(storedAutoRefresh);
   }
+
+  const storedReminderHours = data[em.STORAGE_KEYS.REMINDER_HOURS] !== undefined ? Number(data[em.STORAGE_KEYS.REMINDER_HOURS]) : 24;
+  em.state.reminderHours = storedReminderHours;
+  if (em.panelEls && em.panelEls.reminderSelect) {
+    em.panelEls.reminderSelect.value = String(storedReminderHours);
+  }
+
+  const storedFont = data[em.STORAGE_KEYS.FONT] || "mono";
+  em.setFont(storedFont);
+};
+
+em.setReminderHours = async function (hours) {
+  em.state.reminderHours = hours;
+  const payload = {};
+  payload[em.STORAGE_KEYS.REMINDER_HOURS] = hours;
+  await em.storageSet(payload);
+};
+
+em.pruneNotifiedUpcomingIds = function (items, notifiedSet) {
+  const next = new Set();
+  if (!Array.isArray(items)) return next;
+  items.forEach((item) => {
+    if (item && item.id && notifiedSet.has(item.id)) {
+      next.add(item.id);
+    }
+  });
+  return next;
 };
 
 em.scanPending = async function () {
@@ -115,12 +151,19 @@ em.scanPending = async function () {
     }
 
     const currentAccountId = em.getAccountIdFromToken(token);
-    let knownData = await em.storageGet([em.STORAGE_KEYS.KNOWN_IDS, em.STORAGE_KEYS.ACCOUNT_ID, em.STORAGE_KEYS.ARCHIVED, em.STORAGE_KEYS.PINNED]);
+    let knownData = await em.storageGet([
+      em.STORAGE_KEYS.KNOWN_IDS,
+      em.STORAGE_KEYS.ACCOUNT_ID,
+      em.STORAGE_KEYS.ARCHIVED,
+      em.STORAGE_KEYS.PINNED,
+      em.STORAGE_KEYS.NOTIFIED_UPCOMING
+    ]);
 
     if (knownData[em.STORAGE_KEYS.ACCOUNT_ID] && currentAccountId && knownData[em.STORAGE_KEYS.ACCOUNT_ID] !== currentAccountId) {
       knownData[em.STORAGE_KEYS.KNOWN_IDS] = [];
       knownData[em.STORAGE_KEYS.ARCHIVED] = [];
       knownData[em.STORAGE_KEYS.PINNED] = [];
+      knownData[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
       em.state.logs = [];
       const clearPayload = {};
       clearPayload[em.STORAGE_KEYS.LOG] = [];
@@ -128,6 +171,7 @@ em.scanPending = async function () {
       clearPayload[em.STORAGE_KEYS.KNOWN_IDS] = [];
       clearPayload[em.STORAGE_KEYS.ARCHIVED] = [];
       clearPayload[em.STORAGE_KEYS.PINNED] = [];
+      clearPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
       clearPayload[em.STORAGE_KEYS.ACCOUNT_ID] = currentAccountId;
       await em.storageSet(clearPayload);
     } else if (!knownData[em.STORAGE_KEYS.ACCOUNT_ID] && currentAccountId) {
@@ -139,6 +183,7 @@ em.scanPending = async function () {
     const knownIds = new Set(Array.isArray(knownData[em.STORAGE_KEYS.KNOWN_IDS]) ? knownData[em.STORAGE_KEYS.KNOWN_IDS] : []);
     em.state.archivedIds = em.normalizeArchivedIds(knownData[em.STORAGE_KEYS.ARCHIVED]);
     em.state.pinnedIds = em.normalizePinnedIds(knownData[em.STORAGE_KEYS.PINNED]);
+    em.state.notifiedUpcomingIds = em.normalizeNotifiedUpcomingIds(knownData[em.STORAGE_KEYS.NOTIFIED_UPCOMING]);
 
     const pending = await em.buildPendingData(token, em.state.pinnedIds);
     em.applyArchivedState(pending, em.state.archivedIds);
@@ -167,10 +212,36 @@ em.scanPending = async function () {
     const currentOverdueIds = new Set(currentOverdue.map((item) => item.id));
     const newlyOverdue = currentOverdue.filter((item) => !previousOverdueIds.has(item.id));
 
+    // Upcoming reminders logic
+    const upcomingNotifications = [];
+    if (em.state.reminderHours > 0) {
+      const thresholdMs = em.state.reminderHours * 60 * 60 * 1000;
+      const now = Date.now();
+      for (const item of visiblePending) {
+        if (!item.deadlineRaw || item.urgency === "overdue") continue;
+        const deadline = new Date(item.deadlineRaw).getTime();
+        const diff = deadline - now;
+        if (diff > 0 && diff <= thresholdMs) {
+          if (!em.state.notifiedUpcomingIds.has(item.id)) {
+            upcomingNotifications.push(item);
+            em.state.notifiedUpcomingIds.add(item.id);
+          }
+        }
+      }
+    }
+
     em.state.pending = pending;
     em.renderPending(pending);
 
     const logMeta = await em.appendLog(pending, knownIds, visiblePending, previousPending);
+    
+    // Save notified IDs
+    if (upcomingNotifications.length > 0) {
+      const notifiedPayload = {};
+      notifiedPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = Array.from(em.state.notifiedUpcomingIds);
+      await em.storageSet(notifiedPayload);
+    }
+
     em.renderLogs(em.state.logs);
     em.state.lastUpdatedAt = logMeta.updatedAt;
 
@@ -191,6 +262,12 @@ em.scanPending = async function () {
       const msg = newlyOverdue.length === 1 ? "1 tarea acaba de vencerse" : newlyOverdue.length + " tareas acaban de vencerse";
       em.showToast(msg, "overdue");
       await em.notifyUser("Tarea vencida en Eminus", msg);
+    }
+
+    for (const item of upcomingNotifications) {
+      const msg = `Faltan menos de ${em.state.reminderHours}h para: ${item.title}`;
+      em.showToast(msg, "urgent");
+      await em.notifyUser("Recordatorio de Eminus", msg);
     }
 
     await em.syncBadge(visiblePending.length, logMeta.newCount, currentOverdue.length);

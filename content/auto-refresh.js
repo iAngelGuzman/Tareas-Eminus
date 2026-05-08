@@ -14,6 +14,10 @@ em.startAutoRefresh = function (minutes) {
   em.autoRefreshTimer = window.setInterval(() => {
     em.scanPending();
   }, ms);
+
+  if (em.panelEls && em.panelEls.autoRefreshSelect) {
+    em.panelEls.autoRefreshSelect.value = String(minutes);
+  }
   em.updateAutoRefreshLabel(minutes);
 };
 
