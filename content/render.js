@@ -26,11 +26,6 @@ em.renderAgenda = function (items) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  if (visibleItems.length === 0) {
-    em.panelEls.agendaBody.innerHTML = `<div class="ep-empty">Sin tareas pendientes detectadas.</div>`;
-    return;
-  }
-
   let html = "";
 
   const buildMiniItem = (item) => {
