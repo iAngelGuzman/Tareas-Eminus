@@ -23,13 +23,13 @@ em.detectChanges = function (pending, previousPending) {
       changes.push({
         type: "deadline",
         title: item.course + " - " + item.title,
-        from: prev.deadlineStr || prev.deadlineLabel || "Sin fecha",
-        to: item.deadlineStr || item.deadlineLabel || "Sin fecha"
+        from: prev.deadlineStr || prev.deadlineLabel || em.t("due_nodate"),
+        to: item.deadlineStr || item.deadlineLabel || em.t("due_nodate")
       });
     }
 
-    const prevStatus = prev.estatus || (prev.entregada ? "Entregada" : prev.completada ? "Completada" : "Pendiente");
-    const newStatus = item.estatus || (item.entregada ? "Entregada" : item.completada ? "Completada" : "Pendiente");
+    const prevStatus = prev.estatus || (prev.entregada ? em.t("status_delivered") : prev.completada ? em.t("status_completed") : em.t("status_pending_label"));
+    const newStatus = item.estatus || (item.entregada ? em.t("status_delivered") : item.completada ? em.t("status_completed") : em.t("status_pending_label"));
     if (prevStatus !== newStatus) {
       changes.push({
         type: "status",

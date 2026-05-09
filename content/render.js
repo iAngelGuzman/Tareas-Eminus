@@ -31,8 +31,15 @@ em.renderAgenda = function (items) {
   const buildMiniItem = (item) => {
     const urgencyClass = "ep-" + item.urgency;
     const originalIndex = items.indexOf(item);
-    const timeMatch = item.deadlineLabel ? item.deadlineLabel.match(/(\d{1,2}:\d{2})/) : null;
-    const timeStr = timeMatch ? timeMatch[1] : "";
+    
+    // Recalculate deadline label for current language
+    const dDate = item.deadlineRaw ? new Date(item.deadlineRaw) : null;
+    const remaining = em.getTimeRemaining(dDate);
+    const timeMatch = remaining ? remaining.match(/(\d{1,2}:\d{2})/) : null; // This might be wrong if getTimeRemaining doesn't return time
+    // Better: extract time from deadlineStr which is original from Eminus
+    const timeMatch2 = item.deadlineStr ? item.deadlineStr.match(/(\d{1,2}:\d{2})/) : null;
+    const timeStr = timeMatch2 ? timeMatch2[1] : "";
+    
     const pinIcon = item.pinned ? `<span style="margin-right:4px;opacity:0.9;">★</span>` : "";
     return `
         <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
@@ -49,26 +56,25 @@ em.renderAgenda = function (items) {
 
   if (overdueItems.length > 0) {
     html += `<div class="ep-agenda-day">`;
-    html += `<div class="ep-agenda-day-header ep-agenda-overdue">Vencidas</div>`;
+    html += `<div class="ep-agenda-day-header ep-agenda-overdue">${em.escapeHtml(em.t("agenda_overdue"))}</div>`;
     overdueItems.forEach((item) => {
       html += buildMiniItem(item);
     });
     html += `</div>`;
   }
 
-  const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
   for (let i = 0; i < 7; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
     const dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    const dayName = dayNames[d.getDay()];
-    const dayLabel = i === 0 ? "Hoy" : i === 1 ? "Mañana" : `${dayName} ${d.getDate()}`;
+    const dayName = em.t("day_" + d.getDay());
+    const dayLabel = i === 0 ? em.t("agenda_today") : i === 1 ? em.t("agenda_tomorrow") : `${dayName} ${d.getDate()}`;
     const dayItems = groups[dateStr] || [];
 
     html += `<div class="ep-agenda-day">`;
     html += `<div class="ep-agenda-day-header">${em.escapeHtml(dayLabel)}</div>`;
     if (dayItems.length === 0) {
-      html += `<div class="ep-agenda-empty">Libre</div>`;
+      html += `<div class="ep-agenda-empty">${em.escapeHtml(em.t("agenda_free"))}</div>`;
     } else {
       dayItems.forEach((item) => {
         html += buildMiniItem(item);
@@ -89,14 +95,18 @@ em.renderAgenda = function (items) {
     futureItems.forEach((item) => {
       const originalIndex = items.indexOf(item);
       const urgencyClass = "ep-" + item.urgency;
-      const due = item.deadlineLabel || "";
+      
+      const dDate = item.deadlineRaw ? new Date(item.deadlineRaw) : null;
+      const remaining = em.getTimeRemaining(dDate);
+      const currentDeadlineLabel = remaining ? item.deadlineStr + " (" + remaining + ")" : item.deadlineStr;
+      
       const pinIcon = item.pinned ? `<span style="margin-right:4px;opacity:0.9;">★</span>` : "";
       html += `
           <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
             <article class="ep-item ${urgencyClass} ep-agenda-item">
               <div class="ep-course">${em.escapeHtml(item.course)}</div>
               <div class="ep-title-task" style="font-size: 12px; margin-bottom: 4px;">${pinIcon}${em.escapeHtml(item.title)}</div>
-              <div class="ep-meta">${em.escapeHtml(due)}</div>
+              <div class="ep-meta">${em.escapeHtml(currentDeadlineLabel)}</div>
             </article>
           </div>
         `;
@@ -133,7 +143,12 @@ em.renderPending = function (items) {
     return list
       .map((item) => {
         const urgencyClass = "ep-" + item.urgency;
-        const due = item.deadlineLabel || em.t("due_nodate");
+        
+        // Recalculate deadline label for current language
+        const dDate = item.deadlineRaw ? new Date(item.deadlineRaw) : null;
+        const remaining = em.getTimeRemaining(dDate);
+        const currentDeadlineLabel = remaining ? item.deadlineStr + " (" + remaining + ")" : (item.deadlineStr || em.t("due_nodate"));
+        
         const originalIndex = items.indexOf(item);
         const archivedClass = item.archived ? "ep-archived" : "";
         const pinLabel = item.pinned ? em.t("action_unpin") : em.t("action_pin");
@@ -146,8 +161,8 @@ em.renderPending = function (items) {
           : "";
         const buttonsHtml = [pinHtml, actionHtml].filter(Boolean).join("");
         const metaHtml = buttonsHtml
-          ? `<div class="ep-meta-row"><div class="ep-meta">${em.t("due")} ${em.escapeHtml(due)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
-          : `<div class="ep-meta">${em.t("due")} ${em.escapeHtml(due)}</div>`;
+          ? `<div class="ep-meta-row"><div class="ep-meta">${em.t("due")} ${em.escapeHtml(currentDeadlineLabel)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
+          : `<div class="ep-meta">${em.t("due")} ${em.escapeHtml(currentDeadlineLabel)}</div>`;
         return `
             <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
               <article class="ep-item ${urgencyClass} ${archivedClass}">
@@ -259,7 +274,7 @@ em.renderLogs = function (logs) {
       return `
           <article class="ep-log-item">
             <div class="ep-log-time">${em.escapeHtml(em.formatDateTime(entry.timestamp))}</div>
-            <div class="ep-log-summary">${pendingCount} pendientes (${newCount} nuevas)</div>
+            <div class="ep-log-summary">${pendingCount} ${em.t("status_pending")} (${newCount} ${em.t("status_new")})</div>
             ${changesHtml}
             ${lines}
           </article>

@@ -47,13 +47,15 @@ window.eminus = window.eminus || {};
 
   window.addEventListener("online", () => {
     if (em.panelEls?.footer) {
-      const txt = em.panelEls.footer.textContent.replace(/^Sin conexión\s*(—\s*)?/, "");
-      em.panelEls.footer.textContent = txt || "En línea";
+      const offlineLabel = em.t("offline");
+      const regex = new RegExp(`^${offlineLabel}\\s*(—\\s*)?`);
+      const txt = em.panelEls.footer.textContent.replace(regex, "");
+      em.panelEls.footer.textContent = txt || em.t("online");
     }
     em.scanPending();
   });
 
   window.addEventListener("offline", () => {
-    em.setStatus("Sin conexión");
+    em.setStatus(em.t("offline"));
   });
 })();

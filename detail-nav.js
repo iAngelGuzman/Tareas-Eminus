@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   if (window.__eminusDetailBackInjected) return;
   window.__eminusDetailBackInjected = true;
 
@@ -6,15 +6,68 @@
     return;
   }
 
+  const i18n = {
+    es: { 
+      back_to_eminus: "Volver a Eminus",
+      delivered: "Tarea entregada"
+    },
+    en: { 
+      back_to_eminus: "Back to Eminus",
+      delivered: "Task delivered"
+    },
+    fr: { 
+      back_to_eminus: "Retour à Eminus",
+      delivered: "Tâche livrée"
+    },
+    ja: { 
+      back_to_eminus: "Eminusに戻る",
+      delivered: "提出完了"
+    },
+    ko: { 
+      back_to_eminus: "Eminus로 돌아가기",
+      delivered: "과제 제출됨"
+    },
+    zh: { 
+      back_to_eminus: "返回 Eminus",
+      delivered: "任务已提交"
+    }
+  };
+
+  let currentLang = "es";
+
+  async function updateLanguage() {
+    const data = await chrome.storage.local.get("eminusLanguage");
+    currentLang = data.eminusLanguage || "es";
+    
+    const btn = document.getElementById("ep-back-home-btn");
+    if (btn) {
+      btn.textContent = t("back_to_eminus");
+    }
+  }
+
+  const t = (key) => i18n[currentLang]?.[key] || i18n["es"][key];
+
+  // Initial load
+  await updateLanguage();
+
   const btn = document.createElement("button");
   btn.id = "ep-back-home-btn";
   btn.type = "button";
-  btn.textContent = "Volver a Eminus";
+  btn.textContent = t("back_to_eminus");
   btn.addEventListener("click", () => {
     window.location.assign(`${location.origin}/eminus4/page/course/list`);
   });
 
   document.body.appendChild(btn);
+
+  // Listen for changes in storage (when user changes language in the main panel)
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.eminusLanguage) {
+      currentLang = changes.eminusLanguage.newValue || "es";
+      const backBtn = document.getElementById("ep-back-home-btn");
+      if (backBtn) backBtn.textContent = t("back_to_eminus");
+    }
+  });
 
   function showCelebration() {
     if (document.getElementById("ep-celebration-overlay")) return;
@@ -92,14 +145,22 @@
 
     const txt = document.createElement("pre");
     txt.className = "ep-celebration-cat-text";
-    txt.textContent = [
-      " _____                                 _                            _       ",
-      "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
-      "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
-      "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
-      "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
-      "                                                    |___/ "
-    ].join("\n");
+    if (currentLang === "es") {
+      txt.textContent = [
+        " _____                                 _                            _       ",
+        "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
+        "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
+        "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
+        "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
+        "                                                    |___/ "
+      ].join("\n");
+    } else {
+      txt.textContent = t("delivered").toUpperCase();
+      txt.style.fontSize = "24px";
+      txt.style.fontWeight = "bold";
+      txt.style.textAlign = "center";
+      txt.style.marginTop = "10px";
+    }
     catWrap.appendChild(txt);
     overlay.appendChild(catWrap);
 
@@ -230,14 +291,22 @@
 
     const txtAscii = document.createElement("pre");
     txtAscii.className = "ep-abduction-cat-text";
-    txtAscii.textContent = [
-      " _____                                 _                            _       ",
-      "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
-      "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
-      "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
-      "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
-      "                                                    |___/ "
-    ].join("\n");
+    if (currentLang === "es") {
+      txtAscii.textContent = [
+        " _____                                 _                            _       ",
+        "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
+        "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
+        "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
+        "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
+        "                                                    |___/ "
+      ].join("\n");
+    } else {
+      txtAscii.textContent = t("delivered").toUpperCase();
+      txtAscii.style.fontSize = "24px";
+      txtAscii.style.fontWeight = "bold";
+      txtAscii.style.textAlign = "center";
+      txtAscii.style.marginTop = "10px";
+    }
     catMsg.appendChild(txtAscii);
     overlay.appendChild(catMsg);
 

@@ -15,15 +15,15 @@ em.fetchJson = async function (path, token) {
         token
       });
       if (!bgResponse?.ok) {
-        throw new Error(bgResponse?.error || "Error de red al consultar " + path);
+        throw new Error(bgResponse?.error || em.t("error_network") + " " + path);
       }
       return Array.isArray(bgResponse.contenido) ? bgResponse.contenido : [];
     } catch (err) {
-      throw new Error(err.message || "Error de red al consultar " + path + ". Recarga Eminus e inténtalo de nuevo.");
+      throw new Error(err.message || em.t("error_network") + " " + path + ". " + em.t("error_reload"));
     }
   }
 
-  throw new Error("No hay canal de extensión disponible para consultar API.");
+  throw new Error(em.t("error_no_channel"));
 };
 
 em.filterActiveCourses = function (courses) {
@@ -57,7 +57,7 @@ em.buildPendingData = async function (token, pinnedSet) {
     try {
       activities = await em.fetchJson("/Activity/getActividadesEstudiante/" + courseId, token);
     } catch (err) {
-      console.warn("[Eminus Pending] No se pudieron cargar actividades del curso " + courseId + " (" + courseName + "):", err);
+      console.warn("[Eminus Pending] " + em.t("error_load_activities") + " " + courseId + " (" + courseName + "):", err);
       continue;
     }
 
@@ -76,7 +76,7 @@ em.buildPendingData = async function (token, pinnedSet) {
         courseId,
         activityId: String(act.idActividad || ""),
         course: courseName,
-        title: String(act.titulo || "Actividad sin titulo"),
+        title: String(act.titulo || em.t("no_title")),
         deadlineRaw: deadlineDate ? deadlineDate.toISOString() : "",
         deadlineStr,
         deadlineLabel: remaining ? deadlineStr + " (" + remaining + ")" : deadlineStr,

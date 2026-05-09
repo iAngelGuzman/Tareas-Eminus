@@ -87,7 +87,7 @@ em.hydrateFromStorage = async function () {
     });
 
     if (em.panelEls && em.panelEls.subtitle) {
-      em.panelEls.subtitle.textContent = "Última lectura: " + em.formatDateTime(snapshot.updatedAt);
+      em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.formatDateTime(snapshot.updatedAt);
     }
     em.renderPending(em.state.pending);
     const visibleCount = em.getVisiblePendingCount(em.state.pending);
@@ -98,7 +98,7 @@ em.hydrateFromStorage = async function () {
     em.state.lastUpdatedAt = null;
     em.renderPending([]);
     if (em.panelEls && em.panelEls.subtitle) {
-      em.panelEls.subtitle.textContent = "Última lectura: Nunca";
+      em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.t("never");
     }
     await em.syncBadge(0, 0, 0);
   }
@@ -146,7 +146,7 @@ em.pruneNotifiedUpcomingIds = function (items, notifiedSet) {
 };
 
 em.scanPending = async function () {
-  em.setStatus("Consultando cursos y actividades...");
+  em.setStatus(em.t("status_scanning"));
   if (em.panelEls && em.panelEls.refreshBtn) {
     em.panelEls.refreshBtn.disabled = true;
   }
@@ -154,7 +154,7 @@ em.scanPending = async function () {
   try {
     const token = em.getToken();
     if (!token) {
-      em.setStatus("No se encontró accessToken. Entra a tu curso y vuelve a intentar.");
+      em.setStatus(em.t("error_no_token"));
       return;
     }
 
@@ -254,28 +254,28 @@ em.scanPending = async function () {
     em.state.lastUpdatedAt = logMeta.updatedAt;
 
     if (em.panelEls && em.panelEls.subtitle) {
-      em.panelEls.subtitle.textContent = "Última lectura: " + em.formatDateTime(logMeta.updatedAt);
+      em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.formatDateTime(logMeta.updatedAt);
     }
     em.updateAutoRefreshLabel(em.autoRefreshMinutes);
-    const status = visiblePending.length + " pendientes | " + logMeta.newCount + " nuevas";
+    const status = visiblePending.length + " " + em.t("status_pending") + " | " + logMeta.newCount + " " + em.t("status_new");
     em.setStatus(status);
 
     if (logMeta.newCount > 0) {
-      const msg = logMeta.newCount === 1 ? "1 nueva tarea detectada" : logMeta.newCount + " nuevas tareas detectadas";
+      const msg = logMeta.newCount === 1 ? em.t("new_task_toast_1") : logMeta.newCount + " " + em.t("new_task_toast_n");
       em.showToast(msg, "new");
-      await em.notifyUser("Nueva tarea en Eminus", msg);
+      await em.notifyUser(em.t("new_task_notif"), msg);
     }
 
     if (newlyOverdue.length > 0) {
-      const msg = newlyOverdue.length === 1 ? "1 tarea acaba de vencerse" : newlyOverdue.length + " tareas acaban de vencerse";
+      const msg = newlyOverdue.length === 1 ? em.t("overdue_toast_1") : newlyOverdue.length + " " + em.t("overdue_toast_n");
       em.showToast(msg, "overdue");
-      await em.notifyUser("Tarea vencida en Eminus", msg);
+      await em.notifyUser(em.t("overdue_notif"), msg);
     }
 
     for (const item of upcomingNotifications) {
-      const msg = `Faltan menos de ${em.state.reminderHours}h para: ${item.title}`;
+      const msg = em.t("reminder_toast").replace("{h}", em.state.reminderHours) + ": " + item.title;
       em.showToast(msg, "urgent");
-      await em.notifyUser("Recordatorio de Eminus", msg);
+      await em.notifyUser(em.t("reminder_title"), msg);
     }
 
     await em.syncBadge(visiblePending.length, logMeta.newCount, currentOverdue.length);
@@ -300,18 +300,18 @@ em.scanPending = async function () {
         em.renderPending(em.state.pending);
         em.renderLogs(em.state.logs);
         if (em.panelEls && em.panelEls.subtitle) {
-          em.panelEls.subtitle.textContent = "Última lectura: " + em.formatDateTime(cached.updatedAt);
+          em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.formatDateTime(cached.updatedAt);
         }
         em.updateAutoRefreshLabel(em.autoRefreshMinutes);
         const visible = em.getVisiblePending(em.state.pending);
         const overdueCount = visible.filter((item) => item.urgency === "overdue").length;
-        em.setStatus("Sin conexión — " + visible.length + " pendientes (caché)");
+        em.setStatus(em.t("offline") + " — " + visible.length + " " + em.t("status_pending") + " " + em.t("status_cache"));
         await em.syncBadge(visible.length, 0, overdueCount);
       } else {
-        em.setStatus("Sin conexión — sin datos en caché");
+        em.setStatus(em.t("offline") + " — " + em.t("no_cache"));
       }
     } else {
-      em.setStatus(err.message || "Error al leer pendientes");
+      em.setStatus(err.message || em.t("error_read"));
     }
   } finally {
     if (em.panelEls && em.panelEls.refreshBtn) {

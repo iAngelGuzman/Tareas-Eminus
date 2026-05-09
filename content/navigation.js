@@ -85,7 +85,7 @@ em.ensureIframeLoadsDetail = function (target) {
     const current = String(iframe.getAttribute("src") || iframe.src || "");
     if (current.includes("/actividad-detalle/" + target.activityId)) {
       em.clearPendingNavigationTarget();
-      em.setStatus("Detalle cargado en iframe.");
+      em.setStatus(em.t("status_nav_iframe"));
       return true;
     }
 
@@ -112,7 +112,7 @@ em.ensureIframeLoadsDetail = function (target) {
         em.detailForceTimer = null;
       }
       if (expired && !done) {
-        em.setStatus("No se pudo forzar el detalle en iframe.");
+        em.setStatus(em.t("status_nav_error"));
       }
     }
   }, 300);
@@ -124,7 +124,7 @@ em.loadDetailIntoActivityIframeIfNeeded = async function () {
   if (target.step !== "activity_detail") return;
   if (!location.pathname.includes("/eminus4/page/course/activity")) return;
 
-  em.setStatus("Cargando detalle en Actividades: " + (target.title || target.activityId));
+  em.setStatus(em.t("status_nav_loading") + ": " + (target.title || target.activityId));
 
   const maxAttempts = 30;
   for (let i = 0; i < maxAttempts; i += 1) {
@@ -137,7 +137,7 @@ em.loadDetailIntoActivityIframeIfNeeded = async function () {
   }
 
   em.clearPendingNavigationTarget();
-  em.setStatus("No se encontró iframe de Actividades; abriendo detalle directo.");
+  em.setStatus(em.t("status_nav_no_iframe"));
   const fallbackUrl = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(target.activityId));
   if (target.courseId) {
     fallbackUrl.searchParams.set("courseId", target.courseId);
@@ -192,7 +192,7 @@ em.navigateToActivity = async function (item) {
       await em.setCourseContext(courseId);
 
       try {
-        em.setStatus("Inicializando contexto del curso...");
+        em.setStatus(em.t("status_nav_context"));
         await new Promise((resolve) => {
           const iframe = document.createElement("iframe");
           iframe.style.display = "none";
@@ -218,7 +218,7 @@ em.navigateToActivity = async function (item) {
         console.warn("Error preload actividad-principal iframe:", e);
       }
     }
-    em.setStatus("Abriendo detalle: " + item.title);
+    em.setStatus(em.t("status_nav_opening") + ": " + item.title);
     const detailUrl = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(activityId));
     if (courseId) {
       detailUrl.searchParams.set("courseId", courseId);
@@ -226,5 +226,5 @@ em.navigateToActivity = async function (item) {
     window.location.assign(detailUrl.toString());
     return;
   }
-  em.setStatus("Esta actividad no trae idActividad para abrir detalle directo.");
+  em.setStatus(em.t("error_nav_no_id"));
 };

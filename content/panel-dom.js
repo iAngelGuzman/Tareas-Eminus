@@ -233,6 +233,7 @@ em.createPanel = function () {
   });
 
   em.updateArchiveToggleButton();
+  if (em.applyTranslations) em.applyTranslations();
   em.setupPanelDrag();
   em.filterAvailableFonts();
 };

@@ -38,7 +38,7 @@ em.archiveItemByIndex = async function (index) {
 
   em.renderPending(em.state.pending);
   await em.persistArchiveState();
-  em.setStatus("Archivada: " + item.title);
+  em.setStatus(em.t("status_archived") + ": " + item.title);
 };
 
 em.unarchiveItemByIndex = async function (index) {
@@ -51,7 +51,7 @@ em.unarchiveItemByIndex = async function (index) {
 
   em.renderPending(em.state.pending);
   await em.persistArchiveState();
-  em.setStatus("Restaurada: " + item.title);
+  em.setStatus(em.t("status_restored") + ": " + item.title);
 };
 
 em.persistPinnedState = async function () {
@@ -80,7 +80,7 @@ em.pinItemByIndex = async function (index) {
 
   em.renderPending(em.state.pending);
   await em.persistPinnedState();
-  em.setStatus("Fijada: " + item.title);
+  em.setStatus(em.t("status_pinned") + ": " + item.title);
 };
 
 em.unpinItemByIndex = async function (index) {
@@ -102,5 +102,5 @@ em.unpinItemByIndex = async function (index) {
 
   em.renderPending(em.state.pending);
   await em.persistPinnedState();
-  em.setStatus("Desfijada: " + item.title);
+  em.setStatus(em.t("status_unpinned") + ": " + item.title);
 };

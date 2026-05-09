@@ -30,7 +30,7 @@ em.hasDeliveryDate = function (value) {
 };
 
 em.getActivityDeadlineStr = function (activity) {
-  if (!activity || typeof activity !== "object") return "Sin fecha";
+  if (!activity || typeof activity !== "object") return em.t("due_nodate");
   const fields = ["fechaTermino", "fechaVencimiento", "fechaFin"];
   for (const field of fields) {
     const val = activity[field];
@@ -38,11 +38,11 @@ em.getActivityDeadlineStr = function (activity) {
       return String(val).trim();
     }
   }
-  return "Sin fecha";
+  return em.t("due_nodate");
 };
 
 em.parseEminusDate = function (dateStr) {
-  if (!dateStr || dateStr === "Sin fecha") return null;
+  if (!dateStr || dateStr === "Sin fecha" || dateStr === em.t("due_nodate")) return null;
 
   const months = {
     ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5,
@@ -68,14 +68,18 @@ em.getTimeRemaining = function (deadline) {
   if (!deadline) return "";
   const now = new Date();
   const diff = deadline.getTime() - now.getTime();
-  if (diff < 0) return "Vencida";
+  if (diff < 0) return em.t("due_vencida");
   const totalMinutes = Math.floor(diff / 60000);
   const days = Math.floor(totalMinutes / 1440);
   const hours = Math.floor((totalMinutes % 1440) / 60);
   const minutes = totalMinutes % 60;
-  if (days > 0) return `en ${days}d ${hours}h`;
-  if (hours > 0) return `en ${hours}h ${minutes}m`;
-  return `en ${minutes}m`;
+  
+  const inStr = em.t("due_in");
+  const space = inStr ? " " : "";
+  
+  if (days > 0) return `${inStr}${space}${days}${em.t("due_days")} ${hours}${em.t("due_hours")}`;
+  if (hours > 0) return `${inStr}${space}${hours}${em.t("due_hours")} ${minutes}${em.t("due_minutes")}`;
+  return `${inStr}${space}${minutes}${em.t("due_minutes")}`;
 };
 
 em.isActivityPending = function (activity) {
@@ -149,10 +153,16 @@ em.normalizePositiveId = function (value) {
 };
 
 em.formatDateTime = function (iso) {
-  if (!iso) return "Sin fecha";
+  if (!iso) return em.t("due_nodate");
   const dt = new Date(iso);
   if (Number.isNaN(dt.getTime())) return iso;
-  return dt.toLocaleString();
+  
+  const lang = em.state?.lang || "es";
+  try {
+    return dt.toLocaleString(lang);
+  } catch (e) {
+    return dt.toLocaleString();
+  }
 };
 
 em.setsEqual = function (a, b) {

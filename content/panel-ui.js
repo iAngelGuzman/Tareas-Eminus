@@ -77,8 +77,18 @@ em.setLanguage = async function (lang) {
   await em.storageSet(payload);
   
   if (em.applyTranslations) em.applyTranslations();
+  
+  // Refresh rendering
   em.renderPending(em.state.pending);
   em.renderLogs(em.state.logs);
+  
+  // Refresh status bar
+  const visible = em.getVisiblePending(em.state.pending);
+  const data = await em.storageGet(em.STORAGE_KEYS.SNAPSHOT);
+  const snapshot = data[em.STORAGE_KEYS.SNAPSHOT];
+  const newCount = snapshot ? (snapshot.newCount || 0) : 0;
+  const status = visible.length + " " + em.t("status_pending") + " | " + newCount + " " + em.t("status_new");
+  em.setStatus(status);
 };
 
 em.filterAvailableFonts = function () {

@@ -47,9 +47,9 @@ em.setAutoRefresh = async function (minutes) {
 
 em.updateAutoRefreshLabel = function (minutes) {
   if (!em.panelEls || !em.panelEls.subtitle) return;
-  const baseText = em.panelEls.subtitle.textContent.replace(/ · Auto-refresh: \d+ min/g, "");
+  const baseText = em.panelEls.subtitle.textContent.split(" · ")[0];
   if (minutes > 0) {
-    em.panelEls.subtitle.textContent = baseText + " · Auto-refresh: " + minutes + " min";
+    em.panelEls.subtitle.textContent = baseText + " · " + em.t("autorefresh_label") + ": " + minutes + " " + em.t("unit_min");
   } else {
     em.panelEls.subtitle.textContent = baseText;
   }
