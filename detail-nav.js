@@ -468,38 +468,4 @@
     scheduleCelebration();
   });
 
-  // Test button
-  const testBtn = document.createElement("button");
-  testBtn.textContent = "✨ Test Anim";
-  Object.assign(testBtn.style, {
-    position: "fixed",
-    bottom: "20px",
-    left: "20px",
-    zIndex: "999999",
-    padding: "8px 12px",
-    background: "#5B5FC7",
-    color: "white",
-    border: "none",
-    borderRadius: "20px",
-    cursor: "pointer",
-    boxShadow: "0 4px 6px rgba(0,0,0,0.2)",
-    fontFamily: "sans-serif",
-    fontSize: "12px",
-    fontWeight: "bold",
-    opacity: "0.5",
-    transition: "opacity 0.2s"
-  });
-  testBtn.onmouseenter = () => testBtn.style.opacity = "1";
-  testBtn.onmouseleave = () => testBtn.style.opacity = "0.5";
-  testBtn.onclick = () => {
-    let animIdx = parseInt(sessionStorage.getItem("ep_anim_idx") || "0", 10);
-    if (animIdx === 0) showCelebration();
-    else if (animIdx === 1) showAbductionAnimation();
-    else if (animIdx === 2) showTeamsCelebration();
-    else showPinataCelebration();
-    animIdx = (animIdx + 1) % 4;
-    sessionStorage.setItem("ep_anim_idx", animIdx.toString());
-  };
-  document.body.appendChild(testBtn);
-
 })();
