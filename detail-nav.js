@@ -121,49 +121,6 @@
       overlay.appendChild(piece);
     }
 
-    // Cat ASCII + delivered text
-    const catWrap = document.createElement("div");
-    catWrap.className = "ep-celebration-cat-wrap";
-
-    const cat = document.createElement("pre");
-    cat.className = "ep-celebration-cat";
-    cat.textContent = [
-      " ▒▒▒ ▒▒▒",
-      " ▒▒▒▒ ▒▒▒▒",
-      " ▒▒▒▒▒▒▒░░░░░░▒▒▒▒",
-      " ▒▒░░░▒▒▒░░▒▒▒░▒▒",
-      " ▒▒▓▒▓▒░░░░▒▒▓█▓▒",
-      "▒░▒▓▓▓▒▒▒░░░▒▒▓▓▒▒",
-      "░▒▒░░░░░░▒▒▒▒▒▒▒▒▒",
-      "░░▒▒▒░░░▒▓▓▓▓▓▓▒▒▒",
-      "░░░▒░░░░░▒▓▓█▓▒▒▒▒",
-      "░░░░░░▒▒▒▒▒▓▓▓▓▓▓▒▒",
-      "░░░░░░░▒▒▓▓▓▓▓▓▓▓",
-      "░░░░░░▒▒▒▒▓▓▓▓▓▓▓"
-    ].join("\n");
-    catWrap.appendChild(cat);
-
-    const txt = document.createElement("pre");
-    txt.className = "ep-celebration-cat-text";
-    if (currentLang === "es") {
-      txt.textContent = [
-        " _____                                 _                            _       ",
-        "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
-        "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
-        "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
-        "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
-        "                                                    |___/ "
-      ].join("\n");
-    } else {
-      txt.textContent = t("delivered").toUpperCase();
-      txt.style.fontSize = "24px";
-      txt.style.fontWeight = "bold";
-      txt.style.textAlign = "center";
-      txt.style.marginTop = "10px";
-    }
-    catWrap.appendChild(txt);
-    overlay.appendChild(catWrap);
-
     document.body.appendChild(overlay);
 
     const dismiss = () => {
@@ -268,48 +225,6 @@
     overlay.appendChild(cowWrap);
     document.body.appendChild(overlay);
 
-    // Cat message at the end
-    const catMsg = document.createElement("div");
-    catMsg.className = "ep-abduction-cat-msg";
-
-    const catAscii = document.createElement("pre");
-    catAscii.className = "ep-abduction-cat-art";
-    catAscii.textContent = [
-      "  ▒▒▒▒ ▒▒▒▒",
-      " ▒▒▒▒▒▒▒░░░░░░▒▒▒▒",
-      " ▒▒░░░▒▒▒░░▒▒▒░▒▒",
-      " ▒▒▓▒▓▒░░░░▒▒▓█▓▒",
-      "▒░▒▓▓▓▒▒▒░░░▒▒▓▓▒▒",
-      "░▒▒░░░░░░▒▒▒▒▒▒▒▒▒",
-      "░░▒▒▒░░░▒▓▓▓▓▓▓▒▒▒",
-      "░░░▒░░░░░▒▓▓█▓▒▒▒▒",
-      "░░░░░░▒▒▒▒▒▓▓▓▓▓▓▒▒",
-      "░░░░░░░▒▒▓▓▓▓▓▓▓▓",
-      "░░░░░░▒▒▒▒▓▓▓▓▓▓▓"
-    ].join("\n");
-    catMsg.appendChild(catAscii);
-
-    const txtAscii = document.createElement("pre");
-    txtAscii.className = "ep-abduction-cat-text";
-    if (currentLang === "es") {
-      txtAscii.textContent = [
-        " _____                                 _                            _       ",
-        "|_   _|_ _ _ __ ___  __ _    ___ _ __ | |_ _ __ ___  __ _  __ _  __| | __ _ ",
-        "  | |/ _` | '__/ _ \\/ _` |  / _ \\ '_ \\| __| '__/ _ \\/ _` |/ _` |/ _` |/ _` |",
-        "  | | (_| | | |  __/ (_| | |  __/ | | | |_| | |  __/ (_| | (_| | (_| | (_| |",
-        "  |_|\\__,_|_|  \\___|\\__,_|  \\___|_| |_|\\__|_|  \\___|\\__, |\\__,_|\\__,_|\\__,_|",
-        "                                                    |___/ "
-      ].join("\n");
-    } else {
-      txtAscii.textContent = t("delivered").toUpperCase();
-      txtAscii.style.fontSize = "24px";
-      txtAscii.style.fontWeight = "bold";
-      txtAscii.style.textAlign = "center";
-      txtAscii.style.marginTop = "10px";
-    }
-    catMsg.appendChild(txtAscii);
-    overlay.appendChild(catMsg);
-
     // Animation phases
     setTimeout(() => {
       ufo.classList.add("abducting");
@@ -325,10 +240,6 @@
       cowWrap.style.opacity = "0";
     }, 5000);
 
-    setTimeout(() => {
-      catMsg.classList.add("visible");
-    }, 5200);
-
     const dismiss = () => {
       if (!overlay.parentNode) return;
       overlay.classList.add("ep-abduction-fadeout");
@@ -339,6 +250,168 @@
 
     overlay.addEventListener("click", dismiss, { once: true });
     setTimeout(dismiss, 7200);
+  }
+
+  function showTeamsCelebration() {
+    if (document.getElementById("ep-teams-overlay")) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'ep-teams-overlay';
+
+    const ambient = document.createElement('div');
+    ambient.className = 'ep-teams-ambient';
+
+    const system = document.createElement('div');
+    system.className = 'ep-teams-disco-system';
+
+    const string = document.createElement('div');
+    string.className = 'ep-teams-string';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'ep-teams-ball-wrap';
+
+    const beams = document.createElement('div');
+    beams.className = 'ep-teams-light-beams';
+
+    const ball = document.createElement('div');
+    ball.className = 'ep-teams-disco-ball';
+
+    wrapper.appendChild(beams);
+    wrapper.appendChild(ball);
+    system.appendChild(string);
+    system.appendChild(wrapper);
+    
+    overlay.appendChild(ambient);
+    overlay.appendChild(system);
+    document.body.appendChild(overlay);
+
+    const createParticleBurst = (parent) => {
+        const colors = ['#FFC83D', '#5B5FC7', '#00B7C3', '#E3008C', '#FFFFFF'];
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'ep-teams-star-particle';
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 80 + Math.random() * 150;
+            
+            const tx = Math.cos(angle) * distance + 'px';
+            const ty = Math.sin(angle) * distance + 'px';
+            
+            particle.style.setProperty('--tx', tx);
+            particle.style.setProperty('--ty', ty);
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.backgroundColor = color;
+            particle.style.boxShadow = `0 0 10px ${color}`;
+            
+            const size = 10 + Math.random() * 20;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+
+            particle.style.animation = `ep-teams-flyOut ${1 + Math.random() * 0.8}s ease-out forwards`;
+
+            parent.appendChild(particle);
+        }
+    };
+
+    setTimeout(() => {
+        if (wrapper.parentNode) createParticleBurst(wrapper);
+    }, 650);
+
+    const dismiss = () => {
+      if (!overlay.parentNode) return;
+      overlay.classList.add("ep-celebration-fadeout");
+      setTimeout(() => {
+        if (overlay.parentNode) overlay.remove();
+      }, 600);
+    };
+
+    overlay.addEventListener("click", dismiss, { once: true });
+    setTimeout(dismiss, 3000);
+  }
+
+  function showPinataCelebration() {
+    if (document.getElementById("ep-pinata-overlay")) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'ep-pinata-overlay';
+    
+    overlay.innerHTML = `
+        <div class="ep-pinata-ambient"></div>
+        <div class="ep-pinata-physics-system">
+            <div class="ep-pinata-cord" id="ep-pinata-cuerda"></div>
+            <div class="ep-pinata-container" id="ep-pinata-box">
+                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa85.svg" alt="Llama Pinata">
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const reventar = () => {
+        const pinata = document.getElementById('ep-pinata-box');
+        const cuerda = document.getElementById('ep-pinata-cuerda');
+        if(!overlay || !pinata) return;
+
+        pinata.style.animation = 'ep-pinata-pop 0.15s forwards';
+        if (cuerda) cuerda.style.animation = 'ep-pinata-snapUp 0.15s forwards'; 
+
+        const shockwave = document.createElement('div');
+        shockwave.className = 'ep-pinata-shockwave';
+        shockwave.style.animation = 'ep-pinata-expandRing 0.5s ease-out forwards';
+        overlay.appendChild(shockwave);
+
+        const dulcesSvg = [
+            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36c.svg', 
+            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36d.svg', 
+            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36b.svg', 
+            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b50.svg'   
+        ];
+
+        const originY = window.innerHeight > 600 ? 250 : 150; 
+        const originX = window.innerWidth / 2;
+
+        for (let i = 0; i < 50; i++) {
+            const candy = document.createElement('div');
+            candy.className = 'ep-pinata-candy';
+            candy.style.backgroundImage = `url(${dulcesSvg[Math.floor(Math.random() * dulcesSvg.length)]})`;
+            
+            if(Math.random() > 0.6) {
+                candy.style.width = '16px';
+                candy.style.height = '16px';
+            }
+
+            candy.style.top = originY + 'px';
+            candy.style.left = originX + 'px';
+            overlay.appendChild(candy);
+
+            const angle = Math.random() * Math.PI * 2;
+            const thrust = 100 + Math.random() * 280; 
+            
+            const tX = Math.cos(angle) * thrust;
+            const pY = Math.sin(angle) * thrust;
+            const endX = tX + (Math.random() - 0.5) * 80;
+            const endY = pY + 700 + Math.random() * 300; 
+            
+            const rot = (Math.random() > 0.5 ? 1 : -1) * (1000 + Math.random() * 2000);
+
+            candy.animate([
+                { transform: 'translate3d(0, 0, 0) rotate(0deg) scale(0)', opacity: 1, easing: 'cubic-bezier(0, .8, .2, 1)' },
+                { transform: `translate3d(${tX}px, ${pY * 1.5}px, 0) rotate(${rot * 0.3}deg) scale(1)`, opacity: 1, offset: 0.2, easing: 'cubic-bezier(.6,0,1,.5)' },
+                { transform: `translate3d(${endX}px, ${endY}px, 0) rotate(${rot}deg) scale(0.5)`, opacity: 0 }
+            ], { duration: 1500 + Math.random() * 700, fill: "forwards" });
+        }
+    };
+
+    setTimeout(reventar, 650);
+
+    setTimeout(() => {
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => { if (overlay.parentNode) overlay.remove() }, 300);
+        }
+    }, 2700);
   }
 
   const SUBMIT_KEYWORDS = [
@@ -369,13 +442,18 @@
     if (celebrationTimeout) return;
     celebrationTimeout = setTimeout(() => {
       celebrationTimeout = null;
-      const useAbduction = sessionStorage.getItem("ep_use_abduction") === "1";
-      if (useAbduction) {
-        showAbductionAnimation();
-      } else {
+      let animIdx = parseInt(sessionStorage.getItem("ep_anim_idx") || "0", 10);
+      if (animIdx === 0) {
         showCelebration();
+      } else if (animIdx === 1) {
+        showAbductionAnimation();
+      } else if (animIdx === 2) {
+        showTeamsCelebration();
+      } else {
+        showPinataCelebration();
       }
-      sessionStorage.setItem("ep_use_abduction", useAbduction ? "0" : "1");
+      animIdx = (animIdx + 1) % 4;
+      sessionStorage.setItem("ep_anim_idx", animIdx.toString());
     }, 800);
   }
 
@@ -389,5 +467,39 @@
   document.addEventListener("submit", () => {
     scheduleCelebration();
   });
+
+  // Test button
+  const testBtn = document.createElement("button");
+  testBtn.textContent = "✨ Test Anim";
+  Object.assign(testBtn.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "20px",
+    zIndex: "999999",
+    padding: "8px 12px",
+    background: "#5B5FC7",
+    color: "white",
+    border: "none",
+    borderRadius: "20px",
+    cursor: "pointer",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.2)",
+    fontFamily: "sans-serif",
+    fontSize: "12px",
+    fontWeight: "bold",
+    opacity: "0.5",
+    transition: "opacity 0.2s"
+  });
+  testBtn.onmouseenter = () => testBtn.style.opacity = "1";
+  testBtn.onmouseleave = () => testBtn.style.opacity = "0.5";
+  testBtn.onclick = () => {
+    let animIdx = parseInt(sessionStorage.getItem("ep_anim_idx") || "0", 10);
+    if (animIdx === 0) showCelebration();
+    else if (animIdx === 1) showAbductionAnimation();
+    else if (animIdx === 2) showTeamsCelebration();
+    else showPinataCelebration();
+    animIdx = (animIdx + 1) % 4;
+    sessionStorage.setItem("ep_anim_idx", animIdx.toString());
+  };
+  document.body.appendChild(testBtn);
 
 })();
