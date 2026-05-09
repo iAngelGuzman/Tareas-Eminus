@@ -17,7 +17,8 @@ em.state = {
   lastUpdatedAt: null,
   isArchiveView: false,
   lastTabBeforeArchive: "pending",
-  reminderHours: 24
+  reminderHours: 24,
+  lang: "es"
 };
 
 em.routeObserverStarted = false;

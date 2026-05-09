@@ -18,7 +18,8 @@ window.eminus.STORAGE_KEYS = {
   AUTO_REFRESH: "eminusAutoRefreshMinutes",
   REMINDER_HOURS: "eminusReminderHours",
   NOTIFIED_UPCOMING: "eminusNotifiedUpcomingIds",
-  FONT: "eminusPanelFont"
+  FONT: "eminusPanelFont",
+  LANG: "eminusLanguage"
 };
 
 window.eminus.NAV_KEYS = {

@@ -150,6 +150,17 @@ em.createPanel = function () {
             </optgroup>
           </select>
         </div>
+        <div class="ep-config-group">
+          <label class="ep-config-label" id="ep-lang-label">Idioma</label>
+          <select class="ep-config-select" id="ep-lang">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
       </section>
 
       <footer class="ep-footer" id="ep-footer-status">Listo</footer>
@@ -172,6 +183,7 @@ em.createPanel = function () {
     autoRefreshSelect: root.querySelector("#ep-autorefresh"),
     reminderSelect: root.querySelector("#ep-reminder"),
     fontSelect: root.querySelector("#ep-font"),
+    langSelect: root.querySelector("#ep-lang"),
     archiveBtn: root.querySelector("#ep-archive-toggle"),
     collapseBtn: root.querySelector("#ep-collapse"),
     tabButtons: root.querySelectorAll(".ep-tab"),
@@ -182,7 +194,14 @@ em.createPanel = function () {
     configBody: root.querySelector("#ep-body-config"),
     themeChips: root.querySelectorAll(".ep-theme-chip"),
     footer: root.querySelector("#ep-footer-status"),
-    jazminBg: root.querySelector("#ep-jazmin-bg")
+    jazminBg: root.querySelector("#ep-jazmin-bg"),
+    
+    // Labels for i18n
+    themeLabel: root.querySelector(".ep-config-group:nth-child(1) .ep-config-label"),
+    autorefreshLabel: root.querySelector("#ep-autorefresh").previousElementSibling,
+    reminderLabel: root.querySelector("#ep-reminder").previousElementSibling,
+    fontLabel: root.querySelector("#ep-font").previousElementSibling,
+    langLabel: root.querySelector("#ep-lang-label")
   };
 
   em.panelEls.refreshBtn.addEventListener("click", () => em.scanPending());
@@ -196,6 +215,9 @@ em.createPanel = function () {
   });
   em.panelEls.fontSelect.addEventListener("change", (e) => {
     em.setFont(e.target.value);
+  });
+  em.panelEls.langSelect.addEventListener("change", (e) => {
+    if (em.setLanguage) em.setLanguage(e.target.value);
   });
   em.panelEls.themeChips.forEach((chip) => {
     chip.addEventListener("click", () => em.setTheme(chip.dataset.theme));

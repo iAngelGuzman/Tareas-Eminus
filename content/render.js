@@ -85,7 +85,7 @@ em.renderAgenda = function (items) {
 
   if (futureItems.length > 0) {
     html += `<div class="ep-agenda-day">`;
-    html += `<div class="ep-agenda-day-header">Más adelante</div>`;
+    html += `<div class="ep-agenda-day-header">${em.escapeHtml(em.t("agenda_later"))}</div>`;
     futureItems.forEach((item) => {
       const originalIndex = items.indexOf(item);
       const urgencyClass = "ep-" + item.urgency;
@@ -106,7 +106,7 @@ em.renderAgenda = function (items) {
 
   if (noDateItems.length > 0) {
     html += `<div class="ep-agenda-day">`;
-    html += `<div class="ep-agenda-day-header">Sin fecha</div>`;
+    html += `<div class="ep-agenda-day-header">${em.escapeHtml(em.t("agenda_nodate"))}</div>`;
     noDateItems.forEach((item) => {
       html += buildMiniItem(item);
     });
@@ -133,10 +133,10 @@ em.renderPending = function (items) {
     return list
       .map((item) => {
         const urgencyClass = "ep-" + item.urgency;
-        const due = item.deadlineLabel || "Sin fecha";
+        const due = item.deadlineLabel || em.t("due_nodate");
         const originalIndex = items.indexOf(item);
         const archivedClass = item.archived ? "ep-archived" : "";
-        const pinLabel = item.pinned ? "Desfijar" : "Fijar";
+        const pinLabel = item.pinned ? em.t("action_unpin") : em.t("action_pin");
         const pinAction = item.pinned ? "unpin" : "pin";
         const pinHtml = showPin
           ? `<button class="ep-mini-btn ep-pin-btn" type="button" data-action="${pinAction}" data-item-index="${originalIndex}" title="${em.escapeHtml(pinLabel)}">${item.pinned ? "★" : "☆"}</button>`
@@ -146,8 +146,8 @@ em.renderPending = function (items) {
           : "";
         const buttonsHtml = [pinHtml, actionHtml].filter(Boolean).join("");
         const metaHtml = buttonsHtml
-          ? `<div class="ep-meta-row"><div class="ep-meta">Vence: ${em.escapeHtml(due)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
-          : `<div class="ep-meta">Vence: ${em.escapeHtml(due)}</div>`;
+          ? `<div class="ep-meta-row"><div class="ep-meta">${em.t("due")} ${em.escapeHtml(due)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
+          : `<div class="ep-meta">${em.t("due")} ${em.escapeHtml(due)}</div>`;
         return `
             <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
               <article class="ep-item ${urgencyClass} ${archivedClass}">
@@ -162,12 +162,12 @@ em.renderPending = function (items) {
   };
 
   if (em.state.isArchiveView) {
-    em.panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, "Sin tareas archivadas.", { label: "Restaurar", action: "unarchive" }, false);
+    em.panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, em.t("empty_archived"), { label: em.t("action_restore"), action: "unarchive" }, false);
     em.panelEls.overdueBody.innerHTML = "";
     em.panelEls.agendaBody.innerHTML = "";
   } else {
-    em.panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, "Sin tareas pendientes detectadas.", null, true);
-    em.panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, "Sin tareas vencidas detectadas.", { label: "Archivar", action: "archive" }, true);
+    em.panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, em.t("empty_pending"), null, true);
+    em.panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, em.t("empty_overdue"), { label: em.t("action_archive"), action: "archive" }, true);
     em.renderAgenda(items);
   }
 
@@ -234,11 +234,11 @@ em.renderLogs = function (logs) {
 
   const safeLogs = Array.isArray(logs) ? logs.filter((entry) => entry && typeof entry === "object") : [];
   if (!safeLogs.length) {
-    em.panelEls.logBody.innerHTML = `<div class="ep-empty">Aún no hay historial.</div>`;
+    em.panelEls.logBody.innerHTML = `<div class="ep-empty">${em.escapeHtml(em.t("empty_log"))}</div>`;
     return;
   }
 
-  let html = `<button id="ep-clear-log" class="ep-item-btn" style="margin-bottom: 16px; border: 1px dashed #000; padding: 6px; font-size: 11px; text-align: center; cursor: pointer; background: transparent; color: #000; font-family: inherit; width: 100%; box-sizing: border-box;">[ borrar_log ]</button>`;
+  let html = `<button id="ep-clear-log" class="ep-item-btn" style="margin-bottom: 16px; border: 1px dashed #000; padding: 6px; font-size: 11px; text-align: center; cursor: pointer; background: transparent; color: #000; font-family: inherit; width: 100%; box-sizing: border-box;">${em.escapeHtml(em.t("log_clear"))}</button>`;
 
   html += safeLogs
     .map((entry) => {
@@ -251,7 +251,7 @@ em.renderLogs = function (logs) {
       const changes = Array.isArray(entry.changes) ? entry.changes : [];
       const changesHtml = changes.length
         ? `<div class="ep-log-changes">${changes.map((c) => {
-            const label = c.type === "deadline" ? "cambió de fecha" : "cambió de estado";
+            const label = c.type === "deadline" ? em.t("log_changed_date") : em.t("log_changed_state");
             return `<div class="ep-log-change">• ${em.escapeHtml(c.title)} ${label}: ${em.escapeHtml(c.from)} → ${em.escapeHtml(c.to)}</div>`;
           }).join("")}</div>`
         : "";

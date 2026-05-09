@@ -67,6 +67,20 @@ em.setFont = async function (fontKey) {
   await em.storageSet(payload);
 };
 
+em.setLanguage = async function (lang) {
+  em.state.lang = lang;
+  if (em.panelEls && em.panelEls.langSelect) {
+    em.panelEls.langSelect.value = lang;
+  }
+  const payload = {};
+  payload[em.STORAGE_KEYS.LANG] = lang;
+  await em.storageSet(payload);
+  
+  if (em.applyTranslations) em.applyTranslations();
+  em.renderPending(em.state.pending);
+  em.renderLogs(em.state.logs);
+};
+
 em.filterAvailableFonts = function () {
   if (!em.panelEls || !em.panelEls.fontSelect) return;
   const options = em.panelEls.fontSelect.querySelectorAll("option");
@@ -108,7 +122,7 @@ em.filterAvailableFonts = function () {
 
 em.updateArchiveToggleButton = function () {
   if (!em.panelEls || !em.panelEls.archiveBtn) return;
-  const label = em.state.isArchiveView ? "Volver" : "Archivadas";
+  const label = em.state.isArchiveView ? em.t("archive_back") : em.t("archive_view");
   em.panelEls.archiveBtn.title = label;
   em.panelEls.archiveBtn.setAttribute("aria-label", label);
   em.panelEls.archiveBtn.innerHTML = em.state.isArchiveView ? em.ARCHIVE_BACK_HTML : em.ARCHIVE_BUTTON_HTML;

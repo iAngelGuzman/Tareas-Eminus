@@ -17,7 +17,8 @@ em.hydrateFromStorage = async function () {
     em.STORAGE_KEYS.AUTO_REFRESH,
     em.STORAGE_KEYS.REMINDER_HOURS,
     em.STORAGE_KEYS.NOTIFIED_UPCOMING,
-    em.STORAGE_KEYS.FONT
+    em.STORAGE_KEYS.FONT,
+    em.STORAGE_KEYS.LANG
   ]);
 
   const storedAccountId = data[em.STORAGE_KEYS.ACCOUNT_ID];
@@ -117,6 +118,13 @@ em.hydrateFromStorage = async function () {
 
   const storedFont = data[em.STORAGE_KEYS.FONT] || "mono";
   em.setFont(storedFont);
+  
+  const storedLang = data[em.STORAGE_KEYS.LANG] || "es";
+  em.state.lang = storedLang;
+  if (em.panelEls && em.panelEls.langSelect) {
+    em.panelEls.langSelect.value = storedLang;
+  }
+  if (em.applyTranslations) em.applyTranslations();
 };
 
 em.setReminderHours = async function (hours) {

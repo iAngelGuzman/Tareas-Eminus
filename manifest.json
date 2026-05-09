@@ -19,6 +19,7 @@
         "content/auth.js",
         "content/constants.js",
         "content/storage.js",
+        "content/i18n.js",
         "content/state.js",
         "content/toast.js",
         "content/drag.js",
