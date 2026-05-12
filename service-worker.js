@@ -19,6 +19,41 @@ async function requestJson({ url, method = "GET", token = "", body = null }) {
   return { ok: response.ok, status: response.status, data };
 }
 
+const EMINUS_CONTENT_URLS = [
+  "https://eminus.uv.mx/eminus4/",
+  "https://eminus.uv.mx/aplicativoEminus/actividad-detalle/"
+];
+
+function isAllowedSender(sender) {
+  const rawUrl = sender?.url || sender?.tab?.url || "";
+  try {
+    const url = new URL(rawUrl);
+    if (url.origin !== "https://eminus.uv.mx") return false;
+    return EMINUS_CONTENT_URLS.some((prefix) => rawUrl.startsWith(prefix));
+  } catch (_) {
+    return false;
+  }
+}
+
+function normalizePositiveId(value) {
+  const id = String(value || "").trim();
+  return /^[1-9]\d{0,18}$/.test(id) ? id : "";
+}
+
+function buildEminusApi8Url(path) {
+  const normalizedPath = String(path || "").trim();
+  if (normalizedPath === "/Course/getAllCourses") {
+    return "https://eminus.uv.mx/eminusapi8/api/Course/getAllCourses";
+  }
+
+  const activityMatch = normalizedPath.match(/^\/Activity\/getActividadesEstudiante\/([1-9]\d{0,18})$/);
+  if (activityMatch) {
+    return "https://eminus.uv.mx/eminusapi8/api/Activity/getActividadesEstudiante/" + encodeURIComponent(activityMatch[1]);
+  }
+
+  return "";
+}
+
 chrome.action.onClicked.addListener((tab) => {
   if (tab?.id) {
     chrome.tabs.sendMessage(tab.id, { type: "OPEN_AND_REFRESH_PANEL" }).catch(() => {});
@@ -27,6 +62,11 @@ chrome.action.onClicked.addListener((tab) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "UPDATE_BADGE") {
+    if (!isAllowedSender(sender)) {
+      sendResponse({ ok: false, error: "Origen no autorizado" });
+      return;
+    }
+
     const newCount = Number(message.newCount || 0);
     const overdueCount = Number(message.overdueCount || 0);
     const totalCount = Number(message.count || 0);
@@ -48,6 +88,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message?.type === "SHOW_NOTIFICATION") {
+    if (!isAllowedSender(sender)) {
+      sendResponse({ ok: false, error: "Origen no autorizado" });
+      return;
+    }
+
     const title = String(message.title || "Eminus");
     const body = String(message.body || "");
     const iconUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%23e74c3c'/%3E%3Ctext x='64' y='92' font-size='80' text-anchor='middle' fill='white'%3E!%3C/text%3E%3C/svg%3E";
@@ -63,9 +108,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message?.type === "FETCH_EMINUS_JSON") {
+    if (!isAllowedSender(sender)) {
+      sendResponse({ ok: false, error: "Origen no autorizado" });
+      return;
+    }
+
     const token = String(message.token || "");
     const path = String(message.path || "");
-    const url = `https://eminus.uv.mx/eminusapi8/api${path}`;
+    const url = buildEminusApi8Url(path);
+
+    if (!url) {
+      sendResponse({ ok: false, error: "Endpoint no permitido" });
+      return;
+    }
 
     (async () => {
       try {
@@ -84,8 +139,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message?.type === "SET_COURSE_CONTEXT") {
+    if (!isAllowedSender(sender)) {
+      sendResponse({ ok: false, error: "Origen no autorizado" });
+      return;
+    }
+
     const token = String(message.token || "");
-    const courseId = String(message.courseId || "");
+    const courseId = normalizePositiveId(message.courseId);
+
+    if (!courseId) {
+      sendResponse({ ok: false, error: "Curso no válido" });
+      return;
+    }
 
     (async () => {
       try {

@@ -56,8 +56,8 @@ em.buildPendingData = async function (token, pinnedSet) {
     let activities = [];
     try {
       activities = await em.fetchJson("/Activity/getActividadesEstudiante/" + courseId, token);
-    } catch (err) {
-      console.warn("[Eminus Pending] " + em.t("error_load_activities") + " " + courseId + " (" + courseName + "):", err);
+    } catch (_) {
+      console.warn("[Eminus Pending] " + em.t("error_load_activities") + " " + courseId + " (" + courseName + ")");
       continue;
     }
 

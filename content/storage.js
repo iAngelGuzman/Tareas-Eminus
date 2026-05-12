@@ -26,3 +26,10 @@ em.storageSet = async function (payload) {
   }
   return chrome.storage.local.set(payload);
 };
+
+em.storageClear = async function () {
+  if (!em.hasStorageApi) {
+    return;
+  }
+  return chrome.storage.local.clear();
+};

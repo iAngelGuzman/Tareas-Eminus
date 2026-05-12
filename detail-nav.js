@@ -34,10 +34,12 @@
   };
 
   let currentLang = "es";
+  let deliveryAnimation = "cycle";
 
   async function updateLanguage() {
-    const data = await chrome.storage.local.get("eminusLanguage");
+    const data = await chrome.storage.local.get(["eminusLanguage", "eminusDeliveryAnimation"]);
     currentLang = data.eminusLanguage || "es";
+    deliveryAnimation = data.eminusDeliveryAnimation || "cycle";
     
     const btn = document.getElementById("ep-back-home-btn");
     if (btn) {
@@ -66,6 +68,9 @@
       currentLang = changes.eminusLanguage.newValue || "es";
       const backBtn = document.getElementById("ep-back-home-btn");
       if (backBtn) backBtn.textContent = t("back_to_eminus");
+    }
+    if (area === "local" && changes.eminusDeliveryAnimation) {
+      deliveryAnimation = changes.eminusDeliveryAnimation.newValue || "cycle";
     }
   });
 
@@ -335,6 +340,8 @@
   function showPinataCelebration() {
     if (document.getElementById("ep-pinata-overlay")) return;
 
+    const assetUrl = (name) => chrome.runtime.getURL("assets/twemoji/" + name + ".svg");
+
     const overlay = document.createElement('div');
     overlay.id = 'ep-pinata-overlay';
     
@@ -343,7 +350,7 @@
         <div class="ep-pinata-physics-system">
             <div class="ep-pinata-cord" id="ep-pinata-cuerda"></div>
             <div class="ep-pinata-container" id="ep-pinata-box">
-                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa85.svg" alt="Llama Pinata">
+                <img src="${assetUrl("1fa85")}" alt="Llama Pinata">
             </div>
         </div>
     `;
@@ -363,10 +370,10 @@
         overlay.appendChild(shockwave);
 
         const dulcesSvg = [
-            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36c.svg', 
-            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36d.svg', 
-            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f36b.svg', 
-            'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b50.svg'   
+            assetUrl("1f36c"),
+            assetUrl("1f36d"),
+            assetUrl("1f36b"),
+            assetUrl("2b50")
         ];
 
         const originY = window.innerHeight > 600 ? 250 : 150; 
@@ -414,34 +421,44 @@
     }, 2700);
   }
 
-  const SUBMIT_KEYWORDS = [
+  const DELIVERY_KEYWORDS = [
     "entregar", "entregar tarea", "entregar actividad", "entregar trabajo",
-    "enviar tarea", "enviar actividad", "enviar trabajo", "enviar",
-    "subir tarea", "subir actividad", "subir trabajo", "subir",
-    "guardar", "guardar tarea", "guardar actividad",
-    "submit", "send", "upload"
+    "enviar tarea", "enviar actividad", "enviar trabajo"
   ];
 
-  function looksLikeSubmitButton(el) {
+  function normalizeButtonText(text) {
+    return (text || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function looksLikeDeliveryButton(el) {
     if (!el || el.disabled) return false;
     if (el.offsetParent === null) return false;
 
-    const tag = el.tagName.toLowerCase();
-    const type = (el.getAttribute("type") || "").toLowerCase();
-
-    if ((tag === "button" || tag === "input") && type === "submit") return true;
-
-    const text = (el.textContent || el.value || el.getAttribute("aria-label") || "").toLowerCase().trim();
+    const text = normalizeButtonText(
+      el.textContent || el.value || el.getAttribute("aria-label") || el.getAttribute("title")
+    );
     if (!text) return false;
 
-    return SUBMIT_KEYWORDS.some(k => text.includes(k));
+    return DELIVERY_KEYWORDS.some(k => text.includes(k));
   }
 
   let celebrationTimeout = null;
-  function scheduleCelebration() {
-    if (celebrationTimeout) return;
-    celebrationTimeout = setTimeout(() => {
-      celebrationTimeout = null;
+  function runDeliveryAnimation(animationKey) {
+    if (animationKey === "off") return;
+    if (animationKey === "confetti") {
+      showCelebration();
+    } else if (animationKey === "abduction") {
+      showAbductionAnimation();
+    } else if (animationKey === "teams") {
+      showTeamsCelebration();
+    } else if (animationKey === "pinata") {
+      showPinataCelebration();
+    } else {
       let animIdx = parseInt(sessionStorage.getItem("ep_anim_idx") || "0", 10);
       if (animIdx === 0) {
         showCelebration();
@@ -454,17 +471,27 @@
       }
       animIdx = (animIdx + 1) % 4;
       sessionStorage.setItem("ep_anim_idx", animIdx.toString());
+    }
+  }
+
+  function scheduleCelebration() {
+    if (deliveryAnimation === "off") return;
+    if (celebrationTimeout) return;
+    celebrationTimeout = setTimeout(() => {
+      celebrationTimeout = null;
+      runDeliveryAnimation(deliveryAnimation);
     }, 800);
   }
 
   document.addEventListener("click", (e) => {
     const btn = e.target.closest('button, input[type="submit"], input[type="button"], a.btn, a.button, [role="button"], .btn');
     if (!btn) return;
-    if (!looksLikeSubmitButton(btn)) return;
+    if (!looksLikeDeliveryButton(btn)) return;
     scheduleCelebration();
   });
 
-  document.addEventListener("submit", () => {
+  document.addEventListener("submit", (e) => {
+    if (!looksLikeDeliveryButton(e.submitter)) return;
     scheduleCelebration();
   });
 

@@ -214,8 +214,8 @@ em.navigateToActivity = async function (item) {
 
           setTimeout(cleanup, 5000);
         });
-      } catch (e) {
-        console.warn("Error preload actividad-principal iframe:", e);
+      } catch (_) {
+        console.warn("Error preload actividad-principal iframe");
       }
     }
     em.setStatus(em.t("status_nav_opening") + ": " + item.title);

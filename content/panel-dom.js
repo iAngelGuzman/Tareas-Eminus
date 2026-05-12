@@ -62,6 +62,34 @@ em.createPanel = function () {
         <button class="ep-tab" data-tab="config">Config</button>
       </div>
 
+      <section class="ep-filters" id="ep-filters">
+        <div class="ep-filters-head">
+          <button class="ep-btn ep-filter-compact-btn" id="ep-filter-compact" type="button">[ compactar ]</button>
+        </div>
+        <div class="ep-filters-grid">
+          <input type="text" id="ep-filter-query" class="ep-config-select ep-filter-input" placeholder="buscar tarea o curso" />
+          <select id="ep-filter-course" class="ep-config-select">
+            <option value="all">todos los cursos</option>
+          </select>
+          <select id="ep-filter-urgency" class="ep-config-select">
+            <option value="all">todas las urgencias</option>
+            <option value="overdue">vencidas</option>
+            <option value="imminent">inminentes (&lt;24h)</option>
+            <option value="urgent">urgentes (&lt;48h)</option>
+            <option value="normal">normales</option>
+          </select>
+          <select id="ep-filter-date" class="ep-config-select">
+            <option value="all">cualquier fecha</option>
+            <option value="today">vence hoy</option>
+            <option value="3d">próximos 3 días</option>
+            <option value="7d">próximos 7 días</option>
+            <option value="30d">próximos 30 días</option>
+            <option value="nodate">sin fecha</option>
+            <option value="overdue">ya vencidas</option>
+          </select>
+        </div>
+      </section>
+
       <section class="ep-body" id="ep-body-pending"></section>
       <section class="ep-body ep-hidden" id="ep-body-overdue"></section>
       <section class="ep-body ep-hidden" id="ep-body-agenda"></section>
@@ -93,6 +121,49 @@ em.createPanel = function () {
              <button class="ep-theme-chip" data-theme="wispr">Wispr</button>
              <button class="ep-theme-chip" data-theme="solarized-osaka">Solarized Osaka</button>
              <button class="ep-theme-chip" data-theme="olivia">Olivia</button>
+             <button class="ep-theme-chip" data-theme="custom">Personalizado</button>
+          </div>
+        </div>
+
+        <div class="ep-config-group ep-custom-theme-controls ep-hidden" id="ep-custom-theme-controls">
+          <label class="ep-config-label">Tema personalizado</label>
+          <div class="ep-custom-base-row">
+            <label class="ep-custom-base-label" for="ep-custom-base-theme">Tomar como base</label>
+            <select class="ep-config-select" id="ep-custom-base-theme">
+              <option value="">elige un tema...</option>
+              <option value="light">Light</option>
+              <option value="jazmin">Jazmín</option>
+              <option value="dark">Dark</option>
+              <option value="hacker">Hacker</option>
+              <option value="ocean">Ocean</option>
+              <option value="dracula">Dracula</option>
+              <option value="nord">Nord</option>
+              <option value="solarized">Solarized</option>
+              <option value="solarizedlight">Solarized Light</option>
+              <option value="gruvbox">Gruvbox</option>
+              <option value="sakura">Sakura</option>
+              <option value="lavender">Lavender</option>
+              <option value="rosa">Rosa</option>
+              <option value="sandia">Sandia</option>
+              <option value="matcha">Matcha</option>
+              <option value="moka">Moka</option>
+              <option value="candy">Candy</option>
+              <option value="aurora">Aurora</option>
+              <option value="synthwave">Synthwave</option>
+              <option value="minimal">Minimal</option>
+              <option value="wispr">Wispr</option>
+              <option value="solarized-osaka">Solarized Osaka</option>
+              <option value="olivia">Olivia</option>
+            </select>
+          </div>
+          <div class="ep-custom-theme-grid">
+            <label class="ep-color-field">Fondo <input type="color" id="ep-custom-bg" value="#ffffff" /></label>
+            <label class="ep-color-field">Texto <input type="color" id="ep-custom-text" value="#111111" /></label>
+            <label class="ep-color-field">Borde <input type="color" id="ep-custom-border" value="#111111" /></label>
+            <label class="ep-color-field">Acento <input type="color" id="ep-custom-accent" value="#6c5ce7" /></label>
+            <label class="ep-color-field">Vencida <input type="color" id="ep-custom-overdue" value="#e74c3c" /></label>
+            <label class="ep-color-field">Inminente <input type="color" id="ep-custom-imminent" value="#f1c40f" /></label>
+            <label class="ep-color-field">Urgente <input type="color" id="ep-custom-urgent" value="#e67e22" /></label>
           </div>
         </div>
 
@@ -124,6 +195,18 @@ em.createPanel = function () {
         </div>
 
         <div class="ep-config-group">
+          <label class="ep-config-label">Animación de entrega</label>
+          <select class="ep-config-select" id="ep-delivery-animation">
+            <option value="cycle">rotar animaciones</option>
+            <option value="off">desactivada</option>
+            <option value="confetti">confetti</option>
+            <option value="abduction">ovni</option>
+            <option value="teams">disco</option>
+            <option value="pinata">piñata</option>
+          </select>
+        </div>
+
+        <div class="ep-config-group">
           <label class="ep-config-label">Fuente de la interfaz</label>
           <select class="ep-config-select" id="ep-font">
             <optgroup label="Coding Fonts (Monospace)">
@@ -151,6 +234,21 @@ em.createPanel = function () {
           </select>
         </div>
         <div class="ep-config-group">
+          <label class="ep-config-label">Tamaño del panel</label>
+          <select class="ep-config-select" id="ep-panel-size">
+            <option value="compact">compacto</option>
+            <option value="normal">normal</option>
+            <option value="wide">ancho</option>
+          </select>
+        </div>
+        <div class="ep-config-group">
+          <label class="ep-config-label" id="ep-log-visibility-label">Apartado de log</label>
+          <select class="ep-config-select" id="ep-log-visibility">
+            <option value="visible">visible</option>
+            <option value="removed">oculto</option>
+          </select>
+        </div>
+        <div class="ep-config-group">
           <label class="ep-config-label" id="ep-lang-label">Idioma</label>
           <select class="ep-config-select" id="ep-lang">
             <option value="es">Español</option>
@@ -160,6 +258,10 @@ em.createPanel = function () {
             <option value="ko">한국어</option>
             <option value="zh">中文</option>
           </select>
+        </div>
+
+        <div class="ep-config-group">
+          <button class="ep-btn ep-clear-local-data" id="ep-clear-local-data" type="button">Borrar datos locales</button>
         </div>
       </section>
 
@@ -182,16 +284,37 @@ em.createPanel = function () {
     refreshBtn: root.querySelector("#ep-refresh"),
     autoRefreshSelect: root.querySelector("#ep-autorefresh"),
     reminderSelect: root.querySelector("#ep-reminder"),
+    deliveryAnimationSelect: root.querySelector("#ep-delivery-animation"),
     fontSelect: root.querySelector("#ep-font"),
+    panelSizeSelect: root.querySelector("#ep-panel-size"),
+    logVisibilitySelect: root.querySelector("#ep-log-visibility"),
     langSelect: root.querySelector("#ep-lang"),
+    customThemeControls: root.querySelector("#ep-custom-theme-controls"),
+    customBaseThemeSelect: root.querySelector("#ep-custom-base-theme"),
+    customColorInputs: {
+      bg: root.querySelector("#ep-custom-bg"),
+      text: root.querySelector("#ep-custom-text"),
+      border: root.querySelector("#ep-custom-border"),
+      accent: root.querySelector("#ep-custom-accent"),
+      overdue: root.querySelector("#ep-custom-overdue"),
+      imminent: root.querySelector("#ep-custom-imminent"),
+      urgent: root.querySelector("#ep-custom-urgent")
+    },
     archiveBtn: root.querySelector("#ep-archive-toggle"),
     collapseBtn: root.querySelector("#ep-collapse"),
     tabButtons: root.querySelectorAll(".ep-tab"),
+    filtersWrap: root.querySelector("#ep-filters"),
+    filterCompactBtn: root.querySelector("#ep-filter-compact"),
+    filterQuery: root.querySelector("#ep-filter-query"),
+    filterCourse: root.querySelector("#ep-filter-course"),
+    filterUrgency: root.querySelector("#ep-filter-urgency"),
+    filterDate: root.querySelector("#ep-filter-date"),
     pendingBody: root.querySelector("#ep-body-pending"),
     overdueBody: root.querySelector("#ep-body-overdue"),
     agendaBody: root.querySelector("#ep-body-agenda"),
     logBody: root.querySelector("#ep-body-log"),
     configBody: root.querySelector("#ep-body-config"),
+    clearLocalDataBtn: root.querySelector("#ep-clear-local-data"),
     themeChips: root.querySelectorAll(".ep-theme-chip"),
     footer: root.querySelector("#ep-footer-status"),
     jazminBg: root.querySelector("#ep-jazmin-bg"),
@@ -200,8 +323,15 @@ em.createPanel = function () {
     themeLabel: root.querySelector(".ep-config-group:nth-child(1) .ep-config-label"),
     autorefreshLabel: root.querySelector("#ep-autorefresh").previousElementSibling,
     reminderLabel: root.querySelector("#ep-reminder").previousElementSibling,
+    deliveryAnimationLabel: root.querySelector("#ep-delivery-animation").previousElementSibling,
     fontLabel: root.querySelector("#ep-font").previousElementSibling,
-    langLabel: root.querySelector("#ep-lang-label")
+    panelSizeLabel: root.querySelector("#ep-panel-size").previousElementSibling,
+    logVisibilityLabel: root.querySelector("#ep-log-visibility-label"),
+    langLabel: root.querySelector("#ep-lang-label"),
+    filterQueryPlaceholder: root.querySelector("#ep-filter-query"),
+    filterCourseSelect: root.querySelector("#ep-filter-course"),
+    filterUrgencySelect: root.querySelector("#ep-filter-urgency"),
+    filterDateSelect: root.querySelector("#ep-filter-date")
   };
 
   em.panelEls.refreshBtn.addEventListener("click", () => em.scanPending());
@@ -213,11 +343,33 @@ em.createPanel = function () {
     const hours = parseInt(e.target.value, 10);
     em.setReminderHours(hours);
   });
+  em.panelEls.deliveryAnimationSelect.addEventListener("change", (e) => {
+    if (em.setDeliveryAnimation) em.setDeliveryAnimation(e.target.value);
+  });
   em.panelEls.fontSelect.addEventListener("change", (e) => {
     em.setFont(e.target.value);
   });
+  em.panelEls.panelSizeSelect.addEventListener("change", (e) => {
+    if (em.setPanelSize) em.setPanelSize(e.target.value);
+  });
+  em.panelEls.customBaseThemeSelect.addEventListener("change", (e) => {
+    if (em.setCustomThemeFromBase) em.setCustomThemeFromBase(e.target.value);
+  });
+  Object.keys(em.panelEls.customColorInputs).forEach((key) => {
+    const input = em.panelEls.customColorInputs[key];
+    if (!input) return;
+    input.addEventListener("input", () => {
+      if (em.updateCustomThemeFromInputs) em.updateCustomThemeFromInputs(true);
+    });
+  });
+  em.panelEls.logVisibilitySelect.addEventListener("change", (e) => {
+    if (em.setLogTabVisible) em.setLogTabVisible(e.target.value !== "removed");
+  });
   em.panelEls.langSelect.addEventListener("change", (e) => {
     if (em.setLanguage) em.setLanguage(e.target.value);
+  });
+  em.panelEls.clearLocalDataBtn.addEventListener("click", () => {
+    if (em.clearLocalData) em.clearLocalData();
   });
   em.panelEls.themeChips.forEach((chip) => {
     chip.addEventListener("click", () => em.setTheme(chip.dataset.theme));
@@ -226,6 +378,25 @@ em.createPanel = function () {
   em.panelEls.collapseBtn.addEventListener("click", em.toggleCollapse);
   em.panelEls.tabButtons.forEach((btn) => {
     btn.addEventListener("click", () => em.setTab(btn.dataset.tab));
+  });
+  em.panelEls.filterQuery.addEventListener("input", (e) => {
+    em.state.filters.query = String(e.target.value || "");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterCourse.addEventListener("change", (e) => {
+    em.state.filters.course = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterUrgency.addEventListener("change", (e) => {
+    em.state.filters.urgency = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterDate.addEventListener("change", (e) => {
+    em.state.filters.dateRange = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterCompactBtn.addEventListener("click", () => {
+    em.toggleFiltersCompact();
   });
 
   document.addEventListener("click", (e) => {

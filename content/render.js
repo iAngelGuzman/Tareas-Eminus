@@ -130,9 +130,21 @@ em.renderPending = function (items) {
   if (!em.panelEls || !em.panelEls.pendingBody) return;
   if (!em.panelEls || !em.panelEls.overdueBody) return;
 
-  const pendingItems = items.filter((item) => item.urgency !== "overdue" && !item.archived);
-  const overdueItems = items.filter((item) => item.urgency === "overdue" && !item.archived);
+  const nonArchivedItems = items.filter((item) => !item.archived);
+  const filteredItems = em.applyAdvancedFilters(nonArchivedItems);
+  const pendingItems = filteredItems.filter((item) => item.urgency !== "overdue");
+  const overdueItems = filteredItems.filter((item) => item.urgency === "overdue");
   const archivedItems = items.filter((item) => item.archived);
+
+  if (em.panelEls && em.panelEls.filterCourse) {
+    const previousValue = em.panelEls.filterCourse.value || "all";
+    const courses = Array.from(new Set(nonArchivedItems.map((item) => item.course).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    const options = [`<option value="all">${em.escapeHtml(em.t("filter_courses_all"))}</option>`]
+      .concat(courses.map((course) => `<option value="${em.escapeHtml(course)}">${em.escapeHtml(course)}</option>`));
+    em.panelEls.filterCourse.innerHTML = options.join("");
+    em.panelEls.filterCourse.value = courses.includes(previousValue) || previousValue === "all" ? previousValue : "all";
+    em.state.filters.course = em.panelEls.filterCourse.value;
+  }
 
   const buildListHtml = (list, emptyMsg, actionConfig, showPin) => {
     actionConfig = actionConfig || null;
@@ -183,7 +195,7 @@ em.renderPending = function (items) {
   } else {
     em.panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, em.t("empty_pending"), null, true);
     em.panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, em.t("empty_overdue"), { label: em.t("action_archive"), action: "archive" }, true);
-    em.renderAgenda(items);
+    em.renderAgenda(filteredItems);
   }
 
   const addItemListeners = (container) => {

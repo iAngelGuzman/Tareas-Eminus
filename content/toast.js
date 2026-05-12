@@ -42,8 +42,8 @@ em.notifyUser = async function (title, body) {
       title,
       body
     });
-  } catch (err) {
-    console.debug("No se pudo enviar notificación", err);
+  } catch (_) {
+    console.debug("No se pudo enviar notificación");
   }
 };
 
@@ -54,7 +54,7 @@ em.syncBadge = async function (count, newCount, overdueCount) {
   count = Number(count || 0);
   try {
     await chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count, newCount, overdueCount });
-  } catch (err) {
-    console.debug("No se pudo actualizar badge", err);
+  } catch (_) {
+    console.debug("No se pudo actualizar badge");
   }
 };

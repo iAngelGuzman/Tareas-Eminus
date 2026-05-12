@@ -18,7 +18,12 @@ em.hydrateFromStorage = async function () {
     em.STORAGE_KEYS.REMINDER_HOURS,
     em.STORAGE_KEYS.NOTIFIED_UPCOMING,
     em.STORAGE_KEYS.FONT,
-    em.STORAGE_KEYS.LANG
+    em.STORAGE_KEYS.LANG,
+    em.STORAGE_KEYS.LOG_TAB_VISIBLE,
+    em.STORAGE_KEYS.FILTERS_COMPACT,
+    em.STORAGE_KEYS.CUSTOM_THEME,
+    em.STORAGE_KEYS.PANEL_SIZE,
+    em.STORAGE_KEYS.DELIVERY_ANIMATION
   ]);
 
   const storedAccountId = data[em.STORAGE_KEYS.ACCOUNT_ID];
@@ -54,11 +59,27 @@ em.hydrateFromStorage = async function () {
   em.state.pinnedIds = em.normalizePinnedIds(data[em.STORAGE_KEYS.PINNED]);
   em.state.notifiedUpcomingIds = em.normalizeNotifiedUpcomingIds(data[em.STORAGE_KEYS.NOTIFIED_UPCOMING]);
 
+  em.applyCustomTheme(data[em.STORAGE_KEYS.CUSTOM_THEME]);
+
+  const storedPanelSize = data[em.STORAGE_KEYS.PANEL_SIZE] || "normal";
+  if (em.setPanelSize) {
+    await em.setPanelSize(storedPanelSize, false);
+  }
+
+  const storedDeliveryAnimation = data[em.STORAGE_KEYS.DELIVERY_ANIMATION] || "cycle";
+  if (em.setDeliveryAnimation) {
+    await em.setDeliveryAnimation(storedDeliveryAnimation, false);
+  }
+
   const theme = data[em.STORAGE_KEYS.THEME] || "light";
+  if (em.PANEL_THEME_CLASSES) {
+    em.panelEls.root.classList.remove(...em.PANEL_THEME_CLASSES);
+  }
   if (theme !== "light") {
     em.panelEls.root.classList.add("ep-" + theme + "-theme");
   }
   em.updateActiveThemeChip && em.updateActiveThemeChip(theme);
+  em.updateCustomThemeVisibility && em.updateCustomThemeVisibility(theme);
 
   const snapshot = data[em.STORAGE_KEYS.SNAPSHOT];
   if (snapshot && Array.isArray(snapshot.pending)) {
@@ -118,6 +139,18 @@ em.hydrateFromStorage = async function () {
 
   const storedFont = data[em.STORAGE_KEYS.FONT] || "mono";
   em.setFont(storedFont);
+
+  em.state.isLogTabVisible = data[em.STORAGE_KEYS.LOG_TAB_VISIBLE] !== false;
+  if (em.panelEls && em.panelEls.logVisibilitySelect) {
+    em.panelEls.logVisibilitySelect.value = em.state.isLogTabVisible ? "visible" : "removed";
+  }
+  if (em.updateTabVisibility) em.updateTabVisibility();
+
+  em.state.isFiltersCompact = data[em.STORAGE_KEYS.FILTERS_COMPACT] === true;
+  if (em.panelEls && em.panelEls.root) {
+    em.panelEls.root.classList.toggle("ep-filters-compact", em.state.isFiltersCompact);
+  }
+  if (em.updateFiltersCompactButton) em.updateFiltersCompactButton();
   
   const storedLang = data[em.STORAGE_KEYS.LANG] || "es";
   em.state.lang = storedLang;
@@ -280,7 +313,7 @@ em.scanPending = async function () {
 
     await em.syncBadge(visiblePending.length, logMeta.newCount, currentOverdue.length);
   } catch (err) {
-    console.error("[Eminus Pending Panel]", err);
+    console.error("[Eminus Pending Panel] Error de lectura");
     if (!navigator.onLine) {
       const snapshot = await em.storageGet([em.STORAGE_KEYS.SNAPSHOT, em.STORAGE_KEYS.PINNED]);
       const cached = snapshot[em.STORAGE_KEYS.SNAPSHOT];

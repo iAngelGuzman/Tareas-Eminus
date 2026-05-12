@@ -19,7 +19,12 @@ window.eminus.STORAGE_KEYS = {
   REMINDER_HOURS: "eminusReminderHours",
   NOTIFIED_UPCOMING: "eminusNotifiedUpcomingIds",
   FONT: "eminusPanelFont",
-  LANG: "eminusLanguage"
+  LANG: "eminusLanguage",
+  LOG_TAB_VISIBLE: "eminusLogTabVisible",
+  FILTERS_COMPACT: "eminusFiltersCompact",
+  CUSTOM_THEME: "eminusCustomTheme",
+  PANEL_SIZE: "eminusPanelSize",
+  DELIVERY_ANIMATION: "eminusDeliveryAnimation"
 };
 
 window.eminus.NAV_KEYS = {

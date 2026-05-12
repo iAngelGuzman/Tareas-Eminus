@@ -20,6 +20,22 @@ em.i18n = {
     tab_agenda: "Agenda",
     tab_log: "Log",
     tab_config: "Config",
+    filter_search_placeholder: "buscar tarea o curso",
+    filter_courses_all: "todos los cursos",
+    filter_urgency_all: "todas las urgencias",
+    filter_urgency_overdue: "vencidas",
+    filter_urgency_imminent: "inminentes (<24h)",
+    filter_urgency_urgent: "urgentes (<48h)",
+    filter_urgency_normal: "normales",
+    filter_date_all: "cualquier fecha",
+    filter_date_today: "vence hoy",
+    filter_date_3d: "próximos 3 días",
+    filter_date_7d: "próximos 7 días",
+    filter_date_30d: "próximos 30 días",
+    filter_date_nodate: "sin fecha",
+    filter_date_overdue: "ya vencidas",
+    filter_compact: "[ compactar ]",
+    filter_expand: "[ expandir ]",
     theme_label: "Tema del panel",
     autorefresh_label: "Auto-refresh",
     ar_off: "desactivado",
@@ -37,6 +53,10 @@ em.i18n = {
     rem_24h: "24 horas antes",
     rem_48h: "48 horas antes",
     font_label: "Fuente de la interfaz",
+    log_visibility_label: "Apartado de log",
+    log_visibility_visible: "visible",
+    log_visibility_removed: "oculto",
+    config_clear_data: "Borrar datos locales",
     lang_label: "Idioma",
     lang_es: "Español",
     lang_en: "English",
@@ -125,6 +145,22 @@ em.i18n = {
     tab_agenda: "Agenda",
     tab_log: "Log",
     tab_config: "Config",
+    filter_search_placeholder: "search task or course",
+    filter_courses_all: "all courses",
+    filter_urgency_all: "all urgency levels",
+    filter_urgency_overdue: "overdue",
+    filter_urgency_imminent: "imminent (<24h)",
+    filter_urgency_urgent: "urgent (<48h)",
+    filter_urgency_normal: "normal",
+    filter_date_all: "any due date",
+    filter_date_today: "due today",
+    filter_date_3d: "next 3 days",
+    filter_date_7d: "next 7 days",
+    filter_date_30d: "next 30 days",
+    filter_date_nodate: "no due date",
+    filter_date_overdue: "already overdue",
+    filter_compact: "[ compact ]",
+    filter_expand: "[ expand ]",
     theme_label: "Panel Theme",
     autorefresh_label: "Auto-refresh",
     ar_off: "disabled",
@@ -142,6 +178,10 @@ em.i18n = {
     rem_24h: "24 hours before",
     rem_48h: "48 hours before",
     font_label: "Interface Font",
+    log_visibility_label: "Log section",
+    log_visibility_visible: "visible",
+    log_visibility_removed: "hidden",
+    config_clear_data: "Clear local data",
     lang_label: "Language",
     lang_es: "Español",
     lang_en: "English",
@@ -247,6 +287,10 @@ em.i18n = {
     rem_24h: "24 heures antes",
     rem_48h: "48 heures antes",
     font_label: "Police de l'interface",
+    log_visibility_label: "Section du journal",
+    log_visibility_visible: "visible",
+    log_visibility_removed: "cachée",
+    config_clear_data: "Effacer les données locales",
     lang_label: "Langue",
     lang_es: "Español",
     lang_en: "English",
@@ -352,6 +396,10 @@ em.i18n = {
     rem_24h: "24時間前",
     rem_48h: "48時間前",
     font_label: "インターフェースフォント",
+    log_visibility_label: "ログセクション",
+    log_visibility_visible: "表示",
+    log_visibility_removed: "非表示",
+    config_clear_data: "ローカルデータを消去",
     lang_label: "言語",
     lang_es: "Español",
     lang_en: "English",
@@ -457,6 +505,10 @@ em.i18n = {
     rem_24h: "24시간 전",
     rem_48h: "48시간 전",
     font_label: "인터페이스 글꼴",
+    log_visibility_label: "로그 섹션",
+    log_visibility_visible: "표시",
+    log_visibility_removed: "숨김",
+    config_clear_data: "로컬 데이터 지우기",
     lang_label: "언어",
     lang_es: "Español",
     lang_en: "English",
@@ -562,6 +614,10 @@ em.i18n = {
     rem_24h: "24 小时前",
     rem_48h: "48 小时前",
     font_label: "界面字体",
+    log_visibility_label: "日志区域",
+    log_visibility_visible: "显示",
+    log_visibility_removed: "隐藏",
+    config_clear_data: "清除本地数据",
     lang_label: "语言",
     lang_es: "Español",
     lang_en: "English",
@@ -642,7 +698,7 @@ em.i18n = {
 em.t = function(key) {
   const lang = em.state?.lang || 'es';
   const dictionary = em.i18n[lang] || em.i18n['es'];
-  return dictionary[key] || key;
+  return dictionary[key] || em.i18n.es[key] || key;
 };
 
 em.applyTranslations = function() {
@@ -687,6 +743,7 @@ em.applyTranslations = function() {
   if (els.autorefreshLabel) els.autorefreshLabel.textContent = em.t('autorefresh_label');
   if (els.reminderLabel) els.reminderLabel.textContent = em.t('reminder_label');
   if (els.fontLabel) els.fontLabel.textContent = em.t('font_label');
+  if (els.logVisibilityLabel) els.logVisibilityLabel.textContent = em.t('log_visibility_label');
   if (els.langLabel) els.langLabel.textContent = em.t('lang_label');
   
   // Config Autorefresh options
@@ -709,6 +766,11 @@ em.applyTranslations = function() {
     els.reminderSelect.options[5].textContent = em.t('rem_24h');
     els.reminderSelect.options[6].textContent = em.t('rem_48h');
   }
+
+  if (els.logVisibilitySelect) {
+    els.logVisibilitySelect.options[0].textContent = em.t('log_visibility_visible');
+    els.logVisibilitySelect.options[1].textContent = em.t('log_visibility_removed');
+  }
   
   // Config Language options
   if (els.langSelect) {
@@ -719,6 +781,31 @@ em.applyTranslations = function() {
     els.langSelect.options[4].textContent = em.t('lang_ko');
     els.langSelect.options[5].textContent = em.t('lang_zh');
   }
+
+  if (els.clearLocalDataBtn) {
+    els.clearLocalDataBtn.textContent = em.t("config_clear_data");
+  }
+
+  if (els.filterQueryPlaceholder) {
+    els.filterQueryPlaceholder.placeholder = em.t("filter_search_placeholder");
+  }
+  if (els.filterUrgencySelect && els.filterUrgencySelect.options.length >= 5) {
+    els.filterUrgencySelect.options[0].textContent = em.t("filter_urgency_all");
+    els.filterUrgencySelect.options[1].textContent = em.t("filter_urgency_overdue");
+    els.filterUrgencySelect.options[2].textContent = em.t("filter_urgency_imminent");
+    els.filterUrgencySelect.options[3].textContent = em.t("filter_urgency_urgent");
+    els.filterUrgencySelect.options[4].textContent = em.t("filter_urgency_normal");
+  }
+  if (els.filterDateSelect && els.filterDateSelect.options.length >= 7) {
+    els.filterDateSelect.options[0].textContent = em.t("filter_date_all");
+    els.filterDateSelect.options[1].textContent = em.t("filter_date_today");
+    els.filterDateSelect.options[2].textContent = em.t("filter_date_3d");
+    els.filterDateSelect.options[3].textContent = em.t("filter_date_7d");
+    els.filterDateSelect.options[4].textContent = em.t("filter_date_30d");
+    els.filterDateSelect.options[5].textContent = em.t("filter_date_nodate");
+    els.filterDateSelect.options[6].textContent = em.t("filter_date_overdue");
+  }
+  if (em.updateFiltersCompactButton) em.updateFiltersCompactButton();
 
   // Footer
   if (els.footer && (els.footer.textContent === "Listo" || els.footer.textContent === "Ready" || els.footer.textContent === "Prêt" || els.footer.textContent === "準備完了" || els.footer.textContent === "준비됨" || els.footer.textContent === "就绪" || els.footer.textContent === em.t('ready'))) {

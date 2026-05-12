@@ -2940,3 +2940,96 @@
   color: #cba694;
   border-color: #cba694;
 }
+
+/* ══════════════════════════════════════════
+   THEME: CUSTOM
+   ══════════════════════════════════════════ */
+
+#eminus-pending-panel.ep-custom-theme {
+  --ep-bg-base: var(--ep-custom-bg, #ffffff);
+  --ep-text-base: var(--ep-custom-text, #111111);
+  background: var(--ep-custom-bg, #ffffff);
+  color: var(--ep-custom-text, #111111);
+  border-color: var(--ep-custom-border, #111111);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-header,
+#eminus-pending-panel.ep-custom-theme .ep-tabs,
+#eminus-pending-panel.ep-custom-theme .ep-body,
+#eminus-pending-panel.ep-custom-theme .ep-footer {
+  background: var(--ep-custom-bg, #ffffff);
+  border-color: var(--ep-custom-border, #111111);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-seal-art,
+#eminus-pending-panel.ep-custom-theme .ep-miyu-text,
+#eminus-pending-panel.ep-custom-theme .ep-title-wrap .ep-title,
+#eminus-pending-panel.ep-custom-theme .ep-subtitle,
+#eminus-pending-panel.ep-custom-theme .ep-btn,
+#eminus-pending-panel.ep-custom-theme .ep-tab,
+#eminus-pending-panel.ep-custom-theme .ep-course,
+#eminus-pending-panel.ep-custom-theme .ep-title-task,
+#eminus-pending-panel.ep-custom-theme .ep-meta,
+#eminus-pending-panel.ep-custom-theme .ep-log-time,
+#eminus-pending-panel.ep-custom-theme .ep-log-summary,
+#eminus-pending-panel.ep-custom-theme .ep-log-lines,
+#eminus-pending-panel.ep-custom-theme .ep-log-changes,
+#eminus-pending-panel.ep-custom-theme .ep-config-label,
+#eminus-pending-panel.ep-custom-theme .ep-empty {
+  color: var(--ep-custom-text, #111111) !important;
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-tab-active,
+#eminus-pending-panel.ep-custom-theme .ep-btn:hover,
+#eminus-pending-panel.ep-custom-theme .ep-theme-chip-active {
+  background: var(--ep-custom-accent, #6c5ce7) !important;
+  color: var(--ep-custom-bg, #ffffff) !important;
+  border-color: var(--ep-custom-accent, #6c5ce7) !important;
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item,
+#eminus-pending-panel.ep-custom-theme .ep-log-item,
+#eminus-pending-panel.ep-custom-theme .ep-config-select,
+#eminus-pending-panel.ep-custom-theme .ep-color-field,
+#eminus-pending-panel.ep-custom-theme .ep-empty {
+  background: var(--ep-custom-bg, #ffffff);
+  border-color: var(--ep-custom-border, #111111);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item-btn:hover .ep-item {
+  background: var(--ep-custom-accent, #6c5ce7);
+  color: var(--ep-custom-bg, #ffffff);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item-btn:hover .ep-item .ep-course,
+#eminus-pending-panel.ep-custom-theme .ep-item-btn:hover .ep-item .ep-title-task,
+#eminus-pending-panel.ep-custom-theme .ep-item-btn:hover .ep-item .ep-meta {
+  color: var(--ep-custom-bg, #ffffff) !important;
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item.ep-overdue {
+  background-color: color-mix(in srgb, var(--ep-custom-overdue, #e74c3c) 14%, var(--ep-custom-bg, #ffffff));
+  border-left-color: var(--ep-custom-overdue, #e74c3c);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item.ep-imminent {
+  background-color: color-mix(in srgb, var(--ep-custom-imminent, #f1c40f) 18%, var(--ep-custom-bg, #ffffff));
+  border-left-color: var(--ep-custom-imminent, #f1c40f);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-item.ep-urgent {
+  background-color: color-mix(in srgb, var(--ep-custom-urgent, #e67e22) 16%, var(--ep-custom-bg, #ffffff));
+  border-left-color: var(--ep-custom-urgent, #e67e22);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-agenda-day-header.ep-agenda-overdue,
+#eminus-pending-panel.ep-custom-theme .ep-toast-new,
+#eminus-pending-panel.ep-custom-theme .ep-toast-overdue {
+  color: var(--ep-custom-overdue, #e74c3c);
+  border-color: var(--ep-custom-overdue, #e74c3c);
+}
+
+#eminus-pending-panel.ep-custom-theme .ep-toast-info {
+  color: var(--ep-custom-accent, #6c5ce7);
+  border-color: var(--ep-custom-accent, #6c5ce7);
+}

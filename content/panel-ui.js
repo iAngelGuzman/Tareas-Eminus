@@ -12,11 +12,95 @@ em.toggleCollapse = function () {
   em.panelEls.collapseBtn.textContent = em.state.isCollapsed ? "[ + ]" : "[ - ]";
 };
 
+em.updateFiltersCompactButton = function () {
+  if (!em.panelEls || !em.panelEls.filterCompactBtn) return;
+  em.panelEls.filterCompactBtn.textContent = em.state.isFiltersCompact ? em.t("filter_expand") : em.t("filter_compact");
+};
+
+em.setFiltersCompact = async function (isCompact) {
+  em.state.isFiltersCompact = !!isCompact;
+  if (em.panelEls && em.panelEls.root) {
+    em.panelEls.root.classList.toggle("ep-filters-compact", em.state.isFiltersCompact);
+  }
+  em.updateFiltersCompactButton();
+  const payload = {};
+  payload[em.STORAGE_KEYS.FILTERS_COMPACT] = em.state.isFiltersCompact;
+  await em.storageSet(payload);
+};
+
+em.toggleFiltersCompact = function () {
+  em.state.isFiltersCompact = !em.state.isFiltersCompact;
+  em.setFiltersCompact(em.state.isFiltersCompact);
+};
+
+em.PANEL_THEME_CLASSES = [
+  "ep-dark-theme",
+  "ep-hacker-theme",
+  "ep-ocean-theme",
+  "ep-dracula-theme",
+  "ep-nord-theme",
+  "ep-solarized-theme",
+  "ep-solarizedlight-theme",
+  "ep-gruvbox-theme",
+  "ep-sakura-theme",
+  "ep-lavender-theme",
+  "ep-rosa-theme",
+  "ep-sandia-theme",
+  "ep-matcha-theme",
+  "ep-moka-theme",
+  "ep-jazmin-theme",
+  "ep-candy-theme",
+  "ep-aurora-theme",
+  "ep-synthwave-theme",
+  "ep-minimal-theme",
+  "ep-wispr-theme",
+  "ep-solarized-osaka-theme",
+  "ep-olivia-theme",
+  "ep-custom-theme"
+];
+
+em.DEFAULT_CUSTOM_THEME = {
+  bg: "#ffffff",
+  text: "#111111",
+  border: "#111111",
+  accent: "#6c5ce7",
+  overdue: "#e74c3c",
+  imminent: "#f1c40f",
+  urgent: "#e67e22"
+};
+
+em.CUSTOM_THEME_PRESETS = {
+  light: { bg: "#ffffff", text: "#000000", border: "#000000", accent: "#000000", overdue: "#c0392b", imminent: "#f1c40f", urgent: "#e67e22" },
+  jazmin: { bg: "#fffdf5", text: "#3d3a28", border: "#ddd8c0", accent: "#6a8a50", overdue: "#c06850", imminent: "#b8a030", urgent: "#6a8a50" },
+  dark: { bg: "#121212", text: "#e0e0e0", border: "#444444", accent: "#e0e0e0", overdue: "#ff6b6b", imminent: "#f6e58d", urgent: "#a3e635" },
+  hacker: { bg: "#000000", text: "#00ff00", border: "#00ff00", accent: "#00ff00", overdue: "#ff0000", imminent: "#ffff00", urgent: "#ccff00" },
+  ocean: { bg: "#0f172a", text: "#38bdf8", border: "#1e293b", accent: "#38bdf8", overdue: "#f43f5e", imminent: "#eab308", urgent: "#a3e635" },
+  dracula: { bg: "#282a36", text: "#f8f8f2", border: "#44475a", accent: "#f8f8f2", overdue: "#ff5555", imminent: "#f1fa8c", urgent: "#50fa7b" },
+  nord: { bg: "#2E3440", text: "#D8DEE9", border: "#4C566A", accent: "#D8DEE9", overdue: "#bf616a", imminent: "#ebcb8b", urgent: "#a3be8c" },
+  solarized: { bg: "#002b36", text: "#839496", border: "#073642", accent: "#839496", overdue: "#dc322f", imminent: "#b58900", urgent: "#859900" },
+  solarizedlight: { bg: "#fdf6e3", text: "#586e75", border: "#eee8d5", accent: "#586e75", overdue: "#dc322f", imminent: "#b58900", urgent: "#859900" },
+  gruvbox: { bg: "#282828", text: "#ebdbb2", border: "#504945", accent: "#ebdbb2", overdue: "#cc241d", imminent: "#d79921", urgent: "#98971a" },
+  sakura: { bg: "#1a1225", text: "#f0d0e0", border: "#3d2a4a", accent: "#f8a4c8", overdue: "#e84a6f", imminent: "#f0c060", urgent: "#88c890" },
+  lavender: { bg: "#f5f0fa", text: "#2d2049", border: "#c9b8e8", accent: "#7c5cbf", overdue: "#c0392b", imminent: "#d4a017", urgent: "#4a8c4a" },
+  rosa: { bg: "#fff5f7", text: "#4a1028", border: "#f0c0cf", accent: "#e85080", overdue: "#c0392b", imminent: "#d4a017", urgent: "#4a8c4a" },
+  sandia: { bg: "#1a3a1a", text: "#f0c8c8", border: "#2d5a2d", accent: "#c0392b", overdue: "#e74c3c", imminent: "#f0c040", urgent: "#50d050" },
+  matcha: { bg: "#f4f1e8", text: "#2c3e2c", border: "#b8c9a8", accent: "#5a7a4a", overdue: "#b04040", imminent: "#b89030", urgent: "#5a8a3a" },
+  moka: { bg: "#3e2723", text: "#f8c0d0", border: "#6d4c41", accent: "#f48fb1", overdue: "#ef5350", imminent: "#fdd835", urgent: "#66bb6a" },
+  candy: { bg: "#fdf0f8", text: "#3a2050", border: "#e8b8d0", accent: "#80b8f0", overdue: "#e86080", imminent: "#e0a040", urgent: "#60b080" },
+  aurora: { bg: "#0a0e1a", text: "#e4e8f0", border: "#1e293b", accent: "#34d399", overdue: "#ef4444", imminent: "#f59e0b", urgent: "#34d399" },
+  synthwave: { bg: "#1a1b26", text: "#c0caf5", border: "#24283b", accent: "#7aa2f7", overdue: "#f7768e", imminent: "#e0af68", urgent: "#9ece6a" },
+  minimal: { bg: "#ffffff", text: "#1a1a1a", border: "#f0f0f0", accent: "#f0f0f0", overdue: "#ff4d4f", imminent: "#ffc53d", urgent: "#73d13d" },
+  wispr: { bg: "#fbfaf3", text: "#1a1a1a", border: "#e5e4da", accent: "#1a342d", overdue: "#ff4d4f", imminent: "#ffc53d", urgent: "#73d13d" },
+  "solarized-osaka": { bg: "#001f27", text: "#fdf6e3", border: "#073642", accent: "#2aa198", overdue: "#dc322f", imminent: "#b58900", urgent: "#859900" },
+  olivia: { bg: "#1c1b1a", text: "#f7f0e6", border: "#3d3330", accent: "#cba694", overdue: "#c05858", imminent: "#c0a058", urgent: "#72c058" }
+};
+
 em.setTheme = async function (themeName) {
-  em.panelEls.root.classList.remove("ep-dark-theme", "ep-hacker-theme", "ep-ocean-theme", "ep-dracula-theme", "ep-nord-theme", "ep-solarized-theme", "ep-solarizedlight-theme", "ep-gruvbox-theme", "ep-sakura-theme", "ep-lavender-theme", "ep-rosa-theme", "ep-sandia-theme", "ep-matcha-theme", "ep-moka-theme", "ep-jazmin-theme", "ep-candy-theme", "ep-aurora-theme", "ep-synthwave-theme", "ep-minimal-theme", "ep-wispr-theme", "ep-solarized-osaka-theme", "ep-olivia-theme");
+  em.panelEls.root.classList.remove(...em.PANEL_THEME_CLASSES);
   if (themeName !== "light") {
     em.panelEls.root.classList.add("ep-" + themeName + "-theme");
   }
+  em.updateCustomThemeVisibility(themeName);
   const payload = {};
   payload[em.STORAGE_KEYS.THEME] = themeName;
   await em.storageSet(payload);
@@ -28,6 +112,103 @@ em.updateActiveThemeChip = function (themeName) {
   em.panelEls.themeChips.forEach((chip) => {
     chip.classList.toggle("ep-theme-chip-active", chip.dataset.theme === themeName);
   });
+};
+
+em.updateCustomThemeVisibility = function (themeName) {
+  if (!em.panelEls || !em.panelEls.customThemeControls) return;
+  em.panelEls.customThemeControls.classList.toggle("ep-hidden", themeName !== "custom");
+};
+
+em.normalizeCustomTheme = function (customTheme) {
+  const defaults = em.DEFAULT_CUSTOM_THEME;
+  const hex = /^#[0-9a-f]{6}$/i;
+  return {
+    bg: hex.test(customTheme?.bg || "") ? customTheme.bg : defaults.bg,
+    text: hex.test(customTheme?.text || "") ? customTheme.text : defaults.text,
+    border: hex.test(customTheme?.border || "") ? customTheme.border : defaults.border,
+    accent: hex.test(customTheme?.accent || "") ? customTheme.accent : defaults.accent,
+    overdue: hex.test(customTheme?.overdue || "") ? customTheme.overdue : defaults.overdue,
+    imminent: hex.test(customTheme?.imminent || "") ? customTheme.imminent : defaults.imminent,
+    urgent: hex.test(customTheme?.urgent || "") ? customTheme.urgent : defaults.urgent
+  };
+};
+
+em.applyCustomTheme = function (customTheme) {
+  if (!em.panelEls || !em.panelEls.root) return;
+  const theme = em.normalizeCustomTheme(customTheme || em.state.customTheme);
+  em.state.customTheme = theme;
+  em.panelEls.root.style.setProperty("--ep-custom-bg", theme.bg);
+  em.panelEls.root.style.setProperty("--ep-custom-text", theme.text);
+  em.panelEls.root.style.setProperty("--ep-custom-border", theme.border);
+  em.panelEls.root.style.setProperty("--ep-custom-accent", theme.accent);
+  em.panelEls.root.style.setProperty("--ep-custom-overdue", theme.overdue);
+  em.panelEls.root.style.setProperty("--ep-custom-imminent", theme.imminent);
+  em.panelEls.root.style.setProperty("--ep-custom-urgent", theme.urgent);
+
+  if (em.panelEls.customColorInputs) {
+    Object.keys(theme).forEach((key) => {
+      if (em.panelEls.customColorInputs[key]) {
+        em.panelEls.customColorInputs[key].value = theme[key];
+      }
+    });
+  }
+};
+
+em.updateCustomThemeFromInputs = async function (activateTheme) {
+  if (!em.panelEls || !em.panelEls.customColorInputs) return;
+  const next = {};
+  Object.keys(em.panelEls.customColorInputs).forEach((key) => {
+    next[key] = em.panelEls.customColorInputs[key].value;
+  });
+  em.applyCustomTheme(next);
+  const payload = {};
+  payload[em.STORAGE_KEYS.CUSTOM_THEME] = em.state.customTheme;
+  await em.storageSet(payload);
+  if (activateTheme) {
+    await em.setTheme("custom");
+  }
+};
+
+em.setCustomThemeFromBase = async function (themeName) {
+  const preset = em.CUSTOM_THEME_PRESETS[themeName];
+  if (!preset) return;
+  em.applyCustomTheme(preset);
+  const payload = {};
+  payload[em.STORAGE_KEYS.CUSTOM_THEME] = em.state.customTheme;
+  await em.storageSet(payload);
+  await em.setTheme("custom");
+  if (em.panelEls && em.panelEls.customBaseThemeSelect) {
+    em.panelEls.customBaseThemeSelect.value = "";
+  }
+};
+
+em.setPanelSize = async function (size, shouldPersist = true) {
+  const nextSize = ["compact", "normal", "wide"].includes(size) ? size : "normal";
+  em.state.panelSize = nextSize;
+  if (em.panelEls && em.panelEls.root) {
+    em.panelEls.root.classList.remove("ep-size-compact", "ep-size-normal", "ep-size-wide");
+    em.panelEls.root.classList.add("ep-size-" + nextSize);
+  }
+  if (em.panelEls && em.panelEls.panelSizeSelect) {
+    em.panelEls.panelSizeSelect.value = nextSize;
+  }
+  if (!shouldPersist) return;
+  const payload = {};
+  payload[em.STORAGE_KEYS.PANEL_SIZE] = nextSize;
+  await em.storageSet(payload);
+};
+
+em.setDeliveryAnimation = async function (animationKey, shouldPersist = true) {
+  const allowed = ["cycle", "off", "confetti", "abduction", "teams", "pinata"];
+  const nextAnimation = allowed.includes(animationKey) ? animationKey : "cycle";
+  em.state.deliveryAnimation = nextAnimation;
+  if (em.panelEls && em.panelEls.deliveryAnimationSelect) {
+    em.panelEls.deliveryAnimationSelect.value = nextAnimation;
+  }
+  if (!shouldPersist) return;
+  const payload = {};
+  payload[em.STORAGE_KEYS.DELIVERY_ANIMATION] = nextAnimation;
+  await em.storageSet(payload);
 };
 
 em.setFont = async function (fontKey) {
@@ -91,6 +272,20 @@ em.setLanguage = async function (lang) {
   em.setStatus(status);
 };
 
+em.setLogTabVisible = async function (isVisible) {
+  em.state.isLogTabVisible = !!isVisible;
+  if (em.panelEls && em.panelEls.logVisibilitySelect) {
+    em.panelEls.logVisibilitySelect.value = em.state.isLogTabVisible ? "visible" : "removed";
+  }
+  if (!em.state.isLogTabVisible && em.state.activeTab === "log") {
+    em.state.activeTab = "pending";
+  }
+  const payload = {};
+  payload[em.STORAGE_KEYS.LOG_TAB_VISIBLE] = em.state.isLogTabVisible;
+  await em.storageSet(payload);
+  em.updateTabVisibility();
+};
+
 em.filterAvailableFonts = function () {
   if (!em.panelEls || !em.panelEls.fontSelect) return;
   const options = em.panelEls.fontSelect.querySelectorAll("option");
@@ -139,11 +334,18 @@ em.updateArchiveToggleButton = function () {
 };
 
 em.updateTabVisibility = function () {
+  if (!em.state.isLogTabVisible && em.state.activeTab === "log") {
+    em.state.activeTab = "pending";
+  }
+
   em.panelEls.tabButtons.forEach((btn) => {
+    const isLogTab = btn.dataset.tab === "log";
+    btn.classList.toggle("ep-hidden", isLogTab && !em.state.isLogTabVisible);
     btn.classList.toggle("ep-tab-active", btn.dataset.tab === em.state.activeTab);
   });
 
   if (em.state.isArchiveView) {
+    em.panelEls.filtersWrap.classList.add("ep-hidden");
     em.panelEls.pendingBody.classList.remove("ep-hidden");
     em.panelEls.overdueBody.classList.add("ep-hidden");
     em.panelEls.agendaBody.classList.add("ep-hidden");
@@ -152,10 +354,13 @@ em.updateTabVisibility = function () {
     return;
   }
 
+  const showFilters = em.state.activeTab === "pending" || em.state.activeTab === "overdue" || em.state.activeTab === "agenda";
+  em.panelEls.filtersWrap.classList.toggle("ep-hidden", !showFilters);
+
   em.panelEls.pendingBody.classList.toggle("ep-hidden", em.state.activeTab !== "pending");
   em.panelEls.overdueBody.classList.toggle("ep-hidden", em.state.activeTab !== "overdue");
   em.panelEls.agendaBody.classList.toggle("ep-hidden", em.state.activeTab !== "agenda");
-  em.panelEls.logBody.classList.toggle("ep-hidden", em.state.activeTab !== "log");
+  em.panelEls.logBody.classList.toggle("ep-hidden", !em.state.isLogTabVisible || em.state.activeTab !== "log");
   em.panelEls.configBody.classList.toggle("ep-hidden", em.state.activeTab !== "config");
 };
 
@@ -182,6 +387,9 @@ em.toggleArchiveView = function () {
 };
 
 em.setTab = function (tab) {
+  if (tab === "log" && !em.state.isLogTabVisible) {
+    tab = "pending";
+  }
   em.state.activeTab = tab;
   em.updateTabVisibility();
 };
@@ -190,4 +398,67 @@ em.setStatus = function (text) {
   if (em.panelEls && em.panelEls.footer) {
     em.panelEls.footer.textContent = text;
   }
+};
+
+em.clearLocalData = async function () {
+  await em.storageClear();
+
+  em.state.pending = [];
+  em.state.logs = [];
+  em.state.archivedIds = new Set();
+  em.state.pinnedIds = new Set();
+  em.state.notifiedUpcomingIds = new Set();
+  em.state.lastUpdatedAt = null;
+  em.state.isArchiveView = false;
+  em.state.activeTab = "pending";
+  em.state.filters = {
+    query: "",
+    course: "all",
+    urgency: "all",
+    dateRange: "all"
+  };
+
+  em.stopAutoRefresh();
+  em.state.reminderHours = 24;
+  em.state.isLogTabVisible = true;
+  em.state.isFiltersCompact = false;
+  em.state.customTheme = { ...em.DEFAULT_CUSTOM_THEME };
+  em.state.panelSize = "normal";
+  em.state.deliveryAnimation = "cycle";
+
+  if (em.panelEls) {
+    em.panelEls.root.classList.remove(...em.PANEL_THEME_CLASSES);
+    em.panelEls.root.classList.remove("ep-filters-compact");
+    if (em.panelEls.filterQuery) em.panelEls.filterQuery.value = "";
+    if (em.panelEls.filterCourse) em.panelEls.filterCourse.value = "all";
+    if (em.panelEls.filterUrgency) em.panelEls.filterUrgency.value = "all";
+    if (em.panelEls.filterDate) em.panelEls.filterDate.value = "all";
+    if (em.panelEls.customBaseThemeSelect) em.panelEls.customBaseThemeSelect.value = "";
+    if (em.panelEls.reminderSelect) em.panelEls.reminderSelect.value = "24";
+    if (em.panelEls.deliveryAnimationSelect) em.panelEls.deliveryAnimationSelect.value = "cycle";
+    if (em.panelEls.panelSizeSelect) em.panelEls.panelSizeSelect.value = "normal";
+    if (em.panelEls.logVisibilitySelect) em.panelEls.logVisibilitySelect.value = "visible";
+    if (em.panelEls.langSelect) em.panelEls.langSelect.value = "es";
+    if (em.panelEls.subtitle) em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.t("never");
+  }
+
+  em.state.lang = "es";
+  if (em.applyCustomTheme) em.applyCustomTheme(em.state.customTheme);
+  if (em.setPanelSize) await em.setPanelSize("normal", false);
+  if (em.setDeliveryAnimation) await em.setDeliveryAnimation("cycle", false);
+  if (em.updateCustomThemeVisibility) em.updateCustomThemeVisibility("light");
+  if (em.applyTranslations) em.applyTranslations();
+  if (em.updateActiveThemeChip) em.updateActiveThemeChip("light");
+  if (em.updateArchiveToggleButton) em.updateArchiveToggleButton();
+  if (em.updateTabVisibility) em.updateTabVisibility();
+  if (em.panelEls && em.panelEls.root) {
+    em.panelEls.root.style.setProperty("--ep-font-family", 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace');
+  }
+  if (em.panelEls && em.panelEls.fontSelect) {
+    em.panelEls.fontSelect.value = "mono";
+  }
+  em.renderPending([]);
+  em.renderLogs([]);
+  await em.syncBadge(0, 0, 0);
+  em.setStatus("Datos locales borrados");
 };
