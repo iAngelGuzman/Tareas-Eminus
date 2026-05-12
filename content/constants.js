@@ -18,6 +18,7 @@ window.eminus.STORAGE_KEYS = {
   AUTO_REFRESH: "eminusAutoRefreshMinutes",
   REMINDER_HOURS: "eminusReminderHours",
   NOTIFIED_UPCOMING: "eminusNotifiedUpcomingIds",
+  LAST_URGENCY_BY_ID: "eminusLastUrgencyById",
   FONT: "eminusPanelFont",
   LANG: "eminusLanguage",
   LOG_TAB_VISIBLE: "eminusLogTabVisible",

@@ -121,6 +121,7 @@ em.createPanel = function () {
              <button class="ep-theme-chip" data-theme="wispr">Wispr</button>
              <button class="ep-theme-chip" data-theme="solarized-osaka">Solarized Osaka</button>
              <button class="ep-theme-chip" data-theme="olivia">Olivia</button>
+             <button class="ep-theme-chip" data-theme="codex">Codex</button>
              <button class="ep-theme-chip" data-theme="custom">Personalizado</button>
           </div>
         </div>
@@ -154,6 +155,7 @@ em.createPanel = function () {
               <option value="wispr">Wispr</option>
               <option value="solarized-osaka">Solarized Osaka</option>
               <option value="olivia">Olivia</option>
+              <option value="codex">Codex</option>
             </select>
           </div>
           <div class="ep-custom-theme-grid">

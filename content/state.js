@@ -37,7 +37,8 @@ em.state = {
   },
   panelSize: "normal",
   deliveryAnimation: "cycle",
-  isFiltersCompact: false
+  isFiltersCompact: false,
+  isScanning: false
 };
 
 em.routeObserverStarted = false;

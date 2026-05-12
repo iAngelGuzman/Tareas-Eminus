@@ -17,6 +17,7 @@ em.hydrateFromStorage = async function () {
     em.STORAGE_KEYS.AUTO_REFRESH,
     em.STORAGE_KEYS.REMINDER_HOURS,
     em.STORAGE_KEYS.NOTIFIED_UPCOMING,
+    em.STORAGE_KEYS.LAST_URGENCY_BY_ID,
     em.STORAGE_KEYS.FONT,
     em.STORAGE_KEYS.LANG,
     em.STORAGE_KEYS.LOG_TAB_VISIBLE,
@@ -38,6 +39,7 @@ em.hydrateFromStorage = async function () {
     clearPayload[em.STORAGE_KEYS.ARCHIVED] = [];
     clearPayload[em.STORAGE_KEYS.PINNED] = [];
     clearPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
+    clearPayload[em.STORAGE_KEYS.LAST_URGENCY_BY_ID] = {};
     clearPayload[em.STORAGE_KEYS.ACCOUNT_ID] = currentAccountId;
     await em.storageSet(clearPayload);
     data[em.STORAGE_KEYS.LOG] = [];
@@ -45,6 +47,7 @@ em.hydrateFromStorage = async function () {
     data[em.STORAGE_KEYS.ARCHIVED] = [];
     data[em.STORAGE_KEYS.PINNED] = [];
     data[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
+    data[em.STORAGE_KEYS.LAST_URGENCY_BY_ID] = {};
     await em.syncBadge(0);
   } else if (currentAccountId && !storedAccountId) {
     const idPayload = {};
@@ -178,7 +181,38 @@ em.pruneNotifiedUpcomingIds = function (items, notifiedSet) {
   return next;
 };
 
+em.normalizeUrgencyMap = function (raw) {
+  const allowed = new Set(["overdue", "imminent", "urgent", "normal"]);
+  const normalized = {};
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return normalized;
+
+  Object.keys(raw).forEach((id) => {
+    const key = String(id || "");
+    const urgency = String(raw[id] || "");
+    if (key && allowed.has(urgency)) {
+      normalized[key] = urgency;
+    }
+  });
+
+  return normalized;
+};
+
+em.buildUrgencyMap = function (items) {
+  const map = {};
+  if (!Array.isArray(items)) return map;
+
+  items.forEach((item) => {
+    if (item && item.id) {
+      map[item.id] = item.urgency || "normal";
+    }
+  });
+
+  return map;
+};
+
 em.scanPending = async function () {
+  if (em.state.isScanning) return;
+  em.state.isScanning = true;
   em.setStatus(em.t("status_scanning"));
   if (em.panelEls && em.panelEls.refreshBtn) {
     em.panelEls.refreshBtn.disabled = true;
@@ -197,7 +231,8 @@ em.scanPending = async function () {
       em.STORAGE_KEYS.ACCOUNT_ID,
       em.STORAGE_KEYS.ARCHIVED,
       em.STORAGE_KEYS.PINNED,
-      em.STORAGE_KEYS.NOTIFIED_UPCOMING
+      em.STORAGE_KEYS.NOTIFIED_UPCOMING,
+      em.STORAGE_KEYS.LAST_URGENCY_BY_ID
     ]);
 
     if (knownData[em.STORAGE_KEYS.ACCOUNT_ID] && currentAccountId && knownData[em.STORAGE_KEYS.ACCOUNT_ID] !== currentAccountId) {
@@ -205,6 +240,7 @@ em.scanPending = async function () {
       knownData[em.STORAGE_KEYS.ARCHIVED] = [];
       knownData[em.STORAGE_KEYS.PINNED] = [];
       knownData[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
+      knownData[em.STORAGE_KEYS.LAST_URGENCY_BY_ID] = {};
       em.state.logs = [];
       const clearPayload = {};
       clearPayload[em.STORAGE_KEYS.LOG] = [];
@@ -213,6 +249,7 @@ em.scanPending = async function () {
       clearPayload[em.STORAGE_KEYS.ARCHIVED] = [];
       clearPayload[em.STORAGE_KEYS.PINNED] = [];
       clearPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = [];
+      clearPayload[em.STORAGE_KEYS.LAST_URGENCY_BY_ID] = {};
       clearPayload[em.STORAGE_KEYS.ACCOUNT_ID] = currentAccountId;
       await em.storageSet(clearPayload);
     } else if (!knownData[em.STORAGE_KEYS.ACCOUNT_ID] && currentAccountId) {
@@ -225,6 +262,7 @@ em.scanPending = async function () {
     em.state.archivedIds = em.normalizeArchivedIds(knownData[em.STORAGE_KEYS.ARCHIVED]);
     em.state.pinnedIds = em.normalizePinnedIds(knownData[em.STORAGE_KEYS.PINNED]);
     em.state.notifiedUpcomingIds = em.normalizeNotifiedUpcomingIds(knownData[em.STORAGE_KEYS.NOTIFIED_UPCOMING]);
+    const lastUrgencyById = em.normalizeUrgencyMap(knownData[em.STORAGE_KEYS.LAST_URGENCY_BY_ID]);
 
     const pending = await em.buildPendingData(token, em.state.pinnedIds);
     em.applyArchivedState(pending, em.state.archivedIds);
@@ -250,8 +288,11 @@ em.scanPending = async function () {
     const previousPending = em.state.pending || [];
     const previousOverdueIds = new Set(previousPending.filter((item) => item.urgency === "overdue" && !item.archived).map((item) => item.id));
     const currentOverdue = visiblePending.filter((item) => item.urgency === "overdue");
-    const currentOverdueIds = new Set(currentOverdue.map((item) => item.id));
-    const newlyOverdue = currentOverdue.filter((item) => !previousOverdueIds.has(item.id));
+    const newlyOverdue = currentOverdue.filter((item) => {
+      const lastUrgency = lastUrgencyById[item.id];
+      if (lastUrgency) return lastUrgency !== "overdue";
+      return previousPending.length > 0 && !previousOverdueIds.has(item.id);
+    });
 
     // Upcoming reminders logic
     const upcomingNotifications = [];
@@ -282,6 +323,10 @@ em.scanPending = async function () {
       notifiedPayload[em.STORAGE_KEYS.NOTIFIED_UPCOMING] = Array.from(em.state.notifiedUpcomingIds);
       await em.storageSet(notifiedPayload);
     }
+
+    const urgencyPayload = {};
+    urgencyPayload[em.STORAGE_KEYS.LAST_URGENCY_BY_ID] = em.buildUrgencyMap(pending);
+    await em.storageSet(urgencyPayload);
 
     em.renderLogs(em.state.logs);
     em.state.lastUpdatedAt = logMeta.updatedAt;
@@ -350,5 +395,6 @@ em.scanPending = async function () {
     if (em.panelEls && em.panelEls.refreshBtn) {
       em.panelEls.refreshBtn.disabled = false;
     }
+    em.state.isScanning = false;
   }
 };

@@ -242,6 +242,7 @@
 #eminus-pending-panel.ep-nord-theme .ep-theme-chip-active,
 #eminus-pending-panel.ep-moka-theme .ep-theme-chip-active,
 #eminus-pending-panel.ep-solarized-osaka-theme .ep-theme-chip-active,
+#eminus-pending-panel.ep-codex-theme .ep-theme-chip-active,
 #eminus-pending-panel.ep-wispr-theme .ep-theme-chip-active {
   background: #fff !important;
   color: #000 !important;
@@ -720,6 +721,16 @@
   pointer-events: none;
   text-align: center;
   font-family: inherit;
+}
+
+#eminus-pending-panel.ep-collapsed .ep-toast {
+  position: fixed;
+  top: auto;
+  right: 16px;
+  bottom: 24px;
+  left: auto;
+  width: min(320px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
 }
 
 .ep-toast-visible {

@@ -56,6 +56,7 @@ em.PANEL_THEME_CLASSES = [
   "ep-wispr-theme",
   "ep-solarized-osaka-theme",
   "ep-olivia-theme",
+  "ep-codex-theme",
   "ep-custom-theme"
 ];
 
@@ -92,7 +93,8 @@ em.CUSTOM_THEME_PRESETS = {
   minimal: { bg: "#ffffff", text: "#1a1a1a", border: "#f0f0f0", accent: "#f0f0f0", overdue: "#ff4d4f", imminent: "#ffc53d", urgent: "#73d13d" },
   wispr: { bg: "#fbfaf3", text: "#1a1a1a", border: "#e5e4da", accent: "#1a342d", overdue: "#ff4d4f", imminent: "#ffc53d", urgent: "#73d13d" },
   "solarized-osaka": { bg: "#001f27", text: "#fdf6e3", border: "#073642", accent: "#2aa198", overdue: "#dc322f", imminent: "#b58900", urgent: "#859900" },
-  olivia: { bg: "#1c1b1a", text: "#f7f0e6", border: "#3d3330", accent: "#cba694", overdue: "#c05858", imminent: "#c0a058", urgent: "#72c058" }
+  olivia: { bg: "#1c1b1a", text: "#f7f0e6", border: "#3d3330", accent: "#cba694", overdue: "#c05858", imminent: "#c0a058", urgent: "#72c058" },
+  codex: { bg: "#0d1117", text: "#d7e0ea", border: "#2a3441", accent: "#42d392", overdue: "#ff6b6b", imminent: "#ffd166", urgent: "#4cc9f0" }
 };
 
 em.setTheme = async function (themeName) {
