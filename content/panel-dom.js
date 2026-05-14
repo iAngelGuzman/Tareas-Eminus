@@ -58,6 +58,7 @@ em.createPanel = function () {
         <button class="ep-tab ep-tab-active" data-tab="pending">Pendientes</button>
         <button class="ep-tab" data-tab="overdue">Vencidas</button>
         <button class="ep-tab" data-tab="agenda">Agenda</button>
+        <button class="ep-tab" data-tab="content">Contenido</button>
         <button class="ep-tab" data-tab="log">Log</button>
         <button class="ep-tab" data-tab="config">Config</button>
       </div>
@@ -87,12 +88,29 @@ em.createPanel = function () {
             <option value="nodate">sin fecha</option>
             <option value="overdue">ya vencidas</option>
           </select>
+          <select id="ep-filter-content-type" class="ep-config-select ep-content-filter">
+            <option value="all">todo contenido</option>
+            <option value="unit">módulos</option>
+            <option value="element">mensajes</option>
+            <option value="files">archivos</option>
+          </select>
+          <select id="ep-filter-content-module" class="ep-config-select ep-content-filter">
+            <option value="all">todos los módulos</option>
+          </select>
+          <select id="ep-filter-content-sort" class="ep-config-select ep-content-filter">
+            <option value="newest">más reciente</option>
+            <option value="oldest">más antiguo</option>
+            <option value="course">por curso</option>
+            <option value="module">por módulo</option>
+            <option value="title">por título</option>
+          </select>
         </div>
       </section>
 
       <section class="ep-body" id="ep-body-pending"></section>
       <section class="ep-body ep-hidden" id="ep-body-overdue"></section>
       <section class="ep-body ep-hidden" id="ep-body-agenda"></section>
+      <section class="ep-body ep-hidden" id="ep-body-content"></section>
       <section class="ep-body ep-hidden" id="ep-body-log"></section>
       <section class="ep-body ep-hidden" id="ep-body-config">
         <div class="ep-config-group">
@@ -311,9 +329,14 @@ em.createPanel = function () {
     filterCourse: root.querySelector("#ep-filter-course"),
     filterUrgency: root.querySelector("#ep-filter-urgency"),
     filterDate: root.querySelector("#ep-filter-date"),
+    contentFilters: root.querySelectorAll(".ep-content-filter"),
+    filterContentType: root.querySelector("#ep-filter-content-type"),
+    filterContentModule: root.querySelector("#ep-filter-content-module"),
+    filterContentSort: root.querySelector("#ep-filter-content-sort"),
     pendingBody: root.querySelector("#ep-body-pending"),
     overdueBody: root.querySelector("#ep-body-overdue"),
     agendaBody: root.querySelector("#ep-body-agenda"),
+    contentBody: root.querySelector("#ep-body-content"),
     logBody: root.querySelector("#ep-body-log"),
     configBody: root.querySelector("#ep-body-config"),
     clearLocalDataBtn: root.querySelector("#ep-clear-local-data"),
@@ -395,6 +418,18 @@ em.createPanel = function () {
   });
   em.panelEls.filterDate.addEventListener("change", (e) => {
     em.state.filters.dateRange = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterContentType.addEventListener("change", (e) => {
+    em.state.contentFilters.type = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterContentModule.addEventListener("change", (e) => {
+    em.state.contentFilters.module = String(e.target.value || "all");
+    em.renderPending(em.state.pending);
+  });
+  em.panelEls.filterContentSort.addEventListener("change", (e) => {
+    em.state.contentFilters.sort = String(e.target.value || "newest");
     em.renderPending(em.state.pending);
   });
   em.panelEls.filterCompactBtn.addEventListener("click", () => {

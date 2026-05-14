@@ -13,6 +13,8 @@ em.state = {
   logs: [],
   archivedIds: new Set(),
   pinnedIds: new Set(),
+  contentExpandedIds: new Set(),
+  contentFileLocationCache: new Map(),
   notifiedUpcomingIds: new Set(),
   lastUpdatedAt: null,
   isArchiveView: false,
@@ -25,6 +27,11 @@ em.state = {
     course: "all",
     urgency: "all",
     dateRange: "all"
+  },
+  contentFilters: {
+    type: "all",
+    module: "all",
+    sort: "newest"
   },
   customTheme: {
     bg: "#ffffff",
@@ -106,13 +113,31 @@ em.prunePinnedIds = function (items, pinnedSet) {
   return next;
 };
 
+em.isContentItem = function (item) {
+  return item && item.kind === "content";
+};
+
+em.getActivityItems = function (items) {
+  if (!Array.isArray(items)) return [];
+  return items.filter((item) => item && !em.isContentItem(item));
+};
+
+em.getContentItems = function (items) {
+  if (!Array.isArray(items)) return [];
+  return items.filter((item) => em.isContentItem(item));
+};
+
 em.getVisiblePending = function (items) {
   if (!Array.isArray(items)) return [];
-  return items.filter((item) => !item.archived);
+  return em.getActivityItems(items).filter((item) => !item.archived);
 };
 
 em.getVisiblePendingCount = function (items) {
   return em.getVisiblePending(items).length;
+};
+
+em.getVisibleContent = function (items) {
+  return em.getContentItems(items).filter((item) => !item.archived);
 };
 
 em.isSameDay = function (a, b) {
@@ -139,7 +164,13 @@ em.applyAdvancedFilters = function (items, options) {
     if (selectedUrgency !== "all" && item.urgency !== selectedUrgency) return false;
 
     if (query) {
-      const haystack = (String(item.course || "") + " " + String(item.title || "")).toLowerCase();
+      const haystack = (
+        String(item.course || "") + " " +
+        String(item.title || "") + " " +
+        String(item.contentTypeLabel || "") + " " +
+        String(item.unitName || "") + " " +
+        String(item.description || "")
+      ).toLowerCase();
       if (!haystack.includes(query)) return false;
     }
 
@@ -167,4 +198,52 @@ em.applyAdvancedFilters = function (items, options) {
 
     return true;
   });
+};
+
+em.applyContentFilters = function (items, options) {
+  if (!Array.isArray(items)) return [];
+  const filters = options || em.state.filters || {};
+  const contentFilters = em.state.contentFilters || {};
+  const query = String(filters.query || "").trim().toLowerCase();
+  const selectedCourse = String(filters.course || "all");
+  const selectedType = String(contentFilters.type || "all");
+  const selectedModule = String(contentFilters.module || "all");
+  const selectedSort = String(contentFilters.sort || "newest");
+
+  const filtered = items.filter((item) => {
+    if (!item) return false;
+    if (selectedCourse !== "all" && item.course !== selectedCourse) return false;
+    if (selectedType !== "all") {
+      const mayContainLazyFiles = selectedType === "files" && !item.fileLocationLoaded && (item.contentType === "unit" || item.contentType === "element");
+      if (item.contentType !== selectedType && !mayContainLazyFiles) return false;
+    }
+    const moduleKey = String(item.courseId || "") + ":" + String(item.unitId || "");
+    if (selectedModule !== "all" && moduleKey !== selectedModule) return false;
+    if (!query) return true;
+    const haystack = (
+      String(item.course || "") + " " +
+      String(item.title || "") + " " +
+      String(item.contentTypeLabel || "") + " " +
+      String(item.unitName || "") + " " +
+      String(item.description || "")
+    ).toLowerCase();
+    return haystack.includes(query);
+  });
+
+  filtered.sort((a, b) => {
+    if (selectedSort === "course") {
+      return String(a.course || "").localeCompare(String(b.course || "")) || String(a.unitName || "").localeCompare(String(b.unitName || "")) || String(a.title || "").localeCompare(String(b.title || ""));
+    }
+    if (selectedSort === "module") {
+      return String(a.unitName || "").localeCompare(String(b.unitName || "")) || String(a.title || "").localeCompare(String(b.title || ""));
+    }
+    if (selectedSort === "title") {
+      return String(a.title || "").localeCompare(String(b.title || ""));
+    }
+    const aTime = a.publishedRaw ? new Date(a.publishedRaw).getTime() : 0;
+    const bTime = b.publishedRaw ? new Date(b.publishedRaw).getTime() : 0;
+    return selectedSort === "oldest" ? aTime - bTime : bTime - aTime;
+  });
+
+  return filtered;
 };

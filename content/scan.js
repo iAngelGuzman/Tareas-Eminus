@@ -262,6 +262,8 @@ em.scanPending = async function () {
     em.state.archivedIds = em.normalizeArchivedIds(knownData[em.STORAGE_KEYS.ARCHIVED]);
     em.state.pinnedIds = em.normalizePinnedIds(knownData[em.STORAGE_KEYS.PINNED]);
     em.state.notifiedUpcomingIds = em.normalizeNotifiedUpcomingIds(knownData[em.STORAGE_KEYS.NOTIFIED_UPCOMING]);
+    em.state.contentExpandedIds = new Set();
+    em.state.contentFileLocationCache = new Map();
     const lastUrgencyById = em.normalizeUrgencyMap(knownData[em.STORAGE_KEYS.LAST_URGENCY_BY_ID]);
 
     const pending = await em.buildPendingData(token, em.state.pinnedIds);
@@ -335,13 +337,22 @@ em.scanPending = async function () {
       em.panelEls.subtitle.textContent = em.t("last_read") + ": " + em.formatDateTime(logMeta.updatedAt);
     }
     em.updateAutoRefreshLabel(em.autoRefreshMinutes);
-    const status = visiblePending.length + " " + em.t("status_pending") + " | " + logMeta.newCount + " " + em.t("status_new");
+    const visibleContentCount = em.getVisibleContent(pending).length;
+    const newTaskCount = Number(logMeta.newTaskCount ?? logMeta.newCount ?? 0);
+    const newContentCount = Number(logMeta.newContentCount || 0);
+    const status = visiblePending.length + " " + em.t("status_pending") + " | " + visibleContentCount + " " + em.t("status_content") + " | " + newTaskCount + " " + em.t("status_new");
     em.setStatus(status);
 
-    if (logMeta.newCount > 0) {
-      const msg = logMeta.newCount === 1 ? em.t("new_task_toast_1") : logMeta.newCount + " " + em.t("new_task_toast_n");
+    if (newTaskCount > 0) {
+      const msg = newTaskCount === 1 ? em.t("new_task_toast_1") : newTaskCount + " " + em.t("new_task_toast_n");
       em.showToast(msg, "new");
       await em.notifyUser(em.t("new_task_notif"), msg);
+    }
+
+    if (newContentCount > 0) {
+      const msg = newContentCount === 1 ? em.t("new_content_toast_1") : newContentCount + " " + em.t("new_content_toast_n");
+      em.showToast(msg, "info");
+      await em.notifyUser(em.t("new_content_notif"), msg);
     }
 
     if (newlyOverdue.length > 0) {
@@ -356,7 +367,7 @@ em.scanPending = async function () {
       await em.notifyUser(em.t("reminder_title"), msg);
     }
 
-    await em.syncBadge(visiblePending.length, logMeta.newCount, currentOverdue.length);
+    await em.syncBadge(visiblePending.length, newTaskCount, currentOverdue.length);
   } catch (err) {
     console.error("[Eminus Pending Panel] Error de lectura");
     if (!navigator.onLine) {

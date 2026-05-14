@@ -64,6 +64,85 @@ em.parseEminusDate = function (dateStr) {
   return null;
 };
 
+em.pickFirst = function (source, fields) {
+  if (!source || typeof source !== "object" || !Array.isArray(fields)) return "";
+  for (const field of fields) {
+    const value = source[field];
+    if (value !== null && value !== undefined && String(value).trim() !== "") {
+      return value;
+    }
+  }
+  return "";
+};
+
+em.stripHtml = function (text) {
+  const raw = String(text || "");
+  if (!raw) return "";
+  const withoutTags = raw
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ");
+  const decoded = (() => {
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.innerHTML = withoutTags;
+      return textarea.value;
+    } catch (_) {
+      return withoutTags
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/&lt;/gi, "<")
+        .replace(/&gt;/gi, ">")
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&aacute;/gi, "á")
+        .replace(/&eacute;/gi, "é")
+        .replace(/&iacute;/gi, "í")
+        .replace(/&oacute;/gi, "ó")
+        .replace(/&uacute;/gi, "ú")
+        .replace(/&ntilde;/gi, "ñ");
+    }
+  })();
+  return decoded
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+em.formatBytes = function (bytes) {
+  const value = Number(bytes || 0);
+  if (!Number.isFinite(value) || value <= 0) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  let size = value;
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex += 1;
+  }
+  return (unitIndex === 0 ? String(Math.round(size)) : size.toFixed(size >= 10 ? 1 : 2)) + " " + units[unitIndex];
+};
+
+em.isPublishedContentEntry = function (entry) {
+  if (!entry || typeof entry !== "object") return false;
+
+  const visible = entry.visible ?? entry.Visible ?? entry.estado ?? entry.estatus;
+  const visibleStr = String(visible ?? "").trim().toLowerCase();
+  if (["0", "false", "borrador", "draft", "oculto", "eliminado", "eliminada"].includes(visibleStr)) {
+    return false;
+  }
+  if (Number(visible) === 3) return false;
+
+  const dateValue = em.pickFirst(entry, [
+    "fechaPublicacionInicio",
+    "FechaPublicacionInicio",
+    "fechaPublicacion",
+    "FechaPublicacion"
+  ]);
+  const date = em.parseEminusDate(dateValue);
+  if (date && date.getTime() > Date.now()) return false;
+
+  return true;
+};
+
 em.getTimeRemaining = function (deadline) {
   if (!deadline) return "";
   const now = new Date();

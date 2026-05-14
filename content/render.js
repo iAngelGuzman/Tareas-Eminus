@@ -9,7 +9,7 @@ var em = window.eminus;
 em.renderAgenda = function (items) {
   if (!em.panelEls || !em.panelEls.agendaBody) return;
 
-  const visibleItems = items.filter((item) => !item.archived);
+  const visibleItems = items.filter((item) => !item.archived && item.kind !== "content");
   const overdueItems = visibleItems.filter((item) => item.urgency === "overdue");
   const noDateItems = visibleItems.filter((item) => !item.deadlineRaw && item.urgency !== "overdue");
   const datedItems = visibleItems.filter((item) => item.deadlineRaw && item.urgency !== "overdue");
@@ -131,7 +131,9 @@ em.renderPending = function (items) {
   if (!em.panelEls || !em.panelEls.overdueBody) return;
 
   const nonArchivedItems = items.filter((item) => !item.archived);
-  const filteredItems = em.applyAdvancedFilters(nonArchivedItems);
+  const activityItems = em.getActivityItems(nonArchivedItems);
+  const contentItems = em.applyContentFilters(em.getContentItems(nonArchivedItems));
+  const filteredItems = em.applyAdvancedFilters(activityItems);
   const pendingItems = filteredItems.filter((item) => item.urgency !== "overdue");
   const overdueItems = filteredItems.filter((item) => item.urgency === "overdue");
   const archivedItems = items.filter((item) => item.archived);
@@ -144,6 +146,26 @@ em.renderPending = function (items) {
     em.panelEls.filterCourse.innerHTML = options.join("");
     em.panelEls.filterCourse.value = courses.includes(previousValue) || previousValue === "all" ? previousValue : "all";
     em.state.filters.course = em.panelEls.filterCourse.value;
+  }
+
+  if (em.panelEls && em.panelEls.filterContentModule) {
+    const previousModule = em.panelEls.filterContentModule.value || "all";
+    const modules = em.getContentItems(nonArchivedItems)
+      .filter((item) => item.unitId && item.unitName)
+      .map((item) => ({ id: String(item.unitId), key: String(item.courseId || "") + ":" + String(item.unitId), name: item.unitName, course: item.course }));
+    const seenModules = new Set();
+    const uniqueModules = modules
+      .filter((module) => {
+        if (seenModules.has(module.key)) return false;
+        seenModules.add(module.key);
+        return true;
+      })
+      .sort((a, b) => a.course.localeCompare(b.course) || a.name.localeCompare(b.name));
+    const moduleOptions = [`<option value="all">todos los módulos</option>`]
+      .concat(uniqueModules.map((module) => `<option value="${em.escapeHtml(module.key)}">${em.escapeHtml(module.course + " · " + module.name)}</option>`));
+    em.panelEls.filterContentModule.innerHTML = moduleOptions.join("");
+    em.panelEls.filterContentModule.value = uniqueModules.some((module) => module.key === previousModule) || previousModule === "all" ? previousModule : "all";
+    em.state.contentFilters.module = em.panelEls.filterContentModule.value;
   }
 
   const buildListHtml = (list, emptyMsg, actionConfig, showPin) => {
@@ -172,9 +194,18 @@ em.renderPending = function (items) {
           ? `<button class="ep-mini-btn" type="button" data-action="${actionConfig.action}" data-item-index="${originalIndex}">${em.escapeHtml(actionConfig.label)}</button>`
           : "";
         const buttonsHtml = [pinHtml, actionHtml].filter(Boolean).join("");
+        const contentParts = [];
+        if (item.kind === "content") {
+          contentParts.push(item.contentTypeLabel || "Contenido");
+          if (item.unitName) contentParts.push(item.unitName);
+          if (item.publishedLabel) contentParts.push("Publicado " + item.publishedLabel);
+        }
+        const metaText = item.kind === "content"
+          ? contentParts.filter(Boolean).join(" · ")
+          : em.t("due") + " " + currentDeadlineLabel;
         const metaHtml = buttonsHtml
-          ? `<div class="ep-meta-row"><div class="ep-meta">${em.t("due")} ${em.escapeHtml(currentDeadlineLabel)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
-          : `<div class="ep-meta">${em.t("due")} ${em.escapeHtml(currentDeadlineLabel)}</div>`;
+          ? `<div class="ep-meta-row"><div class="ep-meta">${em.escapeHtml(metaText)}</div><div style="display:flex;gap:6px;">${buttonsHtml}</div></div>`
+          : `<div class="ep-meta">${em.escapeHtml(metaText)}</div>`;
         return `
             <div class="ep-item-btn" role="button" tabindex="0" data-item-index="${originalIndex}">
               <article class="ep-item ${urgencyClass} ${archivedClass}">
@@ -188,13 +219,62 @@ em.renderPending = function (items) {
       .join("");
   };
 
+  const buildContentHtml = (list) => {
+    if (!list.length) {
+      return `<div class="ep-empty">${em.escapeHtml(em.t("empty_content"))}</div>`;
+    }
+
+    return list
+      .map((item) => {
+        const originalIndex = items.indexOf(item);
+        const published = item.publishedLabel ? "Publicado " + item.publishedLabel : item.contentTypeLabel || "Contenido";
+        const metaParts = [item.contentTypeLabel || "Contenido", item.unitName, published].filter(Boolean);
+        const descriptionHtml = item.description
+          ? `<div class="ep-content-description">${em.escapeHtml(item.description)}</div>`
+          : "";
+        const attachments = Array.isArray(item.attachments) ? item.attachments : [];
+        const isOpen = !!(em.state.contentExpandedIds && em.state.contentExpandedIds.has(item.id));
+        const emptyFilesText = item.fileLocationLoading
+          ? "Cargando archivos..."
+          : item.fileLocationError || (item.fileLocationLoaded ? "Sin archivos adjuntos detectados." : "Despliega para cargar archivos.");
+        const attachmentsHtml = attachments.length
+          ? `<div class="ep-content-files">
+              ${attachments.map((file, fileIndex) => `
+                <button class="ep-mini-btn ep-content-download" type="button" data-action="download-content-file" data-item-index="${originalIndex}" data-file-index="${fileIndex}">
+                  ${em.escapeHtml(file.name)}${file.sizeLabel ? " · " + em.escapeHtml(file.sizeLabel) : ""}${file.modifiedLabel ? " · " + em.escapeHtml(file.modifiedLabel) : ""}${file.downloads !== "" && file.downloads !== undefined ? " · " + em.escapeHtml(file.downloads) + " desc." : ""}
+                </button>
+              `).join("")}
+            </div>`
+          : `<div class="ep-empty ep-content-empty-files">${em.escapeHtml(emptyFilesText)}</div>`;
+        return `
+            <details class="ep-content-detail" data-item-index="${originalIndex}"${isOpen ? " open" : ""}>
+              <summary class="ep-content-summary">
+                <article class="ep-item ep-normal">
+                  <div class="ep-course">${em.escapeHtml(item.course)}</div>
+                  <div class="ep-title-task"><span class="ep-wave-text">${em.wrapTextSpans(item.title)}</span></div>
+                  <div class="ep-meta">${em.escapeHtml(metaParts.join(" · "))}</div>
+                </article>
+              </summary>
+              <div class="ep-content-panel">
+                ${descriptionHtml}
+                ${attachmentsHtml}
+                <button class="ep-mini-btn" type="button" data-action="open-content" data-item-index="${originalIndex}">Abrir en Eminus</button>
+              </div>
+            </details>
+          `;
+      })
+      .join("");
+  };
+
   if (em.state.isArchiveView) {
     em.panelEls.pendingBody.innerHTML = buildListHtml(archivedItems, em.t("empty_archived"), { label: em.t("action_restore"), action: "unarchive" }, false);
     em.panelEls.overdueBody.innerHTML = "";
     em.panelEls.agendaBody.innerHTML = "";
+    if (em.panelEls.contentBody) em.panelEls.contentBody.innerHTML = "";
   } else {
     em.panelEls.pendingBody.innerHTML = buildListHtml(pendingItems, em.t("empty_pending"), null, true);
     em.panelEls.overdueBody.innerHTML = buildListHtml(overdueItems, em.t("empty_overdue"), { label: em.t("action_archive"), action: "archive" }, true);
+    if (em.panelEls.contentBody) em.panelEls.contentBody.innerHTML = buildContentHtml(contentItems);
     em.renderAgenda(filteredItems);
   }
 
@@ -241,6 +321,34 @@ em.renderPending = function (items) {
           await em.pinItemByIndex(index);
         } else if (action === "unpin") {
           await em.unpinItemByIndex(index);
+        } else if (action === "download-content-file") {
+          const item = em.state.pending[index];
+          const fileIndex = Number(btn.getAttribute("data-file-index"));
+          const attachment = item && Array.isArray(item.attachments) ? item.attachments[fileIndex] : null;
+          await em.downloadContentAttachment(item, attachment);
+        } else if (action === "open-content") {
+          const item = em.state.pending[index];
+          await em.navigateToContent(item);
+        }
+      });
+    });
+  };
+
+  const addContentDetailListeners = (container) => {
+    if (!container) return;
+    container.querySelectorAll(".ep-content-detail").forEach((detail) => {
+      detail.addEventListener("toggle", () => {
+        const index = Number(detail.getAttribute("data-item-index"));
+        const item = em.state.pending[index];
+        if (!item) return;
+        em.state.contentExpandedIds = em.state.contentExpandedIds || new Set();
+        if (detail.open) {
+          em.state.contentExpandedIds.add(item.id);
+          if (!item.fileLocationLoaded && !item.fileLocationLoading && typeof em.loadContentFilesForItem === "function") {
+            em.loadContentFilesForItem(index);
+          }
+        } else {
+          em.state.contentExpandedIds.delete(item.id);
         }
       });
     });
@@ -248,11 +356,12 @@ em.renderPending = function (items) {
 
   const containers = em.state.isArchiveView
     ? [em.panelEls.pendingBody]
-    : [em.panelEls.pendingBody, em.panelEls.overdueBody, em.panelEls.agendaBody];
+    : [em.panelEls.pendingBody, em.panelEls.overdueBody, em.panelEls.agendaBody, em.panelEls.contentBody];
 
   containers.forEach((container) => {
     addItemListeners(container);
     addActionListeners(container);
+    addContentDetailListeners(container);
   });
 };
 
@@ -275,6 +384,15 @@ em.renderLogs = function (logs) {
         : "";
       const pendingCount = Number(entry.pendingCount || 0);
       const newCount = Number(entry.newCount || 0);
+      const newTaskCount = Number(entry.newTaskCount ?? newCount);
+      const newContentCount = Number(entry.newContentCount || 0);
+      const summaryParts = [
+        pendingCount + " " + em.t("status_pending"),
+        newTaskCount + " " + em.t("status_new")
+      ];
+      if (newContentCount > 0) {
+        summaryParts.push(newContentCount + " " + em.t("status_content"));
+      }
       const changes = Array.isArray(entry.changes) ? entry.changes : [];
       const changesHtml = changes.length
         ? `<div class="ep-log-changes">${changes.map((c) => {
@@ -286,7 +404,7 @@ em.renderLogs = function (logs) {
       return `
           <article class="ep-log-item">
             <div class="ep-log-time">${em.escapeHtml(em.formatDateTime(entry.timestamp))}</div>
-            <div class="ep-log-summary">${pendingCount} ${em.t("status_pending")} (${newCount} ${em.t("status_new")})</div>
+            <div class="ep-log-summary">${em.escapeHtml(summaryParts.join(" · "))}</div>
             ${changesHtml}
             ${lines}
           </article>

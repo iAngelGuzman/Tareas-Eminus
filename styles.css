@@ -326,6 +326,7 @@
 
 .ep-tabs {
   display: flex;
+  flex-wrap: wrap;
   background: #ffffff;
   border-bottom: 1px dashed #000;
 }
@@ -334,10 +335,10 @@
   flex: 1;
   border: none;
   border-right: 1px dashed #000;
-  padding: 10px 12px;
+  padding: 10px 8px;
   background: transparent;
   color: #666;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
 }
 
@@ -553,6 +554,66 @@
 
 .ep-agenda-item:last-child {
   margin-bottom: 0;
+}
+
+.ep-content-detail {
+  margin-bottom: 10px;
+}
+
+.ep-content-detail summary {
+  list-style: none;
+}
+
+.ep-content-detail summary::-webkit-details-marker {
+  display: none;
+}
+
+.ep-content-summary {
+  cursor: pointer;
+}
+
+.ep-content-summary .ep-item {
+  margin-bottom: 0;
+}
+
+.ep-content-summary .ep-title-task::before {
+  content: "[+] ";
+  font-weight: 700;
+}
+
+.ep-content-detail[open] .ep-content-summary .ep-title-task::before {
+  content: "[-] ";
+}
+
+.ep-content-panel {
+  border: 1px dashed currentColor;
+  border-top: none;
+  padding: 10px;
+  background: inherit;
+}
+
+.ep-content-description {
+  font-size: 11px;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  color: currentColor;
+}
+
+.ep-content-files {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ep-content-download {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.ep-content-empty-files {
+  margin-bottom: 10px;
+  padding: 8px;
 }
 
 /* ══════════════════════════════════════════

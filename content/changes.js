@@ -49,6 +49,8 @@ em.appendLog = async function (pending, knownIdsBefore, visiblePending, previous
   const nowIso = new Date().toISOString();
   const currentIds = pending.map((item) => item.id);
   const newCount = currentIds.filter((id) => !knownIdsBefore.has(id)).length;
+  const newTaskCount = em.getActivityItems(pending).filter((item) => item && item.id && !knownIdsBefore.has(item.id)).length;
+  const newContentCount = em.getContentItems(pending).filter((item) => item && item.id && !knownIdsBefore.has(item.id)).length;
   const pendingCount = Array.isArray(visiblePending) ? visiblePending.length : 0;
   const changes = em.detectChanges(pending, previousPending);
 
@@ -61,6 +63,8 @@ em.appendLog = async function (pending, knownIdsBefore, visiblePending, previous
       timestamp: nowIso,
       pendingCount,
       newCount,
+      newTaskCount,
+      newContentCount,
       changes,
       previewTitles: previewSource.slice(0, 4).map((p) => p.course + " - " + p.title)
     };
@@ -78,11 +82,13 @@ em.appendLog = async function (pending, knownIdsBefore, visiblePending, previous
     updatedAt: nowIso,
     pendingCount,
     newCount,
+    newTaskCount,
+    newContentCount,
     overdueCount,
     pending
   };
   payload[em.STORAGE_KEYS.KNOWN_IDS] = currentIds;
   await em.storageSet(payload);
 
-  return { newCount, overdueCount, updatedAt: nowIso, changes };
+  return { newCount, newTaskCount, newContentCount, overdueCount, updatedAt: nowIso, changes };
 };

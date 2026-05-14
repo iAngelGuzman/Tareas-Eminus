@@ -145,7 +145,7 @@ em.loadDetailIntoActivityIframeIfNeeded = async function () {
   window.location.assign(fallbackUrl.toString());
 };
 
-em.setCourseContext = async function (courseId) {
+em.setCourseContext = async function (courseId, moduleId) {
   if (!courseId || !em.hasRuntimeApi) {
     return false;
   }
@@ -157,11 +157,95 @@ em.setCourseContext = async function (courseId) {
     const res = await chrome.runtime.sendMessage({
       type: "SET_COURSE_CONTEXT",
       courseId,
+      moduleId: moduleId || 5,
       token
     });
     return !!res?.ok;
   } catch (err) {
     return false;
+  }
+};
+
+em.mergeLayoutNavigation = function (courseId, unitId) {
+  try {
+    const raw = localStorage.getItem("layoutConfigNavegation");
+    const parsed = raw ? JSON.parse(raw) : {};
+    const next = {
+      ...parsed,
+      config: {
+        ...(parsed.config || {}),
+        navegation: {
+          ...((parsed.config && parsed.config.navegation) || {}),
+          course: {
+            ...(((parsed.config && parsed.config.navegation) || {}).course || {}),
+            id: Number(courseId) || courseId,
+            unit: Number(unitId) || unitId || 0
+          }
+        }
+      }
+    };
+    localStorage.setItem("layoutConfigNavegation", JSON.stringify(next));
+  } catch (_) {
+    // Best effort: Eminus will still open the content route.
+  }
+};
+
+em.navigateToContent = async function (item) {
+  if (!item) return;
+  const courseId = em.normalizePositiveId(item.courseId);
+  const unitId = em.normalizeNonNegativeId(item.unitId);
+  if (!courseId) {
+    em.setStatus(em.t("error_nav_no_id"));
+    return;
+  }
+
+  em.mergeLayoutNavigation(courseId, unitId);
+  await em.setCourseContext(courseId, 1);
+  em.setStatus("Abriendo contenido: " + item.title);
+  window.location.assign(location.origin + "/eminus4/page/course/content/view/unit");
+};
+
+em.downloadContentAttachment = async function (item, attachment) {
+  if (!item || !attachment) return;
+  const courseId = em.normalizePositiveId(item.courseId);
+  const elementId = em.normalizePositiveId(attachment.elementId || item.elementId);
+  const fileId = em.normalizePositiveId(attachment.id);
+  const token = em.getToken();
+  if (!courseId || !elementId || !fileId || !token) {
+    em.setStatus("No se pudo preparar la descarga.");
+    return;
+  }
+
+  const url = "https://eminus.uv.mx/eminusapi/api/contenido/descargaElementoArchivo/" +
+    encodeURIComponent(courseId) + "/" +
+    encodeURIComponent(elementId) + "/" +
+    encodeURIComponent(fileId);
+
+  try {
+    em.setStatus("Descargando: " + attachment.name);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = attachment.name || "archivo";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+    em.setStatus("Descarga iniciada: " + attachment.name);
+  } catch (err) {
+    console.error("[Eminus Pending] Error al descargar archivo de contenido", err);
+    em.setStatus("No se pudo descargar el archivo.");
   }
 };
 
@@ -183,6 +267,10 @@ em.startRouteObserver = function () {
 
 em.navigateToActivity = async function (item) {
   if (!item) return;
+  if (item.kind === "content") {
+    await em.navigateToContent(item);
+    return;
+  }
   const activityId = em.normalizePositiveId(item.activityId);
   const courseId = em.normalizePositiveId(item.courseId);
   if (activityId) {

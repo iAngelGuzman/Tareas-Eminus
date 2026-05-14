@@ -18,6 +18,7 @@ em.i18n = {
     tab_pending: "Pendientes",
     tab_overdue: "Vencidas",
     tab_agenda: "Agenda",
+    tab_content: "Contenido",
     tab_log: "Log",
     tab_config: "Config",
     filter_search_placeholder: "buscar tarea o curso",
@@ -68,6 +69,7 @@ em.i18n = {
     empty_archived: "Sin tareas archivadas.",
     empty_pending: "Sin tareas pendientes detectadas.",
     empty_overdue: "Sin tareas vencidas detectadas.",
+    empty_content: "Sin publicaciones de contenido detectadas.",
     empty_log: "Aún no hay historial.",
     action_restore: "Restaurar",
     action_archive: "Archivar",
@@ -93,6 +95,7 @@ em.i18n = {
     last_read: "Última lectura",
     never: "Nunca",
     status_pending: "pendientes",
+    status_content: "publicaciones",
     status_new: "nuevas",
     status_cache: "(caché)",
     status_scanning: "Consultando cursos y actividades...",
@@ -110,11 +113,14 @@ em.i18n = {
     error_no_token: "No se encontró accessToken. Entra a tu curso y vuelve a intentar.",
     new_task_toast_1: "1 nueva tarea detectada",
     new_task_toast_n: "nuevas tareas detectadas",
+    new_content_toast_1: "1 nueva publicación detectada",
+    new_content_toast_n: "nuevas publicaciones detectadas",
     overdue_toast_1: "1 tarea acaba de vencerse",
     overdue_toast_n: "tareas acaban de vencerse",
     reminder_toast: "Faltan menos de {h}h para",
     reminder_title: "Recordatorio de Eminus",
     new_task_notif: "Nueva tarea en Eminus",
+    new_content_notif: "Nuevo contenido en Eminus",
     overdue_notif: "Tarea vencida en Eminus",
     back_to_eminus: "Volver a Eminus",
     error_network: "Error de red al consultar",
@@ -143,6 +149,7 @@ em.i18n = {
     tab_pending: "Pending",
     tab_overdue: "Overdue",
     tab_agenda: "Agenda",
+    tab_content: "Content",
     tab_log: "Log",
     tab_config: "Config",
     filter_search_placeholder: "search task or course",
@@ -193,6 +200,7 @@ em.i18n = {
     empty_archived: "No archived tasks.",
     empty_pending: "No pending tasks detected.",
     empty_overdue: "No overdue tasks detected.",
+    empty_content: "No content posts detected.",
     empty_log: "No history yet.",
     action_restore: "Restore",
     action_archive: "Archive",
@@ -218,6 +226,7 @@ em.i18n = {
     last_read: "Last read",
     never: "Never",
     status_pending: "pending",
+    status_content: "content posts",
     status_new: "new",
     status_cache: "(cached)",
     status_scanning: "Scanning courses and activities...",
@@ -235,11 +244,14 @@ em.i18n = {
     error_no_token: "No accessToken found. Enter your course and try again.",
     new_task_toast_1: "1 new task detected",
     new_task_toast_n: "new tasks detected",
+    new_content_toast_1: "1 new content post detected",
+    new_content_toast_n: "new content posts detected",
     overdue_toast_1: "1 task just overdue",
     overdue_toast_n: "tasks just overdue",
     reminder_toast: "Less than {h}h left for",
     reminder_title: "Eminus Reminder",
     new_task_notif: "New task in Eminus",
+    new_content_notif: "New content in Eminus",
     overdue_notif: "Overdue task in Eminus",
     back_to_eminus: "Back to Eminus",
     error_network: "Network error while fetching",
@@ -733,6 +745,8 @@ em.applyTranslations = function() {
   if (tabOverdue) tabOverdue.textContent = em.t('tab_overdue');
   const tabAgenda = els.root.querySelector('[data-tab="agenda"]');
   if (tabAgenda) tabAgenda.textContent = em.t('tab_agenda');
+  const tabContent = els.root.querySelector('[data-tab="content"]');
+  if (tabContent) tabContent.textContent = em.t('tab_content');
   const tabLog = els.root.querySelector('[data-tab="log"]');
   if (tabLog) tabLog.textContent = em.t('tab_log');
   const tabConfig = els.root.querySelector('[data-tab="config"]');

@@ -267,10 +267,11 @@ em.setLanguage = async function (lang) {
   
   // Refresh status bar
   const visible = em.getVisiblePending(em.state.pending);
+  const contentCount = em.getVisibleContent(em.state.pending).length;
   const data = await em.storageGet(em.STORAGE_KEYS.SNAPSHOT);
   const snapshot = data[em.STORAGE_KEYS.SNAPSHOT];
-  const newCount = snapshot ? (snapshot.newCount || 0) : 0;
-  const status = visible.length + " " + em.t("status_pending") + " | " + newCount + " " + em.t("status_new");
+  const newCount = snapshot ? (snapshot.newTaskCount ?? snapshot.newCount ?? 0) : 0;
+  const status = visible.length + " " + em.t("status_pending") + " | " + contentCount + " " + em.t("status_content") + " | " + newCount + " " + em.t("status_new");
   em.setStatus(status);
 };
 
@@ -351,17 +352,25 @@ em.updateTabVisibility = function () {
     em.panelEls.pendingBody.classList.remove("ep-hidden");
     em.panelEls.overdueBody.classList.add("ep-hidden");
     em.panelEls.agendaBody.classList.add("ep-hidden");
+    em.panelEls.contentBody.classList.add("ep-hidden");
     em.panelEls.logBody.classList.add("ep-hidden");
     em.panelEls.configBody.classList.add("ep-hidden");
     return;
   }
 
-  const showFilters = em.state.activeTab === "pending" || em.state.activeTab === "overdue" || em.state.activeTab === "agenda";
+  const showFilters = em.state.activeTab === "pending" || em.state.activeTab === "overdue" || em.state.activeTab === "agenda" || em.state.activeTab === "content";
   em.panelEls.filtersWrap.classList.toggle("ep-hidden", !showFilters);
+  const isContentTab = em.state.activeTab === "content";
+  if (em.panelEls.filterUrgency) em.panelEls.filterUrgency.classList.toggle("ep-hidden", isContentTab);
+  if (em.panelEls.filterDate) em.panelEls.filterDate.classList.toggle("ep-hidden", isContentTab);
+  if (em.panelEls.contentFilters) {
+    em.panelEls.contentFilters.forEach((el) => el.classList.toggle("ep-hidden", !isContentTab));
+  }
 
   em.panelEls.pendingBody.classList.toggle("ep-hidden", em.state.activeTab !== "pending");
   em.panelEls.overdueBody.classList.toggle("ep-hidden", em.state.activeTab !== "overdue");
   em.panelEls.agendaBody.classList.toggle("ep-hidden", em.state.activeTab !== "agenda");
+  em.panelEls.contentBody.classList.toggle("ep-hidden", em.state.activeTab !== "content");
   em.panelEls.logBody.classList.toggle("ep-hidden", !em.state.isLogTabVisible || em.state.activeTab !== "log");
   em.panelEls.configBody.classList.toggle("ep-hidden", em.state.activeTab !== "config");
 };
@@ -409,6 +418,8 @@ em.clearLocalData = async function () {
   em.state.logs = [];
   em.state.archivedIds = new Set();
   em.state.pinnedIds = new Set();
+  em.state.contentExpandedIds = new Set();
+  em.state.contentFileLocationCache = new Map();
   em.state.notifiedUpcomingIds = new Set();
   em.state.lastUpdatedAt = null;
   em.state.isArchiveView = false;
@@ -418,6 +429,11 @@ em.clearLocalData = async function () {
     course: "all",
     urgency: "all",
     dateRange: "all"
+  };
+  em.state.contentFilters = {
+    type: "all",
+    module: "all",
+    sort: "newest"
   };
 
   em.stopAutoRefresh();

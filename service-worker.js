@@ -54,6 +54,36 @@ function buildEminusApi8Url(path) {
   return "";
 }
 
+function buildEminusApiUrl(path) {
+  const normalizedPath = String(path || "").trim();
+
+  const unitMatch = normalizedPath.match(/^\/Contenido\/getUnidades\/([1-9]\d{0,18})\/0$/);
+  if (unitMatch) {
+    return "https://eminus.uv.mx/eminusapi/api/Contenido/getUnidades/" + encodeURIComponent(unitMatch[1]) + "/0";
+  }
+
+  const elementsMatch = normalizedPath.match(/^\/Contenido\/getElementos\/([1-9]\d{0,18})\/(\d{1,18})$/);
+  if (elementsMatch) {
+    return "https://eminus.uv.mx/eminusapi/api/Contenido/getElementos/" + encodeURIComponent(elementsMatch[1]) + "/" + encodeURIComponent(elementsMatch[2]);
+  }
+
+  const elementMatch = normalizedPath.match(/^\/Contenido\/getElemento\/([1-9]\d{0,18})\/([1-9]\d{0,18})$/);
+  if (elementMatch) {
+    return "https://eminus.uv.mx/eminusapi/api/Contenido/getElemento/" + encodeURIComponent(elementMatch[1]) + "/" + encodeURIComponent(elementMatch[2]);
+  }
+
+  const fileLocationMatch = normalizedPath.match(/^\/Contenido\/UbicacionArchivos\/([1-9]\d{0,18})$/);
+  if (fileLocationMatch) {
+    return "https://eminus.uv.mx/eminusapi/api/Contenido/UbicacionArchivos/" + encodeURIComponent(fileLocationMatch[1]);
+  }
+
+  return "";
+}
+
+function buildAllowedEminusUrl(path) {
+  return buildEminusApi8Url(path) || buildEminusApiUrl(path);
+}
+
 chrome.action.onClicked.addListener((tab) => {
   if (tab?.id) {
     chrome.tabs.sendMessage(tab.id, { type: "OPEN_AND_REFRESH_PANEL" }).catch(() => {});
@@ -115,7 +145,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     const token = String(message.token || "");
     const path = String(message.path || "");
-    const url = buildEminusApi8Url(path);
+    const url = buildAllowedEminusUrl(path);
 
     if (!url) {
       sendResponse({ ok: false, error: "Endpoint no permitido" });
@@ -129,7 +159,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ ok: false, error: `HTTP ${result.status} en ${path}` });
           return;
         }
-        sendResponse({ ok: true, contenido: result.data?.contenido || [] });
+        const contenido = Array.isArray(result.data?.contenido)
+          ? result.data.contenido
+          : result.data?.contenido && typeof result.data.contenido === "object"
+            ? [result.data.contenido]
+            : Array.isArray(result.data)
+              ? result.data
+              : result.data && typeof result.data === "object"
+                ? [result.data]
+                : [];
+        sendResponse({ ok: true, contenido });
       } catch (_) {
         sendResponse({ ok: false, error: `Error de red al consultar ${path}` });
       }
@@ -146,6 +185,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     const token = String(message.token || "");
     const courseId = normalizePositiveId(message.courseId);
+    const moduleId = Number(message.moduleId || 5);
+    const safeModuleId = Number.isInteger(moduleId) && moduleId > 0 && moduleId < 100 ? moduleId : 5;
 
     if (!courseId) {
       sendResponse({ ok: false, error: "Curso no válido" });
@@ -160,7 +201,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           url: "https://eminus.uv.mx/eminusapi/api/global/accesoModulo",
           method: "PUT",
           token,
-          body: { idModulo: 5, idCurso: Number(courseId) }
+          body: { idModulo: safeModuleId, idCurso: Number(courseId) }
         }));
 
         steps.push(await requestJson({
