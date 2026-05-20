@@ -517,8 +517,32 @@ em.buildPublishedContentData = async function (token, courses, pinnedSet) {
   return items;
 };
 
-em.buildPendingData = async function (token, pinnedSet) {
+em.sortPendingItems = function (items) {
+  if (!Array.isArray(items)) return [];
+  items.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    if (a.kind === "content" && b.kind !== "content") return 1;
+    if (a.kind !== "content" && b.kind === "content") return -1;
+    if (a.kind === "content" && b.kind === "content") {
+      if (a.publishedRaw && b.publishedRaw) {
+        return new Date(b.publishedRaw).getTime() - new Date(a.publishedRaw).getTime();
+      }
+      if (a.publishedRaw) return -1;
+      if (b.publishedRaw) return 1;
+      return a.title.localeCompare(b.title);
+    }
+    if (!a.deadlineRaw && !b.deadlineRaw) return 0;
+    if (!a.deadlineRaw) return 1;
+    if (!b.deadlineRaw) return -1;
+    return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
+  });
+  return items;
+};
+
+em.buildPendingData = async function (token, pinnedSet, options) {
   pinnedSet = pinnedSet || new Set();
+  options = options || {};
   const coursesRaw = await em.fetchJson("/Course/getAllCourses", token);
   const courses = em.filterActiveCourses(coursesRaw);
   const pending = [];
@@ -567,27 +591,13 @@ em.buildPendingData = async function (token, pinnedSet) {
     }
   }
 
+  em.sortPendingItems(pending);
+  if (typeof options.onActivitiesReady === "function") {
+    await options.onActivitiesReady(pending.slice());
+  }
+
   const contentItems = await em.buildPublishedContentData(token, courses, pinnedSet);
   pending.push(...contentItems);
 
-  pending.sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
-    if (a.kind === "content" && b.kind !== "content") return 1;
-    if (a.kind !== "content" && b.kind === "content") return -1;
-    if (a.kind === "content" && b.kind === "content") {
-      if (a.publishedRaw && b.publishedRaw) {
-        return new Date(b.publishedRaw).getTime() - new Date(a.publishedRaw).getTime();
-      }
-      if (a.publishedRaw) return -1;
-      if (b.publishedRaw) return 1;
-      return a.title.localeCompare(b.title);
-    }
-    if (!a.deadlineRaw && !b.deadlineRaw) return 0;
-    if (!a.deadlineRaw) return 1;
-    if (!b.deadlineRaw) return -1;
-    return new Date(a.deadlineRaw).getTime() - new Date(b.deadlineRaw).getTime();
-  });
-
-  return pending;
+  return em.sortPendingItems(pending);
 };

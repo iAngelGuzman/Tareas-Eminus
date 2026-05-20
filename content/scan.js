@@ -266,8 +266,25 @@ em.scanPending = async function () {
     em.state.contentFileLocationCache = new Map();
     const lastUrgencyById = em.normalizeUrgencyMap(knownData[em.STORAGE_KEYS.LAST_URGENCY_BY_ID]);
 
-    const pending = await em.buildPendingData(token, em.state.pinnedIds);
+    const pending = await em.buildPendingData(token, em.state.pinnedIds, {
+      onActivitiesReady: async (activityPending) => {
+        em.applyArchivedState(activityPending, em.state.archivedIds);
+        em.applyPinnedState(activityPending, em.state.pinnedIds);
+        em.state.pending = activityPending;
+        em.renderPending(activityPending);
+        if (em.panelEls && em.panelEls.contentBody) {
+          em.panelEls.contentBody.innerHTML = `<div class="ep-empty">${em.escapeHtml(em.t("status_content"))}: cargando...</div>`;
+        }
+
+        const visibleActivities = em.getVisiblePending(activityPending);
+        const overdueCount = visibleActivities.filter((item) => item.urgency === "overdue").length;
+        const status = visibleActivities.length + " " + em.t("status_pending") + " | " + em.t("status_content") + ": cargando...";
+        em.setStatus(status);
+        await em.syncBadge(visibleActivities.length, 0, overdueCount);
+      }
+    });
     em.applyArchivedState(pending, em.state.archivedIds);
+    em.applyPinnedState(pending, em.state.pinnedIds);
 
     const prunedArchived = em.pruneArchivedIds(pending, em.state.archivedIds);
     if (!em.setsEqual(prunedArchived, em.state.archivedIds)) {
