@@ -51,12 +51,41 @@ em.getActivityIframeElement = function () {
   return null;
 };
 
-em.ensureIframeLoadsDetail = function (target) {
-  const detailUrlObj = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(target.activityId));
-  if (target.courseId) {
-    detailUrlObj.searchParams.set("courseId", target.courseId);
+em.buildActivityDetailUrl = function (activityId, courseId) {
+  const detailUrl = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(activityId));
+  if (courseId) {
+    detailUrl.searchParams.set("courseId", courseId);
   }
-  const detailUrl = detailUrlObj.toString();
+  detailUrl.searchParams.set("_cb", Date.now());
+  return detailUrl.toString();
+};
+
+em.clearEminusAppCache = async function () {
+  try {
+    if (window.caches?.keys) {
+      const keys = await caches.keys();
+      await Promise.all(keys
+        .filter((key) => /eminus|aplicativo/i.test(key))
+        .map((key) => caches.delete(key)));
+    }
+  } catch (_) {
+    // Best effort only; navigation can still continue.
+  }
+
+  try {
+    if (navigator.serviceWorker?.getRegistrations) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations
+        .filter((registration) => /eminus|aplicativo/i.test(registration.scope || ""))
+        .map((registration) => registration.unregister()));
+    }
+  } catch (_) {
+    // Best effort only; navigation can still continue.
+  }
+};
+
+em.ensureIframeLoadsDetail = function (target) {
+  const detailUrl = em.buildActivityDetailUrl(target.activityId, target.courseId);
   const principalUrl = location.origin + "/aplicativoEminus/actividad-principal/?courseId=" + encodeURIComponent(target.courseId || "") + "&_timestamp=" + Date.now();
   const maxMs = 15000;
   const startedAt = Date.now();
@@ -138,11 +167,7 @@ em.loadDetailIntoActivityIframeIfNeeded = async function () {
 
   em.clearPendingNavigationTarget();
   em.setStatus(em.t("status_nav_no_iframe"));
-  const fallbackUrl = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(target.activityId));
-  if (target.courseId) {
-    fallbackUrl.searchParams.set("courseId", target.courseId);
-  }
-  window.location.assign(fallbackUrl.toString());
+  window.location.assign(em.buildActivityDetailUrl(target.activityId, target.courseId));
 };
 
 em.setCourseContext = async function (courseId, moduleId) {
@@ -281,6 +306,7 @@ em.navigateToActivity = async function (item) {
 
       try {
         em.setStatus(em.t("status_nav_context"));
+        await em.clearEminusAppCache();
         await new Promise((resolve) => {
           const iframe = document.createElement("iframe");
           iframe.style.display = "none";
@@ -307,11 +333,7 @@ em.navigateToActivity = async function (item) {
       }
     }
     em.setStatus(em.t("status_nav_opening") + ": " + item.title);
-    const detailUrl = new URL(location.origin + "/aplicativoEminus/actividad-detalle/" + encodeURIComponent(activityId));
-    if (courseId) {
-      detailUrl.searchParams.set("courseId", courseId);
-    }
-    window.location.assign(detailUrl.toString());
+    window.location.assign(em.buildActivityDetailUrl(activityId, courseId));
     return;
   }
   em.setStatus(em.t("error_nav_no_id"));
