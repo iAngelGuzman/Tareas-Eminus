@@ -210,6 +210,35 @@ em.buildUrgencyMap = function (items) {
   return map;
 };
 
+em.scanPendingWhenTokenReady = function () {
+  if (em.getToken()) {
+    if (em.stopTokenWatcher) em.stopTokenWatcher();
+    em.scanPending();
+    return;
+  }
+
+  em.setStatus(em.t("status_waiting_token"));
+  if (em.startTokenWatcher) {
+    em.startTokenWatcher(() => em.scanPending());
+  }
+};
+
+em.isUnauthorizedError = function (err) {
+  return Number(err?.status || 0) === 401 || /HTTP\s+401\b/.test(String(err?.message || ""));
+};
+
+em.waitForTokenRefresh = function (previousToken) {
+  em.setStatus(em.t("status_waiting_token_refresh"));
+  if (!em.startTokenWatcher) return;
+
+  em.startTokenWatcher(() => {
+    window.setTimeout(() => em.scanPendingWhenTokenReady(), 0);
+  }, {
+    previousToken,
+    requireChange: true
+  });
+};
+
 em.scanPending = async function () {
   if (em.state.isScanning) return;
   em.state.isScanning = true;
@@ -218,12 +247,17 @@ em.scanPending = async function () {
     em.panelEls.refreshBtn.disabled = true;
   }
 
+  let token = "";
   try {
-    const token = em.getToken();
+    token = em.getToken();
     if (!token) {
-      em.setStatus(em.t("error_no_token"));
+      em.setStatus(em.t("status_waiting_token"));
+      if (em.startTokenWatcher) {
+        em.startTokenWatcher(() => em.scanPending());
+      }
       return;
     }
+    if (em.stopTokenWatcher) em.stopTokenWatcher();
 
     const currentAccountId = em.getAccountIdFromToken(token);
     let knownData = await em.storageGet([
@@ -416,6 +450,8 @@ em.scanPending = async function () {
       } else {
         em.setStatus(em.t("offline") + " — " + em.t("no_cache"));
       }
+    } else if (em.isUnauthorizedError(err)) {
+      em.waitForTokenRefresh(token);
     } else {
       em.setStatus(err.message || em.t("error_read"));
     }

@@ -18,7 +18,7 @@ window.eminus = window.eminus || {};
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message?.type === "OPEN_AND_REFRESH_PANEL") {
         if (em.state.isCollapsed) em.toggleCollapse();
-        em.scanPending();
+        em.scanPendingWhenTokenReady();
         sendResponse({ ok: true });
       }
     });
@@ -35,7 +35,7 @@ window.eminus = window.eminus || {};
   em.startRouteObserver();
   em.hydrateFromStorage().then(() => {
     em.loadDetailIntoActivityIframeIfNeeded();
-    em.scanPending();
+    em.scanPendingWhenTokenReady();
   });
 
   document.addEventListener("keydown", (e) => {
@@ -52,7 +52,7 @@ window.eminus = window.eminus || {};
       const txt = em.panelEls.footer.textContent.replace(regex, "");
       em.panelEls.footer.textContent = txt || em.t("online");
     }
-    em.scanPending();
+    em.scanPendingWhenTokenReady();
   });
 
   window.addEventListener("offline", () => {

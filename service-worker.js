@@ -156,7 +156,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       try {
         const result = await requestJson({ url, method: "GET", token });
         if (!result.ok) {
-          sendResponse({ ok: false, error: `HTTP ${result.status} en ${path}` });
+          sendResponse({ ok: false, status: result.status, path, error: `HTTP ${result.status} en ${path}` });
           return;
         }
         const contenido = Array.isArray(result.data?.contenido)

@@ -35,11 +35,24 @@
 
   let currentLang = "es";
   let deliveryAnimation = "cycle";
+  let deliveryAnimationCycleIndex = 0;
+  const DELIVERY_ANIMATION_CYCLE_KEY = "eminusDeliveryAnimationCycleIndex";
+
+  function normalizeCycleIndex(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed) || parsed < 0) return 0;
+    return parsed % 4;
+  }
 
   async function updateLanguage() {
-    const data = await chrome.storage.local.get(["eminusLanguage", "eminusDeliveryAnimation"]);
+    const data = await chrome.storage.local.get([
+      "eminusLanguage",
+      "eminusDeliveryAnimation",
+      DELIVERY_ANIMATION_CYCLE_KEY
+    ]);
     currentLang = data.eminusLanguage || "es";
     deliveryAnimation = data.eminusDeliveryAnimation || "cycle";
+    deliveryAnimationCycleIndex = normalizeCycleIndex(data[DELIVERY_ANIMATION_CYCLE_KEY]);
     
     const btn = document.getElementById("ep-back-home-btn");
     if (btn) {
@@ -71,6 +84,9 @@
     }
     if (area === "local" && changes.eminusDeliveryAnimation) {
       deliveryAnimation = changes.eminusDeliveryAnimation.newValue || "cycle";
+    }
+    if (area === "local" && changes[DELIVERY_ANIMATION_CYCLE_KEY]) {
+      deliveryAnimationCycleIndex = normalizeCycleIndex(changes[DELIVERY_ANIMATION_CYCLE_KEY].newValue);
     }
   });
 
@@ -448,7 +464,16 @@
   }
 
   let celebrationTimeout = null;
-  function runDeliveryAnimation(animationKey) {
+  async function getNextCycleAnimationIndex() {
+    const data = await chrome.storage.local.get([DELIVERY_ANIMATION_CYCLE_KEY]);
+    const currentIndex = normalizeCycleIndex(data[DELIVERY_ANIMATION_CYCLE_KEY] ?? deliveryAnimationCycleIndex);
+    const nextIndex = (currentIndex + 1) % 4;
+    deliveryAnimationCycleIndex = nextIndex;
+    await chrome.storage.local.set({ [DELIVERY_ANIMATION_CYCLE_KEY]: nextIndex });
+    return currentIndex;
+  }
+
+  async function runDeliveryAnimation(animationKey) {
     if (animationKey === "off") return;
     if (animationKey === "confetti") {
       showCelebration();
@@ -459,7 +484,7 @@
     } else if (animationKey === "pinata") {
       showPinataCelebration();
     } else {
-      let animIdx = parseInt(sessionStorage.getItem("ep_anim_idx") || "0", 10);
+      const animIdx = await getNextCycleAnimationIndex();
       if (animIdx === 0) {
         showCelebration();
       } else if (animIdx === 1) {
@@ -469,17 +494,15 @@
       } else {
         showPinataCelebration();
       }
-      animIdx = (animIdx + 1) % 4;
-      sessionStorage.setItem("ep_anim_idx", animIdx.toString());
     }
   }
 
   function scheduleCelebration() {
     if (deliveryAnimation === "off") return;
     if (celebrationTimeout) return;
-    celebrationTimeout = setTimeout(() => {
+    celebrationTimeout = setTimeout(async () => {
       celebrationTimeout = null;
-      runDeliveryAnimation(deliveryAnimation);
+      await runDeliveryAnimation(deliveryAnimation);
     }, 800);
   }
 

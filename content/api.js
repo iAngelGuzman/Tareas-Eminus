@@ -15,11 +15,17 @@ em.fetchJson = async function (path, token) {
         token
       });
       if (!bgResponse?.ok) {
-        throw new Error(bgResponse?.error || em.t("error_network") + " " + path);
+        const responseError = new Error(bgResponse?.error || em.t("error_network") + " " + path);
+        responseError.status = Number(bgResponse?.status || 0);
+        responseError.path = bgResponse?.path || path;
+        throw responseError;
       }
       return Array.isArray(bgResponse.contenido) ? bgResponse.contenido : [];
     } catch (err) {
-      throw new Error(err.message || em.t("error_network") + " " + path + ". " + em.t("error_reload"));
+      const wrappedError = new Error(err.message || em.t("error_network") + " " + path + ". " + em.t("error_reload"));
+      wrappedError.status = Number(err.status || 0);
+      wrappedError.path = err.path || path;
+      throw wrappedError;
     }
   }
 

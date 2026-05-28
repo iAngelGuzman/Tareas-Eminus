@@ -359,7 +359,7 @@ em.createPanel = function () {
     filterDateSelect: root.querySelector("#ep-filter-date")
   };
 
-  em.panelEls.refreshBtn.addEventListener("click", () => em.scanPending());
+  em.panelEls.refreshBtn.addEventListener("click", () => em.scanPendingWhenTokenReady());
   em.panelEls.autoRefreshSelect.addEventListener("change", (e) => {
     const minutes = parseInt(e.target.value, 10);
     em.setAutoRefresh(minutes);
