@@ -1,5 +1,7 @@
 # Miyu --pendientes (Chrome Extension)
 
+Repositorio original aquí: `https://github.com/Hiramrr/Tareas-Eminus`
+
 Extensión de Chrome (Manifest V3) para inyectar un panel en `eminus.uv.mx` y mostrar:
 
 - Tareas pendientes por curso
